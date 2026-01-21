@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-signup',
@@ -16,7 +17,10 @@ export class SignupComponent {
   lang: string = 'en';
   email: string = '';
   code: string = '';
+  fullName:string = '';
   password: string = '';
+  mobileNumberIndex:string = '';
+  mobileNumber:string = '';
   password2: string = '';
   errorMessage: string | null = null;
   successMessage: string | null = null;
@@ -26,7 +30,7 @@ export class SignupComponent {
   countDownSeconds: number = 120;
   interval!: any;
 
-  constructor(private translateService: TranslateService, private router: Router, private authService: AuthService) {
+  constructor(private translateService: TranslateService, private userService: UserService, private router: Router, private authService: AuthService) {
     this.startCountDown()
   }
 
@@ -100,13 +104,15 @@ export class SignupComponent {
   signUp() {
     this.resetResponceMessages()
     if (this.password === this.password2) {
-      this.authService.signUp(this.email, this.password, this.code).subscribe(item => {
-        console.log(item)
+      this.authService.signUp(this.email, this.password, this.code, this.fullName, (this.mobileNumberIndex + this.mobileNumber)).subscribe(item => {
         if (item.error) {
           this.errorMessage = item.keyword || 'Login failed';
         } else {
           this.router.navigate(['dashboard'])
           localStorage.setItem('businesManagement_user', JSON.stringify(item))
+          localStorage.setItem('businesManagement_role', item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin' : 'user');
+          localStorage.setItem('businesManagement_token', item.token)
+          this.userService.userLoginStatusChange(item);
         }
       })
     } else {

@@ -1,13 +1,15 @@
 <div class="header_container">
-    <div class="lang_select_cont">
+    <!-- <div class="lang_select_cont">
         <select (change)="changeLang($event)" class="main_select">
             <option value="en">En</option>
             <option value="ka">Ge</option>
         </select>
-    </div>
+    </div> -->
     <div class="auth_cont">
         <button routerLink="/login" *ngIf="!user" class="auth_buttons main_button">{{'login' | translate}}</button>
         <button (click)="logOut()" *ngIf="user" class="auth_buttons main_button">{{'logout' | translate}}</button>
         <button routerLink="/signup" *ngIf="!user" class="auth_buttons main_button">{{'signUp' | translate}}</button>
     </div>
+    <app-branches></app-branches>
+    <app-admin-settings></app-admin-settings>
 </div>

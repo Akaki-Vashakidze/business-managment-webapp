@@ -1,0 +1,15 @@
+
+<button
+mat-button
+[matMenuTriggerFor]="branchesMenu"
+class="menu-button"
+>
+ფილიალები
+<mat-icon>arrow_drop_down</mat-icon>
+</button>
+
+<mat-menu #branchesMenu="matMenu">
+<button mat-menu-item>21 მიკრო</button>
+<button mat-menu-item>მეგორბობა</button>
+<button mat-menu-item>ქუთაისი</button>
+</mat-menu>

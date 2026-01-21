@@ -38,3 +38,15 @@
     }
 
 }
+
+.mobileNumber_field , .index_field{
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    justify-content: center;
+    align-items: center;
+}
+
+.index_input { 
+    width: 60px;
+}

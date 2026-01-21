@@ -17,6 +17,17 @@
                     </div>
                     <button (click)="confirmCode()" class="main_button" style="width: 100%;">confirm</button>
                 </div>
+                <input *ngIf="step3" type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required
+                    class="login_input" />
+                <div *ngIf="step3" class="mobileNumber_field">
+                    <div class="index_field">
+                        <span>+</span>
+                        <input type="text" name="index" [(ngModel)]="mobileNumberIndex" required
+                            class="index_input" />
+                    </div>
+                    <input type="text" name="mobileNumber" maxlength="9" [(ngModel)]="mobileNumber" placeholder="Mobile Number" required
+                        class="login_input" />
+                </div>
                 <input *ngIf="step3" type="password" name="password" [(ngModel)]="password" placeholder="Password" required
                     class="login_input" />
                 <input *ngIf="step3" type="password" name="password2" [(ngModel)]="password2" placeholder="Repeat Password" required

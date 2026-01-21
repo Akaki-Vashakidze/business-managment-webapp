@@ -1,0 +1,13 @@
+.header_container {
+    background-color: var(--secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.lang_select_cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

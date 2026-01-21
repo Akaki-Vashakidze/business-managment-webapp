@@ -3,17 +3,19 @@ import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { AuthService } from '../../features/auth/services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
-import { UserService } from '../../features/auth/services/user.service';
+import { UserService } from '../../auth/services/user.service';
+import { BranchesComponent } from '../../../sharedComponents/branches/branches.component';
+import { AdminSettingsComponent } from "../admin-settings/admin-settings.component";
 
 @Component({
-  selector: 'app-header',
-  imports: [CommonModule, MatButtonModule, TranslateModule, RouterModule],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  selector: 'app-admin-header',
+  imports: [CommonModule, MatButtonModule, TranslateModule, RouterModule, BranchesComponent, AdminSettingsComponent],
+  templateUrl: './adminHeader.component.html',
+  styleUrl: './adminHeader.component.scss'
 })
-export class HeaderComponent {
+export class AdminHeaderComponent {
   lang: string = 'en'
   user: any;
   private destroy$ = new Subject<void>();

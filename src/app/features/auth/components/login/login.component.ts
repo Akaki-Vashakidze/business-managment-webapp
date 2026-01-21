@@ -33,8 +33,12 @@ export class LoginComponent {
       if(item.error) {
         this.errorMessage = item.keyword || 'Login failed';
       } else {
-        this.router.navigate(['dashboard'])
-        localStorage.setItem('businesManagement_user',JSON.stringify(item))
+        localStorage.setItem('businesManagement_user', JSON.stringify(item));
+        localStorage.setItem('businesManagement_role', item.user.isOwner || item.user.isManager ? 'admin' : 'user');
+        localStorage.setItem('businesManagement_token', item.token)
+
+        let route = item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin/dashboard' : 'user/dashboard';
+        this.router.navigate([route]);
         console.log('Login successful', item);
         this.userService.userLoginStatusChange(item);
       }
