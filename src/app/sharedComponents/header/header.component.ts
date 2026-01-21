@@ -19,13 +19,17 @@ export class HeaderComponent {
   private destroy$ = new Subject<void>();
   constructor(private translateService: TranslateService, private authService: AuthService, private userService: UserService, private router: Router) {
     try {
-      const storedUser = localStorage.getItem('schedule_user');
+      const storedUser = localStorage.getItem('businesManagement_user');
       this.user = storedUser ? JSON.parse(storedUser) : null;
       console.log(this.user)
     } catch (error) {
       console.error('Failed to parse user from localStorage:', error);
       this.user = null;
     }
+    
+    this.userService.userLoginStatus.subscribe(item => {
+      this.user = item;
+    });
 
     this.userService.user$
       .pipe(takeUntil(this.destroy$))
@@ -43,10 +47,10 @@ export class HeaderComponent {
     this.authService.logOut()
       .pipe(takeUntil(this.destroy$))
       .subscribe((res: any) => {
-        if (res?.result?.data) {
+        if (res?.message) {
           this.userService.setUser(null);
-          localStorage.removeItem('schedule_user');
-          localStorage.removeItem('schedule_token');
+          localStorage.removeItem('businesManagement_user');
+          localStorage.removeItem('businesManagement_token');
           this.router.navigate(['/login']);
         }
       });

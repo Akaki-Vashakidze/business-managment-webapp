@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Route, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -12,13 +13,14 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
+
 export class LoginComponent {
   lang: string = 'en';
   email: string = '';
   password: string = '';
   errorMessage:string | null = null;
 
-  constructor(private translateService: TranslateService, private router:Router,private authService:AuthService) {}
+  constructor(private translateService: TranslateService, private userService:UserService, private router:Router,private authService:AuthService) {}
 
   changeLang(event: any) {
     const lang = event.target.value;
@@ -32,8 +34,9 @@ export class LoginComponent {
         this.errorMessage = item.keyword || 'Login failed';
       } else {
         this.router.navigate(['dashboard'])
-        localStorage.setItem('user',item)
+        localStorage.setItem('businesManagement_user',JSON.stringify(item))
         console.log('Login successful', item);
+        this.userService.userLoginStatusChange(item);
       }
     })
   }

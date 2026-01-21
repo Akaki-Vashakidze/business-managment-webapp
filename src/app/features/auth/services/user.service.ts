@@ -7,17 +7,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class UserService {
   private userSubject = new BehaviorSubject<any>(null);
   public user$: Observable<any> = this.userSubject.asObservable();
+  public userLoginStatus = new BehaviorSubject<any>(null);
 
   user!: any;
   constructor() {
-    const storedUser = localStorage.getItem('schedule_user');
+    const storedUser = localStorage.getItem('businesManagement_user');
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     this.userSubject.next(parsedUser);
   }
 
   checkUser(): Observable<any> {
     try {
-      const storedUser = localStorage.getItem('schedule_user');
+      const storedUser = localStorage.getItem('businesManagement_user');
       this.user = storedUser ? JSON.parse(storedUser) : null;
     } catch (error) {
       console.error('Failed to parse user from localStorage:', error);
@@ -26,14 +27,18 @@ export class UserService {
     return this.user;
   }
 
+  userLoginStatusChange(user:any){
+    this.userLoginStatus.next(user);
+  }
+
   setUser(user: any) {
     this.userSubject.next(user);
     if (user) {
-      localStorage.setItem('schedule_user', JSON.stringify(user));
-      localStorage.setItem('schedule_token', JSON.stringify(user));
+      localStorage.setItem('businesManagement_user', JSON.stringify(user));
+      localStorage.setItem('businesManagement_token', JSON.stringify(user));
     } else {
-      localStorage.removeItem('schedule_user');
-      localStorage.removeItem('schedule_token');
+      localStorage.removeItem('businesManagement_user');
+      localStorage.removeItem('businesManagement_token');
     }
   }
 
