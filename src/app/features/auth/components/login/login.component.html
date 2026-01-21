@@ -1,0 +1,32 @@
+<div class="header_container">
+
+  <div class="auth_cont">
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login_form">
+        <div class="inputs_cont">
+      <input
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        placeholder="Email"
+        required
+        class="login_input"
+      />
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        placeholder="Password"
+        required
+        class="login_input"
+      />
+        </div>
+        <div *ngIf="errorMessage" style="color: red; text-align: center;">{{errorMessage}}</div>
+        <div class="actions">
+        <div></div>
+      <button type="submit" class="auth_buttons main_button login_bt">
+        {{ 'login' | translate }}
+      </button>
+        </div>
+    </form>
+  </div>
+</div>

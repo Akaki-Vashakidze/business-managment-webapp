@@ -1,0 +1,40 @@
+.auth_cont {
+    width: 300px;
+    margin: auto;
+}
+
+.inputs_cont {
+    display: flex;
+    flex-direction: column;
+}
+
+.login_bt {
+    position: relative;
+    margin-left: auto;
+}
+
+.header_container {
+    position: relative;
+    top: 25%;
+}
+
+.actions {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.inputs_cont input {
+    margin: 10px;
+}
+
+.steps button, .steps input {
+    width: 100%;
+}
+
+@media only screen and (max-width: 767px) {
+    .auth_cont {
+        width: 250px;
+    }
+
+}

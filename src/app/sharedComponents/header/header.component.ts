@@ -1,0 +1,59 @@
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { AuthService } from '../../features/auth/services/auth.service';
+import { Subject, takeUntil } from 'rxjs';
+import { UserService } from '../../features/auth/services/user.service';
+
+@Component({
+  selector: 'app-header',
+  imports: [CommonModule, MatButtonModule, TranslateModule, RouterModule],
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.scss'
+})
+export class HeaderComponent {
+  lang: string = 'en'
+  user: any;
+  private destroy$ = new Subject<void>();
+  constructor(private translateService: TranslateService, private authService: AuthService, private userService: UserService, private router: Router) {
+    try {
+      const storedUser = localStorage.getItem('schedule_user');
+      this.user = storedUser ? JSON.parse(storedUser) : null;
+      console.log(this.user)
+    } catch (error) {
+      console.error('Failed to parse user from localStorage:', error);
+      this.user = null;
+    }
+
+    this.userService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(item => {
+        this.user = item;
+        console.log('Header User Update:', this.user);
+      });
+  }
+  changeLang(event: any) {
+    let lang = event.target.value
+    this.translateService.use(lang);
+  }
+
+  logOut(): void {
+    this.authService.logOut()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        if (res?.result?.data) {
+          this.userService.setUser(null);
+          localStorage.removeItem('schedule_user');
+          localStorage.removeItem('schedule_token');
+          this.router.navigate(['/login']);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}
