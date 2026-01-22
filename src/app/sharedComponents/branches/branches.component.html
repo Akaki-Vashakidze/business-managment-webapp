@@ -4,10 +4,10 @@ mat-button
 [matMenuTriggerFor]="branchesMenu"
 class="menu-button"
 >
-ფილიალები
+{{selectedBranch}}
 <mat-icon>arrow_drop_down</mat-icon>
 </button>
 
 <mat-menu #branchesMenu="matMenu">
-<button *ngFor="let branch of branches" mat-menu-item>{{ branch.name }}</button>
+<button *ngFor="let branch of branches" mat-menu-item (click)="selectBranch(branch.name)">{{ branch.name }}</button>
 </mat-menu>

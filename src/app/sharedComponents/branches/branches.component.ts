@@ -4,8 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BusinessService } from '../../features/auth/services/business.service';
 import { BranchesService } from '../../features/auth/services/branches.service';
-import { branch } from '../../interfaces/shared-interfaces';
+import { Branch } from '../../interfaces/shared-interfaces';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-branches',
@@ -15,9 +16,10 @@ import { CommonModule } from '@angular/common';
   styleUrl: './branches.component.scss'
 })
 export class BranchesComponent {
-  branches: branch[] = [];
+  branches: Branch[] = [];
+  selectedBranch: string = 'ფილიალები';
   selectedBusinessId: string = '';
-  constructor(private businessService:BusinessService, private branchservice:BranchesService) {
+  constructor(private businessService:BusinessService, private router:Router, private branchservice:BranchesService) {
     businessService.businessSelected.subscribe(item => {
       this.selectedBusinessId = item?._id || '';
       this.getBusinessBranches()
@@ -27,6 +29,12 @@ export class BranchesComponent {
       this.getBusinessBranches(); 
     })
   }  
+  
+  selectBranch(branchName:string){
+    this.selectedBranch = branchName;
+    this.router.navigate(['/admin/branchItems']);
+    this.branchservice.onSelectedBranch({name:branchName, business:this.selectedBusinessId});
+  }
 
   getBusinessBranches(){
     if(this.selectedBusinessId){

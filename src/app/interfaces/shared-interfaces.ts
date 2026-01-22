@@ -9,8 +9,8 @@ export interface Record {
  createdAt: string;
 }
 
-export interface branch {
+export interface Branch {
     name:string;
     business:string;
-    _id:string;
+    _id?:string;
 }

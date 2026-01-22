@@ -1,17 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Branch } from '../../../interfaces/shared-interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BranchesService {
   public BranchesUpdate = new BehaviorSubject<boolean>(false);
+  public selectedBranch = new BehaviorSubject<Branch | null>(null);
+
   constructor(private http: HttpClient) { }
 
   createBranch(name:string, business:string): Observable<any> {
     const body = { name, business };
     return this.http.post(`/consoleApi/Branch/create-Branch`, body);
+  }
+
+  onSelectedBranch(branch: Branch) {
+    this.selectedBranch.next(branch);
   }
 
   onBranchesUpdate() {

@@ -12,6 +12,7 @@ import { UserDashboardComponent } from './features/user/user-dashboard/user-dash
 import { AddBranchesComponent } from './features/admin/add-branches/add-branches.component';
 import { AddBusinessComponent } from './features/admin/add-business/add-business.component';
 import { MyBusinessesComponent } from './features/admin/my-businesses/my-businesses.component';
+import { BranchItemsComponent } from './features/admin/branch-items/branch-items.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -38,6 +39,7 @@ export const routes: Routes = [
       { path: 'addBranches', component: AddBranchesComponent },
       { path: 'addBusiness', component: AddBusinessComponent },
       { path: 'myBusinesses', component: MyBusinessesComponent },
+      { path: 'branchItems', component: BranchItemsComponent },
     ],
   },
 
