@@ -1,0 +1,13 @@
+
+<button
+mat-button
+[matMenuTriggerFor]="businessesMenu"
+class="menu-button"
+>
+{{selectedBusiness}}
+<mat-icon>arrow_drop_down</mat-icon>
+</button>
+
+<mat-menu #businessesMenu="matMenu">
+    <button *ngFor="let business of businesses" (click)="selectBusiness(business)" mat-menu-item>{{ business.name }}</button>
+</mat-menu>

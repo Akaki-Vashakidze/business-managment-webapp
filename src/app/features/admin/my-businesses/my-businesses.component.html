@@ -1,0 +1,42 @@
+<div class="page">
+    <h2 class="title">My Businesses</h2>
+
+    <div class="cards">
+        <mat-card class="business-card" *ngFor="let business of myBusinesses; let i = index">
+            <mat-card-header>
+                <mat-card-title>{{ business.name }}</mat-card-title>
+            </mat-card-header>
+
+            <mat-card-content>
+                <p class="description">
+                    Manage your business branches and settings
+                </p>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+                <button mat-button class="hoverGray" color="primary"
+                    (click)="addBranchModeOn(i + 1)">ფილიალის დამატება</button>
+                <button (click)="onUpdateModeChange(i + 1)" mat-button class="hoverGray" color="warn">რედაქტირება</button>
+                <button (click)="deletebusiness(business._id)" mat-button class="hoverGray" color="warn">წაშლა</button>
+            </mat-card-actions>
+
+            <div>
+                <mat-icon *ngIf="updateModeOn > 0 || addBranchMode > 0" (click)="closeModes()">close</mat-icon>
+            </div>
+
+            <div *ngIf="addBranchMode == i + 1" class="addBranchCont">
+                <input [(ngModel)]="branchName" />
+                <button (click)="addBranchToBusiness(business._id)">add</button>
+            </div>
+
+            <div *ngIf="updateModeOn == i + 1" class="addBranchCont">
+                <input placeholder="update name here" [(ngModel)]="businessUpdatedName" />
+                <button (click)="updateBusiness(business._id, businessUpdatedName)">update</button>
+            </div>
+        </mat-card>
+    </div>
+
+    <p class="empty" *ngIf="myBusinesses.length === 0">
+        You don’t have any businesses yet.
+    </p>
+</div>

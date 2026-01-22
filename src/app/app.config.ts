@@ -9,6 +9,8 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { consoleApiRedirectInterceptor } from './features/auth/services/api-redirect.interceptor';
 import { LoadingInterceptor } from './features/auth/services/loading.interceptor';
+import { TokenInterceptorService } from './features/auth/services/token.interceptor';
+import { BadRequestInterceptor } from './features/auth/services/bad-request.interceptor';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -34,6 +36,20 @@ export const appConfig: ApplicationConfig = {
       useClass: LoadingInterceptor,
       multi: true
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: BadRequestInterceptor,
+      multi:true
+    },
+    // {
+    //   provide: ErrorHandler,
+    //   useClass: GlobalErrorHandler
+    // },
     provideHttpClient(withInterceptors([consoleApiRedirectInterceptor])),
     provideRouter(routes, withHashLocation())
   ],

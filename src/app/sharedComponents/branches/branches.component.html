@@ -9,7 +9,5 @@ class="menu-button"
 </button>
 
 <mat-menu #branchesMenu="matMenu">
-<button mat-menu-item>21 მიკრო</button>
-<button mat-menu-item>მეგორბობა</button>
-<button mat-menu-item>ქუთაისი</button>
+<button *ngFor="let branch of branches" mat-menu-item>{{ branch.name }}</button>
 </mat-menu>

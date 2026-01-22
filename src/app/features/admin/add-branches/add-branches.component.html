@@ -1,1 +1,29 @@
-<p>add-branches works!</p>
+<mat-card class="branch-card">
+  <h2>Add Branch</h2>
+
+  <form [formGroup]="branchForm" (ngSubmit)="submit()">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Branch name</mat-label>
+      <input matInput formControlName="name" />
+
+      <mat-error *ngIf="branchForm.controls.name.hasError('required')">
+        Name is required
+      </mat-error>
+
+      <mat-error *ngIf="branchForm.controls.name.hasError('minlength')">
+        Minimum 2 characters
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="branchForm.invalid"
+    >
+      Add Branch
+    </button>
+
+  </form>
+</mat-card>

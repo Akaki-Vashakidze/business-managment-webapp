@@ -10,6 +10,7 @@
         <button (click)="logOut()" *ngIf="user" class="auth_buttons main_button">{{'logout' | translate}}</button>
         <button routerLink="/signup" *ngIf="!user" class="auth_buttons main_button">{{'signUp' | translate}}</button>
     </div>
+    <app-businesses></app-businesses>
     <app-branches></app-branches>
     <app-admin-settings></app-admin-settings>
 </div>

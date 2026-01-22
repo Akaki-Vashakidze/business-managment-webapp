@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { UserHeaderComponent } from '../user-header/userHeader.component';
 
 @Component({
   selector: 'app-user-dashboard',
-  imports: [CommonModule, UserHeaderComponent],
+  imports: [CommonModule],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.scss'
 })

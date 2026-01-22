@@ -10,6 +10,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { UserDashboardComponent } from './features/user/user-dashboard/user-dashboard.component';
 import { AddBranchesComponent } from './features/admin/add-branches/add-branches.component';
+import { AddBusinessComponent } from './features/admin/add-business/add-business.component';
+import { MyBusinessesComponent } from './features/admin/my-businesses/my-businesses.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -34,6 +36,8 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'addBranches', component: AddBranchesComponent },
+      { path: 'addBusiness', component: AddBusinessComponent },
+      { path: 'myBusinesses', component: MyBusinessesComponent },
     ],
   },
 

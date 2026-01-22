@@ -8,10 +8,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../auth/services/user.service';
 import { BranchesComponent } from '../../../sharedComponents/branches/branches.component';
 import { AdminSettingsComponent } from "../admin-settings/admin-settings.component";
+import { BusinessesComponent } from "../businesses/businesses.component";
 
 @Component({
   selector: 'app-admin-header',
-  imports: [CommonModule, MatButtonModule, TranslateModule, RouterModule, BranchesComponent, AdminSettingsComponent],
+  imports: [CommonModule, MatButtonModule, TranslateModule, BusinessesComponent, RouterModule, BranchesComponent, AdminSettingsComponent],
   templateUrl: './adminHeader.component.html',
   styleUrl: './adminHeader.component.scss'
 })

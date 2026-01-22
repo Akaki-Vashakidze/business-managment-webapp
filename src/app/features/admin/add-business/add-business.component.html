@@ -1,0 +1,29 @@
+<mat-card class="business-card">
+  <h2>Add business</h2>
+
+  <form [formGroup]="businessForm" (ngSubmit)="submit()">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>business name</mat-label>
+      <input matInput formControlName="name" />
+
+      <mat-error *ngIf="businessForm.controls.name.hasError('required')">
+        Name is required
+      </mat-error>
+
+      <mat-error *ngIf="businessForm.controls.name.hasError('minlength')">
+        Minimum 2 characters
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="businessForm.invalid"
+    >
+      Add business
+    </button>
+
+  </form>
+</mat-card>
