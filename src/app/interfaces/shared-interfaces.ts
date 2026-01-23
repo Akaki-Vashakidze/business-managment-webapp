@@ -20,3 +20,22 @@ export interface BranchItem {
   name: string;
   branch:string;
 }
+
+export interface ReserveItem {
+    startHour: number;
+    endHour: number;
+    startMinute: number;
+    endMinute: number;
+    item: string;
+    date: string;
+    user:string;
+}
+
+export interface User {
+    _id: string;
+    fullName: string;
+    email: string;
+    mobileNumber: string;
+    isManager: number;
+    isOwner: number;
+}

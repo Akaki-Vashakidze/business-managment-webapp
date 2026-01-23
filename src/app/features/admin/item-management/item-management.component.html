@@ -1,0 +1,64 @@
+<div class="reservation-container">
+
+  <h2>Reserve Item</h2>
+
+  <!-- USER -->
+  <label>User</label>
+  <select [(ngModel)]="reservation.user">
+    <option value="">Select user</option>
+    <option *ngFor="let user of users" [value]="user._id">
+      {{ user.fullName }}
+    </option>
+  </select>
+
+  <!-- DATE -->
+  <label>Date</label>
+
+  <!-- ✅ New: quick-select checkboxes -->
+  <div class="quick-date-options">
+    <label>
+      <input type="radio" name="quickDate" (change)="selectDate('today')" [checked]="dateOption==='today'">
+      Today
+    </label>
+    <label>
+      <input type="radio" name="quickDate" (change)="selectDate('tomorrow')" [checked]="dateOption==='tomorrow'">
+      Tomorrow
+    </label>
+    <label>
+      <input type="radio" name="quickDate" (change)="selectDate('dayAfter')" [checked]="dateOption==='dayAfter'">
+      Day After Tomorrow
+    </label>
+  </div>
+
+  <!-- Original calendar input -->
+  <input 
+    type="date" 
+    [(ngModel)]="reservation.date" 
+    [disabled]="dateOption !== ''"
+  />
+
+  <!-- TIME -->
+  <div class="time-row">
+    <div>
+      <label>Start Time</label>
+      <input type="number" min="0" max="23" [(ngModel)]="reservation.startHour" />
+      :
+      <input type="number" min="0" max="59" [(ngModel)]="reservation.startMinute" />
+    </div>
+
+    <div>
+      <label>End Time</label>
+      <input type="number" min="0" max="23" [(ngModel)]="reservation.endHour" />
+      :
+      <input type="number" min="0" max="59" [(ngModel)]="reservation.endMinute" />
+    </div>
+  </div>
+
+  <!-- ✅ PAID CHECKBOX -->
+  <div class="checkbox-row">
+    <input type="checkbox" id="isPaid" [(ngModel)]="reservation.isPaid" />
+    <label for="isPaid">Paid</label>
+  </div>
+
+  <button (click)="reserveItem()">Reserve</button>
+</div>

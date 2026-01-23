@@ -9,6 +9,7 @@ import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { ItemsService } from '../../auth/services/items.service';
 import { AddItemComponent } from "../add-item/add-item.component";
 import { BranchesService } from '../../auth/services/branches.service';
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-branch-items',
@@ -19,7 +20,8 @@ import { BranchesService } from '../../auth/services/branches.service';
     MatCardModule,
     MatIconModule,
     AddItemComponent,
-    AddItemComponent
+    AddItemComponent,
+    RouterLink
 ],
   templateUrl: './branch-items.component.html',
   styleUrl: './branch-items.component.scss'
@@ -37,7 +39,8 @@ export class BranchItemsComponent {
   constructor(
     private itemsService: ItemsService,
     private snackbar: SnackbarService,
-    private branchService: BranchesService
+    private branchService: BranchesService,
+    private router:Router
   ) {
     branchService.selectedBranch.subscribe(branch => {
       if (branch) {
@@ -98,6 +101,10 @@ export class BranchItemsComponent {
     });
   }
 
+  onManageItemTime(item: BranchItem) {
+    this.router.navigate(['/admin/item/manage', item._id]);
+  }
+
   deleteItem(itemId: string) {
     this.itemsService.deleteItem(itemId).subscribe({
       next: () => {
@@ -110,3 +117,7 @@ export class BranchItemsComponent {
     });
   }
 }
+  function deleteItem(itemId: string, string: any) {
+    throw new Error('Function not implemented.');
+  }
+

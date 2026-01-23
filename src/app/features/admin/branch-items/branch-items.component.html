@@ -27,6 +27,11 @@
       <mat-card-actions align="end">
 
         <button mat-button class="hoverGray" color="warn"
+                (click)="onManageItemTime(item)">
+          manage
+        </button>
+
+        <button mat-button class="hoverGray" color="warn"
                 (click)="onUpdateModeChange(i + 1)">
           Edit
         </button>

@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -10,7 +11,7 @@ export class UserService {
   public userLoginStatus = new BehaviorSubject<any>(null);
 
   user!: any;
-  constructor() {
+  constructor(private http: HttpClient) {
     const storedUser = localStorage.getItem('businesManagement_user');
     const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     this.userSubject.next(parsedUser);
@@ -45,4 +46,13 @@ export class UserService {
   getUser(): any {
     return this.userSubject.value;
   }
+
+  getAllUsers(): Observable<any> {
+    return this.http.get(`/consoleApi/user/get-all-users-minus-owner-and-managers`);
+  }
+
+  getFilteredUsers(searchTerm: string): Observable<any> {
+    return this.http.get(`/consoleApi/user/get-filtered-users/${searchTerm}`);
+  }
+
 }
