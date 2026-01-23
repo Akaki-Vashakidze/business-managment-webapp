@@ -20,20 +20,31 @@ export class BranchesComponent {
   selectedBranch: string = 'ფილიალები';
   selectedBusinessId: string = '';
   constructor(private businessService:BusinessService, private router:Router, private branchservice:BranchesService) {
+    const selectedBranch = localStorage.getItem('businesManagement_selectedBranch');
+    if(selectedBranch){
+      this.selectedBranch = JSON.parse(selectedBranch).name;
+    }
     businessService.businessSelected.subscribe(item => {
       this.selectedBusinessId = item?._id || '';
+      const selectBranch = localStorage.getItem('businesManagement_selectedBranch');
+      if(selectBranch){
+        this.selectedBranch = JSON.parse(selectBranch).name;
+      } else {
+        this.selectedBranch = 'ფილიალები';
+      }
       this.getBusinessBranches()
     });
 
     branchservice.BranchesUpdate.subscribe(item => {
       this.getBusinessBranches(); 
     })
-  }  
+  }   
   
-  selectBranch(branchName:string){
-    this.selectedBranch = branchName;
+  selectBranch(branch:Branch){
+    localStorage.setItem('businesManagement_selectedBranch', JSON.stringify(branch));
+    this.selectedBranch = branch.name;
     this.router.navigate(['/admin/branchItems']);
-    this.branchservice.onSelectedBranch({name:branchName, business:this.selectedBusinessId});
+    this.branchservice.onSelectedBranch(branch);
   }
 
   getBusinessBranches(){

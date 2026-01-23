@@ -1,0 +1,61 @@
+<div class="page">
+
+  <button (click)="addBranchMode = !addBranchMode">Add branch</button>
+
+    <div *ngIf="addBranchMode" >
+        <app-add-branches (branchAdded)="onBranchAdded($event)"></app-add-branches>
+    </div>
+
+  <h2 class="title">Branches</h2>
+
+  <div class="cards">
+    <mat-card class="branch-card" *ngFor="let branch of branches; let i = index">
+
+      <mat-card-header>
+        <mat-card-title>{{ branch.name }}</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="description">
+          Manage branch items and settings
+        </p>
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button class="hoverGray" color="warn"
+                (click)="onUpdateModeChange(i + 1)">
+          Edit
+        </button>
+
+        <button mat-button class="hoverGray" color="warn"
+                (click)="deleteBranch(branch._id)">
+          Delete
+        </button>
+      </mat-card-actions>
+
+      <div>
+        <mat-icon *ngIf="updateModeOn > 0 || addBranchMode"
+                  (click)="closeModes()">
+          close
+        </mat-icon>
+      </div>
+
+      <!-- ADD BRANCH -->
+      <div *ngIf="addBranchMode" class="addBranchCont">
+        <input [(ngModel)]="branchName" placeholder="Branch name" />
+        <button (click)="addBranch()">Add</button>
+      </div>
+
+      <!-- UPDATE BRANCH -->
+      <div *ngIf="updateModeOn === i + 1" class="addBranchCont">
+        <input [(ngModel)]="updatedBranchName" placeholder="Update name" />
+        <button (click)="updateBranch(branch._id)">Update</button>
+      </div>
+
+    </mat-card>
+  </div>
+
+  <p class="empty" *ngIf="branches.length === 0">
+    You don’t have any branches yet.
+  </p>
+</div>

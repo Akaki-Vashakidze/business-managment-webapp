@@ -1,13 +1,8 @@
-
-<button
-mat-button
-[matMenuTriggerFor]="branchesMenu"
-class="menu-button"
->
-{{selectedBranch}}
-<mat-icon>arrow_drop_down</mat-icon>
+<button mat-button [matMenuTriggerFor]="branchesMenu" class="menu-button">
+    {{selectedBranch}}
+    <mat-icon>arrow_drop_down</mat-icon>
 </button>
 
 <mat-menu #branchesMenu="matMenu">
-<button *ngFor="let branch of branches" mat-menu-item (click)="selectBranch(branch.name)">{{ branch.name }}</button>
+    <button *ngFor="let branch of branches" mat-menu-item (click)="selectBranch(branch)">{{ branch.name }}</button>
 </mat-menu>

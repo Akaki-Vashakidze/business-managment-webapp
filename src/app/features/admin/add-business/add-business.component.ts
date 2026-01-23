@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -20,6 +20,7 @@ import { SnackbarService } from '../../auth/services/snack-bar.service';
   styleUrl: './add-business.component.scss'
 })
 export class AddBusinessComponent {
+  @Output() businessAdded = new EventEmitter<Event>();
   constructor(private businessService:BusinessService, private snackbarService:SnackbarService){}
   businessForm = new FormGroup({
     name: new FormControl('', {
@@ -38,6 +39,7 @@ export class AddBusinessComponent {
         this.snackbarService.success('Business created successfully');
         this.businessService.onBusinessesUpdated();
         this.businessForm.reset();
+        this.businessAdded.emit();
       },
       error: (error) => {
         console.error('Error creating business:', error);

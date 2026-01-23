@@ -13,6 +13,8 @@ import { AddBranchesComponent } from './features/admin/add-branches/add-branches
 import { AddBusinessComponent } from './features/admin/add-business/add-business.component';
 import { MyBusinessesComponent } from './features/admin/my-businesses/my-businesses.component';
 import { BranchItemsComponent } from './features/admin/branch-items/branch-items.component';
+import { BranchesComponent } from './sharedComponents/branches/branches.component';
+import { MyBranchesComponent } from './features/admin/my-branches/my-branches.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -36,7 +38,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard, AdminGuard],
     children: [
       { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'addBranches', component: AddBranchesComponent },
+      { path: 'branches', component: MyBranchesComponent },
       { path: 'addBusiness', component: AddBusinessComponent },
       { path: 'myBusinesses', component: MyBusinessesComponent },
       { path: 'branchItems', component: BranchItemsComponent },

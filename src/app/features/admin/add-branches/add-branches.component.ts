@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { BranchesService } from '../../auth/services/branches.service';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
+import { BusinessService } from '../../auth/services/business.service';
 
 @Component({
   selector: 'app-add-branches',
@@ -22,11 +23,15 @@ import { SnackbarService } from '../../auth/services/snack-bar.service';
 })
 export class AddBranchesComponent {
   selectedBusinessId: string = '';
-
-  constructor(private branchesService: BranchesService, private snackbarService: SnackbarService) {
-    branchesService.selectedBranch.subscribe(branch => {
-      this.selectedBusinessId = branch?.business || '';
+  @Output() branchAdded = new EventEmitter<Event>();  
+  constructor(private branchesService: BranchesService, private businessService: BusinessService, private snackbarService: SnackbarService) {
+    businessService.businessSelected.subscribe(business => {
+      console.log('Selected business changed:', business);
+      if (business) { 
+        this.selectedBusinessId = business._id;
+      }
     });
+
   }
   branchForm = new FormGroup({
     name: new FormControl('', {
@@ -49,9 +54,9 @@ export class AddBranchesComponent {
 
     this.branchesService.createBranch(branch.name || '', this.selectedBusinessId).subscribe({
       next: (response) => {
-        console.log('Branch created successfully:', response);
         this.snackbarService.success('Branch created successfully');
         this.branchesService.onBranchesUpdate();
+        this.branchAdded.emit();
       },
       error: (error) => {
         console.error('Error creating branch:', error);

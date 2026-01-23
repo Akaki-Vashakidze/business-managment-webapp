@@ -26,7 +26,6 @@ export class BranchesService {
   }
 
   getBranchesByBusiness(businessId: string): Observable<any> {
-    console.log('Fetching branches for business ID:', businessId);
     return this.http.get(`/consoleApi/Branch/get-branches-by-business/${businessId}`);
   }
   

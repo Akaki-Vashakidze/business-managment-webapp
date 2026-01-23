@@ -1,0 +1,29 @@
+<mat-card class="item-card">
+  <h2>Add item</h2>
+
+  <form [formGroup]="itemForm" (ngSubmit)="submit()">
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Item name</mat-label>
+      <input matInput formControlName="name" />
+
+      <mat-error *ngIf="itemForm.controls.name.hasError('required')">
+        Name is required
+      </mat-error>
+
+      <mat-error *ngIf="itemForm.controls.name.hasError('minlength')">
+        Minimum 2 characters
+      </mat-error>
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="itemForm.invalid"
+    >
+      Add item
+    </button>
+
+  </form>
+</mat-card>

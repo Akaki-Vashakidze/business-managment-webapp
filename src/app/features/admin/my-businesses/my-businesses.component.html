@@ -1,4 +1,11 @@
 <div class="page">
+    
+    <button (click)="addBusinessMode = !addBusinessMode">Add business</button>
+
+    <div *ngIf="addBusinessMode">
+      <app-add-business *ngIf="addBusinessMode" (businessAdded)="onBusinessAdded($event)"></app-add-business>
+    </div>
+
     <h2 class="title">My Businesses</h2>
 
     <div class="cards">

@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { MatIconModule } from "@angular/material/icon";
 import { BranchesService } from '../../auth/services/branches.service';
+import { AddBusinessComponent } from '../add-business/add-business.component';
 
 @Component({
   selector: 'app-my-businesses',
-  imports: [MatCardModule, CommonModule, FormsModule, MatIconModule],
+  imports: [MatCardModule, CommonModule, FormsModule, MatIconModule, AddBusinessComponent],
   templateUrl: './my-businesses.component.html',
   styleUrl: './my-businesses.component.scss'
 })
@@ -18,6 +19,7 @@ export class MyBusinessesComponent {
   myBusinesses: Business[] = [];
   addBranchMode: number = -1;
   branchName:string = '';
+  addBusinessMode: boolean = false;
   businessUpdatedName:string = '';
   updateModeOn:number = -1;
   constructor(private businessService: BusinessService, private branchService:BranchesService,private snackbarService:SnackbarService) {
@@ -29,6 +31,11 @@ export class MyBusinessesComponent {
       this.myBusinesses = businesses || [];
     });
   } 
+
+  onBusinessAdded(event:Event){
+    this.addBusinessMode = false;
+    this.getAllMyBusinesses();
+  }
 
   addBranchModeOn(index:number){
     this.addBranchMode = index;

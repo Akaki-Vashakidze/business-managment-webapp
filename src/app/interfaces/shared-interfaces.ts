@@ -14,3 +14,9 @@ export interface Branch {
     business:string;
     _id?:string;
 }
+
+export interface BranchItem {
+  _id: string;
+  name: string;
+  branch:string;
+}

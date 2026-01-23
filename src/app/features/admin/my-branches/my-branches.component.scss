@@ -14,7 +14,7 @@
   gap: 20px;
 }
 
-.item-card {
+.branch-card {
   border-radius: 16px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
@@ -30,25 +30,18 @@
   font-size: 14px;
 }
 
-.addItemCont {
+.addBranchCont {
   padding: 12px;
   display: flex;
   gap: 8px;
 
   input {
     flex: 1;
-    padding: 6px 8px;
   }
 }
 
-.close-icon {
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 12px;
-}
-
 .hoverGray:hover {
-  background-color: #e0e0e0;
+  background-color: gray;
 }
 
 .empty {
