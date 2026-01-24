@@ -23,36 +23,36 @@ import { ItemsWholeReservesComponent } from "../items-whole-reserves/items-all-r
     AddItemComponent,
     AddItemComponent,
     ItemsWholeReservesComponent
-],
+  ],
   templateUrl: './branch-items.component.html',
   styleUrl: './branch-items.component.scss'
 })
 export class BranchItemsComponent {
   addItemMode: boolean = false;
-  branchId!: string; 
+  branchId!: string;
   items: BranchItem[] = [];
 
   updateModeOn = -1;
 
   itemName = '';
   updatedItemName = '';
-  itemIds:string[] = []
+  itemIds: string[] = []
   constructor(
     private itemsService: ItemsService,
     private snackbar: SnackbarService,
     private branchService: BranchesService,
-    private router:Router
+    private router: Router
   ) {
     branchService.selectedBranch.subscribe(branch => {
       if (branch) {
         this.branchId = branch._id || '';
       } else {
-          const selectedBranch = localStorage.getItem('businesManagement_selectedBranch');
-          if(selectedBranch){
-            this.branchId = JSON.parse(selectedBranch)._id || '';
-          }
+        const selectedBranch = localStorage.getItem('businesManagement_selectedBranch');
+        if (selectedBranch) {
+          this.branchId = JSON.parse(selectedBranch)._id || '';
+        }
       }
-          this.getItemsByBranch();
+      this.getItemsByBranch();
     });
   }
 
@@ -63,7 +63,7 @@ export class BranchItemsComponent {
     }));
   }
 
-  onItemAdded(event:any) {
+  onItemAdded(event: any) {
     this.addItemMode = false;
     this.getItemsByBranch();
   }
@@ -119,7 +119,4 @@ export class BranchItemsComponent {
     });
   }
 }
-  function deleteItem(itemId: string, string: any) {
-    throw new Error('Function not implemented.');
-  }
 

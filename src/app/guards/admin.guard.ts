@@ -7,10 +7,8 @@ export class AdminGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(): boolean {
-    const role = localStorage.getItem('businesManagement_role'); // 'admin' | 'user'
-    console.log('AdminGuard check, role:', role);
+    const role = localStorage.getItem('businesManagement_role'); 
     if (role !== 'admin') {
-        alert('Access denied. Admins only.');
       this.router.navigate(['/user/dashboard']);
       return false;
     }
