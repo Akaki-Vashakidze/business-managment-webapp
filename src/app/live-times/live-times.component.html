@@ -1,1 +1,27 @@
-<p>live-times works!</p>
+<div class="live-container">
+  <h3>Live Item Status</h3>
+
+  <div class="item-card" *ngFor="let item of itemStatuses">
+    <div class="item-name">
+      {{ item.name }}
+    </div>
+
+    <div
+      class="status"
+      [class.free]="!item.isBusy"
+      [class.busy]="item.isBusy"
+    >
+      <ng-container *ngIf="!item.isBusy">
+        🟢 Free
+      </ng-container>
+
+      <ng-container *ngIf="item.isBusy">
+        🔴 Busy <br />
+        <small>
+          Ends at {{ item.endsAt }} <br />
+          {{ formatRemaining(item.remainingSeconds!) }}
+        </small>
+      </ng-container>
+    </div>
+  </div>
+</div>
