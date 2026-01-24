@@ -2,10 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { User } from '../../../interfaces/shared-interfaces';
+import { ItemManagement, User } from '../../../interfaces/shared-interfaces';
 import { UserService } from '../../auth/services/user.service';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
+
+interface TimeSlot {
+  start: number;
+  end: number;
+  label: string;
+  reserved: boolean;
+  selected: boolean;
+}
 
 @Component({
   selector: 'app-item-management',
@@ -22,59 +30,124 @@ export class ItemManagementComponent implements OnInit {
   reservation = {
     user: '',
     date: '',
-    startHour: 9,
+    startHour: 0,
     startMinute: 0,
-    endHour: 10,
+    endHour: 0,
     endMinute: 0,
     isPaid: false
   };
 
-  // ✅ New: checkbox state
-  dateOption: 'today' | 'tomorrow' | 'dayAfter' | '' = '';
+  allReservations: ItemManagement[] = [];
+  dayReservations: ItemManagement[] = [];
+  timeSlots: TimeSlot[] = [];
+
+  selectedStart: TimeSlot | null = null;
+  selectedEnd: TimeSlot | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.item = this.route.snapshot.paramMap.get('id')!;
     this.getAllUsers();
+
+    this.loadReservations();
+
   }
 
   getAllUsers() {
-    this.userService.getAllUsers().subscribe((users: User[]) => {
-      this.users = users;
-    });
+    this.userService.getAllUsers().subscribe(u => this.users = u);
   }
 
-  // ✅ New: handle checkbox selection
-  selectDate(option: 'today' | 'tomorrow' | 'dayAfter') {
-    this.dateOption = option;
+  onDateChange() {
+    const selected = new Date(this.reservation.date).toDateString();
 
-    const today = new Date();
-    let selectedDate = new Date();
+    this.dayReservations = this.allReservations.filter(r =>
+      new Date(r.date).toDateString() === selected
+    );
 
-    if(option === 'tomorrow') selectedDate.setDate(today.getDate() + 1);
-    else if(option === 'dayAfter') selectedDate.setDate(today.getDate() + 2);
-
-    // Format date as YYYY-MM-DD for the input
-    this.reservation.date = selectedDate.toISOString().split('T')[0];
+    this.buildSlots();
   }
 
-  reserveItem() {
-    if (!this.reservation.user || !this.reservation.date) {
-      this.snackbar.error('Please fill all fields');
+  buildSlots() {
+    this.timeSlots = [];
+    this.clearSelection();
+
+    // ⏱ 15-minute slots from 12:00 → 24:00
+    for (let m = 12 * 60; m < 24 * 60; m += 15) {
+      const end = m + 15;
+
+      const reserved = this.dayReservations.some(r => {
+        const rs = r.startHour * 60 + r.startMinute;
+        const re = r.endHour * 60 + r.endMinute;
+        return m < re && end > rs;
+      });
+
+      this.timeSlots.push({
+        start: m,
+        end,
+        reserved,
+        selected: false,
+        label: `${this.format(m)} - ${this.format(end)}`
+      });
+    }
+  }
+
+  selectSlot(slot: TimeSlot) {
+    if (slot.reserved) return;
+
+    // First click → start
+    if (!this.selectedStart || this.selectedEnd) {
+      this.clearSelection();
+      this.selectedStart = slot;
+      slot.selected = true;
       return;
     }
 
-    const start = this.reservation.startHour * 60 + this.reservation.startMinute;
-    const end = this.reservation.endHour * 60 + this.reservation.endMinute;
+    // Second click → end
+    if (slot.start <= this.selectedStart.start) return;
 
-    if (start >= end) {
-      this.snackbar.error('End time must be after start time');
+    const invalid = this.timeSlots.some(s =>
+      s.reserved &&
+      s.start >= this.selectedStart!.start &&
+      s.end <= slot.end
+    );
+
+    if (invalid) return;
+
+    this.selectedEnd = slot;
+
+    this.timeSlots.forEach(s => {
+      if (s.start >= this.selectedStart!.start && s.end <= slot.end) {
+        s.selected = true;
+      }
+    });
+
+    this.applyReservationTime();
+  }
+
+  applyReservationTime() {
+    if (!this.selectedStart || !this.selectedEnd) return;
+
+    this.reservation.startHour = Math.floor(this.selectedStart.start / 60);
+    this.reservation.startMinute = this.selectedStart.start % 60;
+    this.reservation.endHour = Math.floor(this.selectedEnd.end / 60);
+    this.reservation.endMinute = this.selectedEnd.end % 60;
+  }
+
+  clearSelection() {
+    this.timeSlots.forEach(s => s.selected = false);
+    this.selectedStart = null;
+    this.selectedEnd = null;
+  }
+
+  reserveItem() {
+    if (!this.selectedStart || !this.selectedEnd) {
+      this.snackbar.error('Select time interval');
       return;
     }
 
@@ -87,20 +160,35 @@ export class ItemManagementComponent implements OnInit {
       endHour: this.reservation.endHour,
       endMinute: this.reservation.endMinute,
       isPaid: this.reservation.isPaid ? 1 : 0
-    };  
+    };
 
     this.itemManagementService.reserveitem(payload).subscribe({
-      next: (res) => {
-        if(res.success) {
-          this.snackbar.success('Item reserved successfully');
-        } else {
-          this.snackbar.error(res.message || 'Reservation failed');
-        }
-      }, 
-      error: (err) => {
-        this.snackbar.error(err.error?.message || 'Reservation failed');
-      }
+      next: () => {
+        this.snackbar.success('Reserved successfully');
+
+        // 🔄 refresh reservations & slots
+        this.loadReservations();
+        this.clearSelection();
+      },
+      error: () => this.snackbar.error('Reservation failed')
     });
   }
-}
 
+
+  format(min: number) {
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
+  loadReservations() {
+    this.reservation.isPaid = false;
+    this.reservation.user = '';
+    this.itemManagementService
+      .getAllReservationsForItem(this.item)
+      .subscribe(res => {
+        this.allReservations = res;
+        this.onDateChange(); // rebuild slots for selected date
+      });
+  }
+}

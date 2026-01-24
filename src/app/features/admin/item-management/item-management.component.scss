@@ -1,5 +1,5 @@
 .reservation-container {
-  max-width: 420px;
+  max-width: 520px;
   margin: 40px auto;
   padding: 24px;
   border-radius: 16px;
@@ -8,7 +8,7 @@
 }
 
 h2 {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 label {
@@ -26,27 +26,63 @@ select {
   border: 1px solid #ccc;
 }
 
-.time-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
+.hint {
+  margin: 12px 0;
+  font-size: 13px;
+  color: #666;
 }
 
-.time-row div {
-  flex: 1;
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.time-slot {
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  background: #f5f5f5;
+  user-select: none;
+  transition: 0.2s;
+}
+
+.time-slot:hover:not(.reserved) {
+  background: #e3f2fd;
+  transform: scale(1.05);
+}
+
+.time-slot.selected {
+  background: #1976d2;
+  color: #fff;
+}
+
+.time-slot.reserved {
+  background: #ffcdd2;
+  color: #a00;
+  cursor: not-allowed;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 button {
   margin-top: 24px;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
-  background-color: #1976d2;
+  background: #1976d2;
   color: #fff;
   border: none;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #125aa0;
+  background: #125aa0;
 }

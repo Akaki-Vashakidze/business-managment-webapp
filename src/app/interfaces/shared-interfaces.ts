@@ -39,3 +39,18 @@ export interface User {
     isManager: number;
     isOwner: number;
 }
+
+export interface ItemManagement {
+    _id: string;
+    user:string;
+    item:string;
+    acceptedBy:string;
+    startHour:number;
+    startMinute:number;
+    endHour:number;
+    endMinute:number;
+    date:Date;
+    isPaid:number;
+    accepted:number;
+
+}

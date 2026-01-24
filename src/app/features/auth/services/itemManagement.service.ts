@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Business, ReserveItem } from '../../../interfaces/shared-interfaces';
+import { Business, ItemManagement, ReserveItem } from '../../../interfaces/shared-interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -13,8 +13,11 @@ export class ItemManagementService {
         return this.http.post(`/consoleApi/item/management/reserve-item`, reserveItem);
     }
 
-    getAllReservationsForItem(itemId: string): Observable<any> {
-        return this.http.get(`/consoleApi/item/management/get-all-reservations-for-item/${itemId}`);
+    getAllReservationsForItem(itemId: string): Observable<ItemManagement[]> {
+        return this.http.get<ItemManagement[]>(`/consoleApi/item/management/get-reservations-by-item/${itemId}`);
     }
 
+    getAllItemsReservations(itemIds:string[]){
+        return this.http.post<ItemManagement[]>(`/consoleApi/item/management/get-all-item-reservations`,{itemIds});
+    }
 }

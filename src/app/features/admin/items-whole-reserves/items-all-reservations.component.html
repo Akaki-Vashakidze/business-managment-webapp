@@ -1,0 +1,31 @@
+<div class="reservation-container">
+
+  <h3>Open Slots</h3>
+
+  <label>User</label>
+  <select [(ngModel)]="selectedUser">
+    <option value="">Select user</option>
+    <option *ngFor="let user of users" [value]="user._id">
+      {{ user.fullName }}
+    </option>
+  </select>
+
+  <label>Date</label>
+  <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
+
+  <div class="slots-grid">
+    <div 
+      *ngFor="let slot of timeSlots" 
+      class="slot" 
+      [class.free]="slot.free" 
+      [class.busy]="!slot.free"
+      [class.selected]="slot.selected"
+      (click)="selectSlot(slot)"
+    >
+      {{ slot.label }}
+    </div>
+  </div>
+
+  <button (click)="reserveSelected()">Reserve Selected Slot</button>
+
+</div>

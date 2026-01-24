@@ -9,7 +9,8 @@ import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { ItemsService } from '../../auth/services/items.service';
 import { AddItemComponent } from "../add-item/add-item.component";
 import { BranchesService } from '../../auth/services/branches.service';
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
+import { ItemsWholeReservesComponent } from "../items-whole-reserves/items-all-reservations.component";
 
 @Component({
   selector: 'app-branch-items',
@@ -21,7 +22,7 @@ import { Router, RouterLink } from "@angular/router";
     MatIconModule,
     AddItemComponent,
     AddItemComponent,
-    RouterLink
+    ItemsWholeReservesComponent
 ],
   templateUrl: './branch-items.component.html',
   styleUrl: './branch-items.component.scss'
@@ -35,7 +36,7 @@ export class BranchItemsComponent {
 
   itemName = '';
   updatedItemName = '';
-
+  itemIds:string[] = []
   constructor(
     private itemsService: ItemsService,
     private snackbar: SnackbarService,
@@ -58,6 +59,7 @@ export class BranchItemsComponent {
   getItemsByBranch() {
     this.itemsService.getItemsByBranch(this.branchId).subscribe((items => {
       this.items = items || [];
+      this.itemIds = this.items.map(item => item._id);
     }));
   }
 

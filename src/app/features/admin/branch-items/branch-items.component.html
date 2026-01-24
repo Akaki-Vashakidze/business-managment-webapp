@@ -1,6 +1,4 @@
 <div class="page">
-
-
     <button (click)="addItemMode = !addItemMode">Add item</button>
 
     <div *ngIf="addItemMode">
@@ -65,3 +63,5 @@
     No items found for this branch.
   </p>
 </div>
+
+<app-items-all-reservations [itemsId]="itemIds"></app-items-all-reservations>
