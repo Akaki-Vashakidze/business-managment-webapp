@@ -24,7 +24,7 @@ interface TimeSlot {
 export class ItemsWholeReservesComponent implements OnInit, OnChanges {
 rangeStart: TimeSlot | null = null;
 rangeEnd: TimeSlot | null = null;
-  @Input() itemsId!: string[];
+  @Input() itemsIds!: string[];
 
   allReservations: any[] = [];
   timeSlots: TimeSlot[] = [];
@@ -43,12 +43,12 @@ rangeEnd: TimeSlot | null = null;
   }
 
   ngOnInit(): void {
-    if (this.itemsId && this.itemsId.length){ this.loadReservations(this.itemsId)};
+    if (this.itemsIds && this.itemsIds.length){ this.loadReservations(this.itemsIds)};
     this.getAllUsers()
   }
 
   ngOnChanges(): void {
-    if (this.itemsId && this.itemsId.length) this.loadReservations(this.itemsId);
+    if (this.itemsIds && this.itemsIds.length) this.loadReservations(this.itemsIds);
   }
 
   loadReservations(ids: string[]) {
@@ -75,7 +75,7 @@ rangeEnd: TimeSlot | null = null;
       const slotEnd = m + slotDuration;
 
       // check if slot is free in **any item**
-      const free = this.itemsId.some(itemId => {
+      const free = this.itemsIds.some(itemId => {
         return !this.allReservations.some(r => {
           const rDate = new Date(r.date).toISOString().split('T')[0];
           const slotDate = this.selectedDate;
@@ -157,7 +157,7 @@ reserveSelected() {
   const end = this.rangeEnd.end;
 
   // find ANY free item for the WHOLE RANGE
-  const freeItem = this.itemsId.find(itemId => {
+  const freeItem = this.itemsIds.find(itemId => {
     return !this.allReservations.some(r => {
       const rDate = new Date(r.date).toISOString().split('T')[0];
       if (r.item._id !== itemId || rDate !== this.selectedDate) return false;
@@ -191,7 +191,7 @@ reserveSelected() {
       this.snackbar.error(item.errors)
     } else {
       this.snackbar.success('Reserved successfully!');
-      this.loadReservations(this.itemsId);
+      this.loadReservations(this.itemsIds);
       this.clearSelection();
     }
   });

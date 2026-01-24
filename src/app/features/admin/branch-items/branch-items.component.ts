@@ -11,6 +11,7 @@ import { AddItemComponent } from "../add-item/add-item.component";
 import { BranchesService } from '../../auth/services/branches.service';
 import { Router } from "@angular/router";
 import { ItemsWholeReservesComponent } from "../items-whole-reserves/items-all-reservations.component";
+import { LiveTimesComponent } from "../../../live-times/live-times.component";
 
 @Component({
   selector: 'app-branch-items',
@@ -22,8 +23,9 @@ import { ItemsWholeReservesComponent } from "../items-whole-reserves/items-all-r
     MatIconModule,
     AddItemComponent,
     AddItemComponent,
-    ItemsWholeReservesComponent
-  ],
+    ItemsWholeReservesComponent,
+    LiveTimesComponent
+],
   templateUrl: './branch-items.component.html',
   styleUrl: './branch-items.component.scss'
 })
