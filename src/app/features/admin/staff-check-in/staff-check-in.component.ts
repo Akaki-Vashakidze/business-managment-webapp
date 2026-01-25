@@ -2,6 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { MembershipService } from '../../auth/services/membership.service';
 import { CommonModule } from '@angular/common';
+import { SnackbarService } from '../../auth/services/snack-bar.service';
 
 @Component({
   selector: 'app-staff-check-in',
@@ -18,7 +19,7 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   scanning = false;
   message = '';
 
-  constructor(private membershipService: MembershipService) {}
+  constructor(private membershipService: MembershipService, private snackbarService:SnackbarService) {}
 
   async ngOnInit() {
     await this.startScanner();
@@ -41,7 +42,26 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   // }
 
   //safer scanner
-  async startScanner() {
+//   async startScanner() {
+//   const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+//   const deviceId = devices[0]?.deviceId;
+
+//   await this.codeReader.decodeFromVideoDevice(
+//     deviceId,
+//     this.video.nativeElement,
+//     (result) => {
+//       if (result && this.scanning) {
+//         this.scanning = false;
+//         this.handleScan(result.getText());
+//       }
+//     }
+//   );
+// }
+
+//this scans, so coooool
+async startScanner() {
+  this.scanning = true; // ✅ REQUIRED
+
   const devices = await BrowserMultiFormatReader.listVideoInputDevices();
   const deviceId = devices[0]?.deviceId;
 
@@ -57,15 +77,26 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   );
 }
 
+// {
+//       next: (res) => {
+//         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
+//         this.restartScanner();
+//       },
+//       error: (err) => {
+//         this.message = `❌ ${err.error?.message || 'Check-in failed'}`;
+//         this.restartScanner();
+//       }
+//     }
+
   handleScan(qr: string) {
-    this.membershipService.checkIn(qr).subscribe({
-      next: (res) => {
+    this.membershipService.checkIn(qr).subscribe(res => {
+      if(res.statusCode != 400) {
         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
         this.restartScanner();
-      },
-      error: (err) => {
-        this.message = `❌ ${err.error?.message || 'Check-in failed'}`;
+      } else {
+        this.message = `❌ ${res.errors || 'Check-in failed'}`;
         this.restartScanner();
+        this.snackbarService.error(res.errors)
       }
     });
   }

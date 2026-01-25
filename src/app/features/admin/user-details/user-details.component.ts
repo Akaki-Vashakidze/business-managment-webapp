@@ -16,6 +16,7 @@ export class UserDetailsComponent implements OnInit {
 
   userId!: string;
   user!: User;
+  qrImageUrl!: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,7 +25,6 @@ export class UserDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Get userId from route
     this.userId = this.route.snapshot.paramMap.get('userId') as string;
 
     if (!this.userId) {
@@ -37,11 +37,19 @@ export class UserDetailsComponent implements OnInit {
 
   getUser() {
     this.userService.getUserById(this.userId).subscribe(res => {
-      if(res.statusCode == 200) {
-        this.user = res.result.data
+      if (res.statusCode === 200) {
+        this.user = res.result.data;
+        this.generateQr();
       } else {
-        this.snackbarService.error('Can not find user')
+        this.snackbarService.error('Cannot find user');
       }
     });
+  }
+
+  generateQr() {
+    if (!this.user?.qrCode) return;
+
+    this.qrImageUrl =
+      `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(this.user.qrCode)}`;
   }
 }

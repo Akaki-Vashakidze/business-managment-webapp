@@ -1,0 +1,53 @@
+.user-card {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.user-info h2 {
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+.user-info p {
+  margin: 6px 0;
+  color: #444;
+}
+
+.qr-section {
+  text-align: center;
+  border-left: 1px dashed #ddd;
+  padding-left: 20px;
+}
+
+.qr-section h3 {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.qr-image {
+  width: 240px;
+  height: 240px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+
+.qr-text {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #777;
+  word-break: break-all;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  font-size: 18px;
+}

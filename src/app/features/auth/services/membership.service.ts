@@ -7,7 +7,7 @@ export class MembershipService {
   constructor(private http: HttpClient) {}
 
   checkIn(qr: string) {
-    return this.http.post<any>('/api/membership/check-in', {
+    return this.http.post<any>('/consoleApi/membership/check-in', {
       qr
     });
   }

@@ -1,14 +1,29 @@
-<div *ngIf="user; else loading">
-  <h2>{{ user.fullName }}</h2>
+<div *ngIf="user; else loading" class="user-card">
 
-  <p><strong>Email:</strong> {{ user.email }}</p>
-  <p><strong>Mobile:</strong> {{ user.mobileNumber }}</p>
-  <p><strong>Manager:</strong> {{ user.isManager ? 'Yes' : 'No' }}</p>
-  <p><strong>Owner:</strong> {{ user.isOwner ? 'Yes' : 'No' }}</p>
-  <p><strong>QR:</strong> {{ user.qrCode }}</p>
+  <div class="user-info">
+    <h2>{{ user.fullName }}</h2>
+
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Mobile:</strong> {{ user.mobileNumber }}</p>
+    <p><strong>Manager:</strong> {{ user.isManager ? 'Yes' : 'No' }}</p>
+    <p><strong>Owner:</strong> {{ user.isOwner ? 'Yes' : 'No' }}</p>
+  </div>
+
+  <div class="qr-section">
+    <h3>Membership QR</h3>
+
+    <img
+      *ngIf="qrImageUrl"
+      [src]="qrImageUrl"
+      alt="User QR Code"
+      class="qr-image"
+    />
+
+    <p class="qr-text">{{ user.qrCode }}</p>
+  </div>
 
 </div>
 
 <ng-template #loading>
-  <p>Loading user...</p>
+  <div class="loading">Loading user...</div>
 </ng-template>
