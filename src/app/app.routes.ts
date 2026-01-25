@@ -16,6 +16,7 @@ import { BranchItemsComponent } from './features/admin/branch-items/branch-items
 import { BranchesComponent } from './sharedComponents/branches/branches.component';
 import { MyBranchesComponent } from './features/admin/my-branches/my-branches.component';
 import { ItemManagementComponent } from './features/admin/item-management/item-management.component';
+import { UsersComponent } from './features/admin/users/users.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -43,6 +44,7 @@ export const routes: Routes = [
       { path: 'addBusiness', component: AddBusinessComponent },
       { path: 'myBusinesses', component: MyBusinessesComponent },
       { path: 'branchItems', component: BranchItemsComponent },
+      { path: 'users', component: UsersComponent },
       { path: 'item/manage/:id', component: ItemManagementComponent },
     ],
   },

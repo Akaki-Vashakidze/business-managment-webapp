@@ -1,0 +1,53 @@
+<div class="users-container">
+  <h2>Users</h2>
+
+  <!-- Search -->
+<input
+  type="text"
+  [(ngModel)]="searchTerm"
+  placeholder="Search users..."
+  (ngModelChange)="onSearchChange()"
+/>
+
+  <!-- Add/Edit Form -->
+  <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+    <input formControlName="fullName" placeholder="Full Name" />
+    <input formControlName="email" placeholder="Email" type="email" />
+    <input formControlName="mobileNumber" placeholder="Mobile Number" />
+    <label>
+      <input type="checkbox" formControlName="isManager" /> Manager
+    </label>
+    <label>
+      <input type="checkbox" formControlName="isOwner" /> Owner
+    </label>
+    <button type="submit">{{ editingUser ? 'Update' : 'Add' }} User</button>
+  </form>
+
+  <!-- Users Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Manager</th>
+        <th>Owner</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.fullName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.mobileNumber }}</td>
+        <td>{{ user.isManager }}</td>
+        <td>{{ user.isOwner }}</td>
+        <td>
+          <button (click)="openEditUser(user)">Edit</button>
+          <button (click)="deleteUser(user)">Delete</button>
+          <button (click)="createMembership(user)">Create Membership</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

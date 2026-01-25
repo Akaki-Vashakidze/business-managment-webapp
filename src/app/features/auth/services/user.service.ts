@@ -52,7 +52,25 @@ export class UserService {
   }
 
   getFilteredUsers(searchTerm: string): Observable<any> {
-    return this.http.get(`/consoleApi/user/get-filtered-users/${searchTerm}`);
+    return this.http.post(`/consoleApi/user/get-filtered-users`, {searchQuery:searchTerm});
   }
+
+  editUser(searchTerm: string, userData:any): Observable<any> {
+    return this.http.put(`/consoleApi/user/edit`, {userData});
+  }
+
+    deleteUser(userId: string): Observable<any> {
+    return this.http.delete(`/consoleApi/user/delete/${userId}`);
+  }
+
+    createMembership(userId: string): Observable<any> {
+    return this.http.post(`/consoleApi/membership/create`, {userId});
+  }
+
+    addUser(userId: string): Observable<any> {
+    return this.http.post(`/consoleApi/user/create`, {userId});
+  }
+  
+  
 
 }
