@@ -59,6 +59,9 @@
             <button *ngIf="showCreateMembershipFeature != (i + 1)" (click)="showCreateMembership(user, i)">
             Create Membership
             </button>
+            <button (click)="launchUserDetails(user._id)">
+            details
+            </button>
 
         </td>
       </tr>

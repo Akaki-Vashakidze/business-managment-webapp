@@ -72,6 +72,8 @@ export class UserService {
     return this.http.post(`/consoleApi/user/create`, {userId});
   }
   
-  
+  getUserById(userId:string){
+    return this.http.get<any>(`/consoleApi/user/getById/${userId}`);
+  }
 
 }

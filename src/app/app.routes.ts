@@ -17,6 +17,8 @@ import { BranchesComponent } from './sharedComponents/branches/branches.componen
 import { MyBranchesComponent } from './features/admin/my-branches/my-branches.component';
 import { ItemManagementComponent } from './features/admin/item-management/item-management.component';
 import { UsersComponent } from './features/admin/users/users.component';
+import { StaffCheckInComponent } from './features/admin/staff-check-in/staff-check-in.component';
+import { UserDetailsComponent } from './features/admin/user-details/user-details.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -46,6 +48,8 @@ export const routes: Routes = [
       { path: 'branchItems', component: BranchItemsComponent },
       { path: 'users', component: UsersComponent },
       { path: 'item/manage/:id', component: ItemManagementComponent },
+      { path: 'checkIn', component: StaffCheckInComponent },
+      { path: 'user-details/:userId', component: UserDetailsComponent },
     ],
   },
 

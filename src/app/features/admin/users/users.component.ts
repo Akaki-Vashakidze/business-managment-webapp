@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { MembershipType } from '../../../enums/membership.enum';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users',
@@ -29,6 +30,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   private searchSubscription!: Subscription;
 
   constructor(
+    private router:Router,
     private usersService: UserService,
     private snackbarService: SnackbarService,
     private fb: FormBuilder
@@ -145,5 +147,9 @@ export class UsersComponent implements OnInit, OnDestroy {
       },
       error: () => this.snackbarService.error('Error creating membership')
     });
+  }
+
+  launchUserDetails(userId:string){
+    this.router.navigate([`/admin/user-details/${userId}`])
   }
 }

@@ -1,0 +1,14 @@
+<div *ngIf="user; else loading">
+  <h2>{{ user.fullName }}</h2>
+
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Mobile:</strong> {{ user.mobileNumber }}</p>
+  <p><strong>Manager:</strong> {{ user.isManager ? 'Yes' : 'No' }}</p>
+  <p><strong>Owner:</strong> {{ user.isOwner ? 'Yes' : 'No' }}</p>
+  <p><strong>QR:</strong> {{ user.qrCode }}</p>
+
+</div>
+
+<ng-template #loading>
+  <p>Loading user...</p>
+</ng-template>

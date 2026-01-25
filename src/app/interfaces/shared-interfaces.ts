@@ -38,6 +38,7 @@ export interface User {
     mobileNumber: string;
     isManager: number;
     isOwner: number;
+    qrCode:string;
 }
 
 export interface ItemManagement {
