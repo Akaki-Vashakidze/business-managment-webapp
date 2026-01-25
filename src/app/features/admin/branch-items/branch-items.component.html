@@ -1,66 +1,17 @@
 <div class="page">
 
-    <app-live-times [items]="items"></app-live-times>
+  <!-- LIVE TIMES (NOW CONTROLS ITEMS) -->
+  <app-live-times
+    [items]="items"
+    (itemsChanged)="getItemsByBranch()"
+  ></app-live-times>
 
-    <button (click)="addItemMode = !addItemMode">Add item</button>
+  <button (click)="addItemMode = !addItemMode">Add item</button>
 
-    <div *ngIf="addItemMode">
-      <app-add-item *ngIf="addItemMode" (itemAdded)="onItemAdded($event)"></app-add-item>
-    </div>
-    
-  <h2 class="title">Branch Items</h2>
-
-  <div class="cards">
-    <mat-card
-      class="item-card"
-      *ngFor="let item of items; let i = index"
-    >
-      <mat-card-header>
-        <mat-card-title>{{ item.name }}</mat-card-title>
-      </mat-card-header>
-
-      <mat-card-content>
-        <p class="description">
-          Manage branch items
-        </p>
-      </mat-card-content>
-
-      <mat-card-actions align="end">
-
-        <button mat-button class="hoverGray" color="warn"
-                (click)="onManageItemTime(item)">
-          manage
-        </button>
-
-        <button mat-button class="hoverGray" color="warn"
-                (click)="onUpdateModeChange(i + 1)">
-          Edit
-        </button>
-
-        <button mat-button class="hoverGray" color="warn"
-                (click)="deleteItem(item._id)">
-          Delete
-        </button>
-      </mat-card-actions>
-
-      <div class="close-icon">
-        <mat-icon
-          *ngIf=" updateModeOn > 0"
-          (click)="closeModes()">
-          close
-        </mat-icon>
-      </div>
-
-      <!-- UPDATE ITEM -->
-      <div *ngIf="updateModeOn === i + 1" class="addItemCont">
-        <input
-          [(ngModel)]="updatedItemName"
-          placeholder="Update name"
-        />
-        <button (click)="updateItem(item._id)">Update</button>
-      </div>
-    </mat-card>
-  </div>
+  <app-add-item
+    *ngIf="addItemMode"
+    (itemAdded)="onItemAdded()"
+  ></app-add-item>
 
   <p class="empty" *ngIf="items.length === 0">
     No items found for this branch.

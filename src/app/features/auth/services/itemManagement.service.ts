@@ -24,5 +24,9 @@ export class ItemManagementService {
     getAllItemsReservationsForToday(itemIds:string[]){
         return this.http.post<ItemManagement[]>(`/consoleApi/item/management/get-all-item-reservations-for-today`,{itemIds});
     }
+
+    markItemAsPaid(itemManagingId:string){
+        return this.http.post<any>(`/consoleApi/item/management/mark-item-as-paid/${itemManagingId}`,{});
+    }
     
 }

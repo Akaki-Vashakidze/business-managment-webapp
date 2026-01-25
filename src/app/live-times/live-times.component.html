@@ -1,27 +1,76 @@
 <div class="live-container">
   <h3>Live Item Status</h3>
 
-  <div class="item-card" *ngFor="let item of itemStatuses">
-    <div class="item-name">
-      {{ item.name }}
-    </div>
+  <div
+    class="item-card"
+    *ngFor="let item of itemStatuses; trackBy: trackByItemId"
+  >
+    <div class="item-name">{{ item.name }}</div>
 
-    <div
-      class="status"
-      [class.free]="!item.isBusy"
-      [class.busy]="item.isBusy"
-    >
+    <div class="status" [class.free]="!item.isBusy" [class.busy]="item.isBusy">
       <ng-container *ngIf="!item.isBusy">
         🟢 Free
       </ng-container>
 
       <ng-container *ngIf="item.isBusy">
         🔴 Busy <br />
-        <small>
+        <div>
           Ends at {{ item.endsAt }} <br />
           {{ formatRemaining(item.remainingSeconds!) }}
+        </div>
+      </ng-container>
+
+      <ng-container>
+        <small>
+            {{item.fullName}}
         </small>
       </ng-container>
+
+        <ng-container>
+            <small>
+                {{item.mobile}}
+            </small>
+        </ng-container>
     </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-primary"
+              (click)="onManageItemTime(item.itemId)">
+        Manage
+      </button>
+
+      <button class="btn btn-warning"
+              (click)="startEdit(item)">
+        Edit
+      </button>
+
+      <button class="btn btn-danger"
+              (click)="deleteItem(item.itemId)">
+        Delete
+      </button>
+
+
+    <button class="btn btn-neutral"
+              *ngIf="item.isPaid == 1">
+         paid
+    </button>
+
+      <button class="btn btn-neutral"
+              *ngIf="item.isBusy && item.isPaid == 0"
+              (click)="markAsPaid(item)">
+        Mark as paid
+      </button>
+    </div>
+
+    <div class="edit-row" *ngIf="editItemId === item.itemId">
+      <input
+        class="edit-input"
+        [(ngModel)]="updatedItemName"
+        placeholder="New name"
+      />
+      <button class="btn btn-primary" (click)="updateItem(item.itemId)">Save</button>
+      <button class="btn btn-neutral" (click)="cancelEdit()">Cancel</button>
+    </div>
+
   </div>
 </div>

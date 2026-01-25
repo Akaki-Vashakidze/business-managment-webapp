@@ -32,6 +32,24 @@ select {
   color: #666;
 }
 
+.quick-dates {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.quick-dates label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+input.faded {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .slots-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

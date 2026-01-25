@@ -1,7 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  OnDestroy
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { ItemManagementService } from '../features/auth/services/itemManagement.service';
+import { ItemsService } from '../features/auth/services/items.service';
+import { SnackbarService } from '../features/auth/services/snack-bar.service';
 import { BranchItem } from '../interfaces/shared-interfaces';
+import { FormsModule } from '@angular/forms';
 
 interface LiveItemStatus {
   itemId: string;
@@ -9,111 +20,193 @@ interface LiveItemStatus {
   isBusy: boolean;
   remainingSeconds?: number;
   endsAt?: string;
+  activeReservation?: any; // added for mark as paid
+  fullName:string;
+  mobile:string;
+  isPaid:number;
 }
 
 @Component({
   selector: 'app-live-times',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './live-times.component.html',
-  styleUrl: './live-times.component.scss'
+  styleUrls: ['./live-times.component.scss']
 })
 export class LiveTimesComponent implements OnChanges, OnDestroy {
 
   @Input() items!: BranchItem[];
+  @Output() itemsChanged = new EventEmitter<void>();
 
   itemStatuses: LiveItemStatus[] = [];
   reservations: any[] = [];
+  timer!: any;
 
-  private timer!: any;
+  editItemId: string | null = null;
+  updatedItemName = '';
 
-  constructor(private itemManagementService: ItemManagementService) {}
+  constructor(
+    private itemManagementService: ItemManagementService,
+    private itemsService: ItemsService,
+    private snackbar: SnackbarService,
+    private router: Router
+  ) {}
 
   ngOnChanges(): void {
-    if (!this.items || !this.items.length) return;
+    this.getAllReservations()
+  }
 
-    const itemIds = this.items.map(i => i._id);
+  getAllReservations(){
+    if (!this.items?.length) return;
 
+    const ids = this.items.map(i => i._id);
     this.itemManagementService
-      .getAllItemsReservationsForToday(itemIds)
+      .getAllItemsReservationsForToday(ids)
       .subscribe(res => {
         this.reservations = res;
-        this.startLiveTimer();
+        this.startTimer();
       });
   }
 
-  startLiveTimer() {
-    this.updateStatuses(); // immediate run
-
-    if (this.timer) clearInterval(this.timer);
-
-    this.timer = setInterval(() => {
-      this.updateStatuses();
-    }, 1000);
+  trackByItemId(index: number, item: LiveItemStatus): string {
+    return item.itemId;
   }
+
+  startTimer() {
+    this.updateStatuses();
+    clearInterval(this.timer);
+    this.timer = setInterval(() => this.updateStatuses(), 1000);
+  }
+
+  
 
   updateStatuses() {
+    if (this.editItemId) return;
     const now = new Date();
-    const nowSeconds =
-      now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    const nowSec =
+      now.getHours() * 3600 +
+      now.getMinutes() * 60 +
+      now.getSeconds();
 
-    this.itemStatuses = this.items.map(item => {
-      const activeReservation = this.reservations.find(r => {
-        if (r.item._id !== item._id) return false;
+this.itemStatuses = this.items.map(item => {
+  const r = this.reservations.find(res => {
+    if (res.item._id !== item._id) return false;
 
-        const start =
-          r.startHour * 3600 + r.startMinute * 60;
-        const end =
-          r.endHour * 3600 + r.endMinute * 60;
+    const s = res.startHour * 3600 + res.startMinute * 60;
+    const e = res.endHour * 3600 + res.endMinute * 60;
 
-        return nowSeconds >= start && nowSeconds < end;
-      });
+    return nowSec >= s && nowSec < e;
+  });
 
-      if (!activeReservation) {
-        return {
-          itemId: item._id,
-          name: item.name,
-          isBusy: false
-        };
-      }
+  if (!r) {
+    return {
+      itemId: item._id,
+      name: item.name,
+      isBusy: false,
+      fullName: '',  // no user if free
+      mobile: '',
+      isPaid:0
+    };
+  }
 
-      const endSeconds =
-        activeReservation.endHour * 3600 +
-        activeReservation.endMinute * 60;
+  const endSec = r.endHour * 3600 + r.endMinute * 60;
+  const remaining = Math.max(endSec - nowSec, 0);
 
-      const remaining = Math.max(endSeconds - nowSeconds, 0);
-
-      return {
-        itemId: item._id,
-        name: item.name,
-        isBusy: true,
-        remainingSeconds: remaining,
-        endsAt: this.formatTime(endSeconds)
-      };
+  if (remaining === 9) {
+    console.log('⏰ 9 seconds left', {
+      item,
+      user: r.user
     });
+  }
+
+  return {
+    itemId: item._id,
+    name: item.name,
+    isBusy: true,
+    remainingSeconds: remaining,
+    endsAt: this.formatTime(endSec),
+    activeReservation: r, // store active reservation
+    fullName: r.user?.fullName || '',  // <-- added
+    mobile: r.user?.mobileNumber || '',       // <-- added
+    isPaid:r.isPaid
+  };
+});
+
   }
 
   formatTime(totalSeconds: number): string {
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
 
   formatRemaining(seconds: number): string {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-
-  if (h > 0) {
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return h > 0
+      ? `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+      : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   }
 
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-}
+  /* ================= ACTIONS ================= */
 
+  onManageItemTime(itemId: string) {
+    this.router.navigate(['/admin/item/manage', itemId]);
+  }
+
+  startEdit(item: LiveItemStatus) {
+    this.editItemId = item.itemId;
+    this.updatedItemName = item.name;
+  }
+
+  cancelEdit() {
+    this.editItemId = null;
+    this.updatedItemName = '';
+  }
+
+  updateItem(itemId: string) {
+    this.itemsService.updateItem(itemId, this.updatedItemName).subscribe({
+      next: () => {
+        this.snackbar.success('Item updated successfully');
+        this.cancelEdit();
+        this.itemsChanged.emit();
+      },
+      error: () => {
+        this.snackbar.error('Failed to update item');
+      }
+    });
+  }
+
+  deleteItem(itemId: string) {
+    this.itemsService.deleteItem(itemId).subscribe({
+      next: () => {
+        this.snackbar.success('Item deleted');
+        this.itemsChanged.emit();
+      },
+      error: () => {
+        this.snackbar.error('Failed to delete item');
+      }
+    });
+  }
+
+  // ------------------ MARK AS PAID ------------------
+  markAsPaid(item: LiveItemStatus) {
+    if (!item.activeReservation) return;
+    console.log('MARK AS PAID → ACTIVE RESERVATION:', item.activeReservation);
+    this.itemManagementService.markItemAsPaid(item.activeReservation._id).subscribe(res => {
+      if(res.statusCode == 200) {
+        this.getAllReservations()
+        this.snackbar.success('Marked as paid (check console)');
+      } else {
+        this.snackbar.error(res.errorMessage)
+      }
+    })
+    
+  }
 
   ngOnDestroy(): void {
-    if (this.timer) clearInterval(this.timer);
+    clearInterval(this.timer);
   }
 }

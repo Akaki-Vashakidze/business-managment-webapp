@@ -10,8 +10,46 @@
     </option>
   </select>
 
+  <!-- QUICK DATE SELECT -->
+  <label>Quick date</label>
+  <div class="quick-dates">
+    <label>
+      <input
+        type="checkbox"
+        [checked]="quickDate === 'today'"
+        (change)="setQuickDate('today')"
+      />
+      Today
+    </label>
+
+    <label>
+      <input
+        type="checkbox"
+        [checked]="quickDate === 'tomorrow'"
+        (change)="setQuickDate('tomorrow')"
+      />
+      Tomorrow
+    </label>
+
+    <label>
+      <input
+        type="checkbox"
+        [checked]="quickDate === 'dayAfter'"
+        (change)="setQuickDate('dayAfter')"
+      />
+      Day after tomorrow
+    </label>
+  </div>
+
+  <!-- DATE INPUT -->
   <label>Date</label>
-  <input type="date" [(ngModel)]="reservation.date" (change)="onDateChange()" />
+  <input
+    type="date"
+    [(ngModel)]="reservation.date"
+    (change)="onManualDateChange()"
+    [disabled]="quickDate !== null"
+    [class.faded]="quickDate !== null"
+  />
 
   <p class="hint">
     Click a start time, then click an end time

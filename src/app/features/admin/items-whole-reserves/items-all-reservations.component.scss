@@ -7,20 +7,35 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-h3 {
-  margin-bottom: 12px;
-}
-
 label {
   font-weight: 500;
 }
 
+select,
 input[type="date"] {
   width: 100%;
   padding: 6px 10px;
   margin: 6px 0 16px 0;
   border-radius: 6px;
   border: 1px solid #ccc;
+}
+
+.quick-dates {
+  display: flex;
+  gap: 14px;
+  margin: 8px 0 10px;
+}
+
+.quick-dates label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+input.faded {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .slots-grid {
@@ -37,23 +52,21 @@ input[type="date"] {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
-  border: 1px solid transparent;
 }
 
 .slot.free {
-  background-color: #c8e6c9; /* green for free */
-  border-color: #388e3c;
+  background-color: #c8e6c9;
 }
 
 .slot.busy {
-  background-color: #ffcdd2; /* red for busy */
-  border-color: #d32f2f;
+  background-color: #ffcdd2;
   cursor: not-allowed;
 }
 
 .slot.selected {
   border: 2px solid #1976d2;
 }
+
 button {
   width: 100%;
   padding: 10px;
@@ -62,19 +75,8 @@ button {
   background-color: #1976d2;
   color: #fff;
   font-weight: 600;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #125aa0;
 }
 
-select {
-  width: 100%;
-  padding: 6px 10px;
-  margin: 6px 0 16px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  font-size: 0.95rem;
-  cursor: pointer;
+label input[type="checkbox"] {
+  margin-right: 6px;
 }

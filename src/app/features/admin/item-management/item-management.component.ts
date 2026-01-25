@@ -27,6 +27,8 @@ export class ItemManagementComponent implements OnInit {
   item!: string;
   users: User[] = [];
 
+  quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = null;
+
   reservation = {
     user: '',
     date: '',
@@ -49,18 +51,47 @@ export class ItemManagementComponent implements OnInit {
     private userService: UserService,
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.item = this.route.snapshot.paramMap.get('id')!;
     this.getAllUsers();
 
-    this.loadReservations();
+    // ✅ DEFAULT DATE = TODAY
+    this.setDateByOffset(0);
 
+    this.loadReservations();
   }
 
   getAllUsers() {
     this.userService.getAllUsers().subscribe(u => this.users = u);
+  }
+
+  // QUICK DATE HANDLING
+  setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter') {
+    if (this.quickDate === type) {
+      this.quickDate = null;
+      return;
+    }
+
+    this.quickDate = type;
+
+    if (type === 'today') this.setDateByOffset(0);
+    if (type === 'tomorrow') this.setDateByOffset(1);
+    if (type === 'dayAfter') this.setDateByOffset(2);
+  }
+
+  setDateByOffset(days: number) {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+
+    this.reservation.date = d.toISOString().split('T')[0];
+    this.onDateChange();
+  }
+
+  onManualDateChange() {
+    this.quickDate = null;
+    this.onDateChange();
   }
 
   onDateChange() {
@@ -100,7 +131,6 @@ export class ItemManagementComponent implements OnInit {
   selectSlot(slot: TimeSlot) {
     if (slot.reserved) return;
 
-    // First click → start
     if (!this.selectedStart || this.selectedEnd) {
       this.clearSelection();
       this.selectedStart = slot;
@@ -108,7 +138,6 @@ export class ItemManagementComponent implements OnInit {
       return;
     }
 
-    // Second click → end
     if (slot.start <= this.selectedStart.start) return;
 
     const invalid = this.timeSlots.some(s =>
@@ -165,15 +194,12 @@ export class ItemManagementComponent implements OnInit {
     this.itemManagementService.reserveitem(payload).subscribe({
       next: () => {
         this.snackbar.success('Reserved successfully');
-
-        // 🔄 refresh reservations & slots
         this.loadReservations();
         this.clearSelection();
       },
       error: () => this.snackbar.error('Reservation failed')
     });
   }
-
 
   format(min: number) {
     const h = Math.floor(min / 60);
@@ -184,11 +210,12 @@ export class ItemManagementComponent implements OnInit {
   loadReservations() {
     this.reservation.isPaid = false;
     this.reservation.user = '';
+
     this.itemManagementService
       .getAllReservationsForItem(this.item)
       .subscribe(res => {
         this.allReservations = res;
-        this.onDateChange(); // rebuild slots for selected date
+        this.onDateChange();
       });
   }
 }

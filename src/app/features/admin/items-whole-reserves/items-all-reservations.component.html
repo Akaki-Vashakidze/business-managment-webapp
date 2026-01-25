@@ -10,8 +10,45 @@
     </option>
   </select>
 
+  <!-- QUICK DATE SELECT -->
+  <label>Quick date</label>
+  <div class="quick-dates">
+    <label>
+      <input
+        type="checkbox"
+        [checked]="quickDate === 'today'"
+        (change)="setQuickDate('today')"
+      />
+      Today
+    </label>
+
+    <label>
+      <input
+        type="checkbox"
+        [checked]="quickDate === 'tomorrow'"
+        (change)="setQuickDate('tomorrow')"
+      />
+      Tomorrow
+    </label>
+
+    <label>
+      <input
+        type="checkbox"
+        [checked]="quickDate === 'dayAfter'"
+        (change)="setQuickDate('dayAfter')"
+      />
+      Day after tomorrow
+    </label>
+  </div>
+
   <label>Date</label>
-  <input type="date" [(ngModel)]="selectedDate" (change)="onDateChange()" />
+  <input
+    type="date"
+    [(ngModel)]="selectedDate"
+    (change)="onManualDateChange()"
+    [disabled]="quickDate !== null"
+    [class.faded]="quickDate !== null"
+  />
 
   <div class="slots-grid">
     <div 
@@ -26,6 +63,10 @@
     </div>
   </div>
 
+  <label>
+  <input type="checkbox" [(ngModel)]="isPaid" />
+  Mark as paid
+</label>
   <button (click)="reserveSelected()">Reserve Selected Slot</button>
 
 </div>
