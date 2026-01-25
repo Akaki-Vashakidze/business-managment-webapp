@@ -41,7 +41,7 @@ export class LiveTimesComponent implements OnChanges, OnDestroy {
   itemStatuses: LiveItemStatus[] = [];
   reservations: any[] = [];
   timer!: any;
-
+  
   editItemId: string | null = null;
   updatedItemName = '';
 
@@ -112,11 +112,31 @@ this.itemStatuses = this.items.map(item => {
   const endSec = r.endHour * 3600 + r.endMinute * 60;
   const remaining = Math.max(endSec - nowSec, 0);
 
-  if (remaining === 9) {
-    console.log('⏰ 9 seconds left', {
-      item,
-      user: r.user
+  if (remaining === 1) {
+    console.log('⏰ 1 second left', {
+      reservation: r,  
+      item: item,     
+      user: r.user    
     });
+
+    let acceptedByAdminId = r.acceptedBy
+    let userEmail = r.user.email
+    let userName = r.user.fullName
+    let userMobile = r.user.mobileNumber
+    let finishedTime = (r.endHour < 10 ? '0' + r.endHour : r.endHour) + ':' + (r.endMinute < 10 ? '0' + r.endMinute : r.endMinute)
+    let startedTime = (r.startHour < 10 ? '0' + r.startHour : r.startHour) + ':' + (r.startMinute < 10 ? '0' + r.startMinute : r.startMinute)
+    console.log(acceptedByAdminId,userEmail,userName,userMobile,finishedTime,startedTime)
+
+    let subject = 'Your play time is finished'
+    let text = `Dear ${userName} your play time is finished. start time - ${startedTime}, finished time - ${finishedTime}. Share our website and get additional 15 minutes. - www.facebook.com`
+
+    this.itemManagementService.sendMailWhenReservationIsFinished(userEmail, subject, text).subscribe(res => {
+     if(res.statusCode) {
+      this.snackbar.success('Notification about finished reservation sent successfuly')
+     } else {
+      this.snackbar.error(res.errors)
+     }
+    })
   }
 
   return {
