@@ -8,6 +8,8 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { MembershipType } from '../../../enums/membership.enum';
 import { Router } from '@angular/router';
+import { BusinessService } from '../../auth/services/business.service';
+import { BranchesService } from '../../auth/services/branches.service';
 
 @Component({
   selector: 'app-users',
@@ -22,6 +24,9 @@ export class UsersComponent implements OnInit, OnDestroy {
   userForm!: FormGroup;
   editingUser: User | null = null;
 
+  selectedBusinessId!: string;
+  selectedBranchId!: string;
+
   showCreateMembershipFeature: number = 0;
   selectedMembershipType: any = MembershipType.MONTHLY_8;
   membershipTypes = [MembershipType.MONTHLY_8,MembershipType.MONTHLY_12, MembershipType.MONTHLY_20, MembershipType.MONTHLY_28, MembershipType.UNLIMITED] // enum for template
@@ -33,8 +38,18 @@ export class UsersComponent implements OnInit, OnDestroy {
     private router:Router,
     private usersService: UserService,
     private snackbarService: SnackbarService,
-    private fb: FormBuilder
-  ) {}
+    private fb: FormBuilder,
+    private businessService:BusinessService,
+    private branchService:BranchesService
+  ) {
+      businessService.businessSelected.subscribe(business => {
+        this.selectedBusinessId = business?._id || ''
+      })
+  
+      branchService.selectedBranch.subscribe(branch => {
+        this.selectedBranchId = branch?._id || ''
+      })
+  }
 
   ngOnInit() {
     this.initForm();
@@ -139,7 +154,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   createMembership(user: User) {
-    this.usersService.createMembership(user._id, JSON.parse(this.selectedMembershipType)).subscribe({
+    this.usersService.createMembership(user._id, JSON.parse(this.selectedMembershipType), this.selectedBusinessId, this.selectedBranchId).subscribe({
       next: () => {
         this.snackbarService.success('Membership created successfully');
         this.loadUsers(this.searchTerm);

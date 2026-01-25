@@ -39,14 +39,7 @@ export class BranchItemsComponent {
     private branchService: BranchesService
   ) {
     branchService.selectedBranch.subscribe(branch => {
-      if (branch) {
-        this.branchId = branch._id!;
-      } else {
-        const stored = localStorage.getItem('businesManagement_selectedBranch');
-        if (stored) {
-          this.branchId = JSON.parse(stored)._id;
-        }
-      }
+        this.branchId = branch?._id || '';
       this.getItemsByBranch();
     });
   }

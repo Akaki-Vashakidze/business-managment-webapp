@@ -10,14 +10,18 @@ export class BranchesService {
   public BranchesUpdate = new BehaviorSubject<boolean>(false);
   public selectedBranch = new BehaviorSubject<Branch | null>(null);
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { 
+    const selectedBranchRaw = localStorage.getItem('businesManagement_selectedBranch');
+    const selectedBranch: Branch | null = selectedBranchRaw ? JSON.parse(selectedBranchRaw) : null;
+    this.onSelectedBranch(selectedBranch);
+    }
 
   createBranch(name:string, business:string): Observable<any> {
     const body = { name, business };
     return this.http.post(`/consoleApi/Branch/create-Branch`, body);
   }
 
-  onSelectedBranch(branch: Branch) {
+  onSelectedBranch(branch: Branch | null) {
     this.selectedBranch.next(branch);
   }
 

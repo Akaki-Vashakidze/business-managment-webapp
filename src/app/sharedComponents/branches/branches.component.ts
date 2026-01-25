@@ -20,18 +20,12 @@ export class BranchesComponent {
   selectedBranch: string = 'ფილიალები';
   selectedBusinessId: string = '';
   constructor(private businessService:BusinessService, private router:Router, private branchservice:BranchesService) {
-    const selectedBranch = localStorage.getItem('businesManagement_selectedBranch');
-    if(selectedBranch){
-      this.selectedBranch = JSON.parse(selectedBranch).name;
-    }
+    branchservice.selectedBranch.subscribe(branch => {
+      this.selectedBranch = branch?.name || 'ფილიალები'; 
+    })
+
     businessService.businessSelected.subscribe(item => {
       this.selectedBusinessId = item?._id || '';
-      const selectBranch = localStorage.getItem('businesManagement_selectedBranch');
-      if(selectBranch){
-        this.selectedBranch = JSON.parse(selectBranch).name;
-      } else {
-        this.selectedBranch = 'ფილიალები';
-      }
       this.getBusinessBranches()
     });
 

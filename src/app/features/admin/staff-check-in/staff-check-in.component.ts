@@ -3,6 +3,8 @@ import { BrowserMultiFormatReader } from '@zxing/browser';
 import { MembershipService } from '../../auth/services/membership.service';
 import { CommonModule } from '@angular/common';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
+import { BusinessService } from '../../auth/services/business.service';
+import { BranchesService } from '../../auth/services/branches.service';
 
 @Component({
   selector: 'app-staff-check-in',
@@ -18,8 +20,18 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   private codeReader = new BrowserMultiFormatReader();
   scanning = false;
   message = '';
+  selectedBusinessId!: string;
+  selectedBranchId!: string;
+  constructor(private membershipService: MembershipService, private snackbarService: SnackbarService, private businessService: BusinessService, private branchService: BranchesService) {
+    businessService.businessSelected.subscribe(business => {
+      this.selectedBusinessId = business?._id || ''
+    })
 
-  constructor(private membershipService: MembershipService, private snackbarService:SnackbarService) {}
+    branchService.selectedBranch.subscribe(branch => {
+      this.selectedBranchId = branch?._id || ''
+    })
+
+  }
 
   async ngOnInit() {
     await this.startScanner();
@@ -42,61 +54,75 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   // }
 
   //safer scanner
-//   async startScanner() {
-//   const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-//   const deviceId = devices[0]?.deviceId;
+  //   async startScanner() {
+  //   const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+  //   const deviceId = devices[0]?.deviceId;
 
-//   await this.codeReader.decodeFromVideoDevice(
-//     deviceId,
-//     this.video.nativeElement,
-//     (result) => {
-//       if (result && this.scanning) {
-//         this.scanning = false;
-//         this.handleScan(result.getText());
-//       }
-//     }
-//   );
-// }
+  //   await this.codeReader.decodeFromVideoDevice(
+  //     deviceId,
+  //     this.video.nativeElement,
+  //     (result) => {
+  //       if (result && this.scanning) {
+  //         this.scanning = false;
+  //         this.handleScan(result.getText());
+  //       }
+  //     }
+  //   );
+  // }
 
-//this scans, so coooool
-async startScanner() {
-  this.scanning = true; // ✅ REQUIRED
+  //this scans, so coooool
+  async startScanner() {
+    this.scanning = true; // ✅ REQUIRED
 
-  const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-  const deviceId = devices[0]?.deviceId;
+    const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+    const deviceId = devices[0]?.deviceId;
 
-  await this.codeReader.decodeFromVideoDevice(
-    deviceId,
-    this.video.nativeElement,
-    (result) => {
-      if (result && this.scanning) {
-        this.scanning = false;
-        this.handleScan(result.getText());
+    await this.codeReader.decodeFromVideoDevice(
+      deviceId,
+      this.video.nativeElement,
+      (result) => {
+        if (result && this.scanning) {
+          this.scanning = false;
+          this.handleScan(result.getText());
+        }
       }
-    }
-  );
-}
+    );
+  }
 
-// {
-//       next: (res) => {
-//         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
-//         this.restartScanner();
-//       },
-//       error: (err) => {
-//         this.message = `❌ ${err.error?.message || 'Check-in failed'}`;
-//         this.restartScanner();
-//       }
-//     }
+  // {
+  //       next: (res) => {
+  //         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
+  //         this.restartScanner();
+  //       },
+  //       error: (err) => {
+  //         this.message = `❌ ${err.error?.message || 'Check-in failed'}`;
+  //         this.restartScanner();
+  //       }
+  //     }
 
   handleScan(qr: string) {
-    this.membershipService.checkIn(qr).subscribe(res => {
-      if(res.statusCode != 400) {
+    const staffId = 'currentStaffUserId';
+    const businessId = 'currentStaffBusinessId';
+    const branchId = 'currentStaffBranchId'; // optional
+    // {
+    //     next: (res: any) => {
+    //       this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
+    //       this.restartScanner();
+    //     },  
+    //     error: (err) => {
+    //       this.message = `❌ ${err.error?.message || 'Check-in failed'}`;
+    //       this.restartScanner();
+    //     }
+    //   }
+    this.membershipService.checkIn(qr, this.selectedBusinessId, this.selectedBranchId).subscribe(res => {
+      if (res.statusCode != 400) {
         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
+        this.snackbarService.success('Checked In')
         this.restartScanner();
       } else {
         this.message = `❌ ${res.errors || 'Check-in failed'}`;
-        this.restartScanner();
         this.snackbarService.error(res.errors)
+        this.restartScanner();
       }
     });
   }
@@ -108,12 +134,12 @@ async startScanner() {
     }, 2000);
   }
 
-ngOnDestroy() {
-  const video = this.video?.nativeElement;
-  if (video && video.srcObject) {
-    const stream = video.srcObject as MediaStream;
-    stream.getTracks().forEach(track => track.stop());
-    video.srcObject = null;
+  ngOnDestroy() {
+    const video = this.video?.nativeElement;
+    if (video && video.srcObject) {
+      const stream = video.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+    }
   }
-}
 }

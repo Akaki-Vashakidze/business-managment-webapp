@@ -9,14 +9,18 @@ import { Business } from '../../../interfaces/shared-interfaces';
 export class BusinessService {
   public businessesUpdated = new BehaviorSubject<boolean>(false);
   public businessSelected = new BehaviorSubject<Business | null>(null);
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+      const selectedBusinessRaw = localStorage.getItem('businesManagement_selectedBusiness');
+      const selectedBusiness: Business | null = selectedBusinessRaw ? JSON.parse(selectedBusinessRaw) : null;
+      this.selectBusiness(selectedBusiness);
+  }
 
   createBusiness(name:string): Observable<any> {
     const body = { name };
     return this.http.post(`/consoleApi/business/create-business`, body);
   }
 
-  selectBusiness(business: Business) {
+  selectBusiness(business: Business | null) {
     this.businessSelected.next(business);
   }
 

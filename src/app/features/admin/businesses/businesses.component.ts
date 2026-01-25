@@ -17,12 +17,11 @@ export class BusinessesComponent {
   businesses!:Business[];
   selectedBusiness:string = 'ბიზნესები'
   constructor(private businessService:BusinessService, private branchservice:BranchesService) {
-    const selectedBusiness1 = localStorage.getItem('businesManagement_selectedBusiness');
-    if(selectedBusiness1){
-      const business = JSON.parse(selectedBusiness1);
+
+    businessService.businessSelected.subscribe((business:any) => {
       this.selectedBusiness = business.name;
-      this.businessService.selectBusiness(business);
-    }
+    })
+
     businessService.businessesUpdated.subscribe(item => {
       businessService.getAllMyBusinesses().subscribe((businesses:any) => {
         this.businesses = businesses;
@@ -35,5 +34,6 @@ export class BusinessesComponent {
     localStorage.removeItem('businesManagement_selectedBranch');
     this.selectedBusiness = business.name;
     this.businessService.selectBusiness(business);
+    this.branchservice.onSelectedBranch(null)
   }
 }
