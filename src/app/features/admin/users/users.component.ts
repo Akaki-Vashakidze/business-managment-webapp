@@ -6,6 +6,7 @@ import { User } from '../../../interfaces/shared-interfaces';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { MembershipType } from '../../../enums/membership.enum';
 
 @Component({
   selector: 'app-users',
@@ -20,6 +21,10 @@ export class UsersComponent implements OnInit, OnDestroy {
   userForm!: FormGroup;
   editingUser: User | null = null;
 
+  showCreateMembershipFeature: number = 0;
+  selectedMembershipType: any = MembershipType.MONTHLY_8;
+  membershipTypes = [MembershipType.MONTHLY_8,MembershipType.MONTHLY_12, MembershipType.MONTHLY_20, MembershipType.MONTHLY_28, MembershipType.UNLIMITED] // enum for template
+
   private searchSubject: Subject<string> = new Subject<string>();
   private searchSubscription!: Subscription;
 
@@ -32,14 +37,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initForm();
 
-    // Subscribe to debounced search
+    // Debounced search
     this.searchSubscription = this.searchSubject
-      .pipe(debounceTime(300)) // wait 0.3 seconds
+      .pipe(debounceTime(300))
       .subscribe((term) => {
         this.loadUsers(term);
       });
 
-    // Initial load
     this.loadUsers('');
   }
 
@@ -47,7 +51,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.searchSubscription.unsubscribe();
   }
 
-  // Initialize Add/Edit form
   initForm() {
     this.userForm = this.fb.group({
       fullName: ['', Validators.required],
@@ -58,28 +61,22 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Load users from backend
   loadUsers(term: string) {
     this.usersService.getFilteredUsers(term).subscribe({
-      next: (res: User[]) => {
-        this.users = res;
-      },
+      next: (res: User[]) => this.users = res,
       error: () => this.snackbarService.error('Error loading users')
     });
   }
 
-  // Trigger search whenever user types
   onSearchChange() {
     this.searchSubject.next(this.searchTerm);
   }
 
-  // Open Add User form
   openAddUser() {
     this.editingUser = null;
     this.userForm.reset({ isManager: 0, isOwner: 0 });
   }
 
-  // Open Edit User form
   openEditUser(user: User) {
     this.editingUser = user;
     this.userForm.patchValue({
@@ -91,7 +88,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Save Add/Edit user
   saveUser() {
     if (this.userForm.invalid) return;
 
@@ -119,7 +115,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.editingUser = null;
   }
 
-  // Delete user
   deleteUser(user: User) {
     if (!confirm(`Are you sure you want to delete ${user.fullName}?`)) return;
 
@@ -132,12 +127,17 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Create membership
+  showCreateMembership(user: User, index: number) {
+    this.showCreateMembershipFeature = index + 1;
+    this.selectedMembershipType = MembershipType.MONTHLY_8; // default
+  }
+
   createMembership(user: User) {
-    this.usersService.createMembership(user._id).subscribe({
+    this.usersService.createMembership(user._id, JSON.parse(this.selectedMembershipType)).subscribe({
       next: () => {
         this.snackbarService.success('Membership created successfully');
         this.loadUsers(this.searchTerm);
+        this.showCreateMembershipFeature = 0; // hide after creation
       },
       error: () => this.snackbarService.error('Error creating membership')
     });

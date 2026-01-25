@@ -36,16 +36,27 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users">
+      <tr *ngFor="let user of users; let i = index;">
         <td>{{ user.fullName }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.mobileNumber }}</td>
-        <td>{{ user.isManager }}</td>
-        <td>{{ user.isOwner }}</td>
+        <td>{{ (user.isManager == 0 ? false : true) }}</td>
+        <td>{{ user.isOwner == 0 ? false : true }}</td>
         <td>
           <button (click)="openEditUser(user)">Edit</button>
           <button (click)="deleteUser(user)">Delete</button>
-          <button (click)="createMembership(user)">Create Membership</button>
+            <div *ngIf="(i + 1) == showCreateMembershipFeature">
+            <select [(ngModel)]="selectedMembershipType">
+                <option *ngFor="let key of membershipTypes" [value]="key">
+                {{ key }}
+                </option>
+            </select>
+            <button (click)="createMembership(user)">Create</button>
+            </div>
+            <button *ngIf="showCreateMembershipFeature == 0" (click)="showCreateMembership(user, i)">
+            Create Membership
+            </button>
+
         </td>
       </tr>
     </tbody>

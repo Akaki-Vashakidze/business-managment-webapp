@@ -63,8 +63,9 @@ export class UserService {
     return this.http.delete(`/consoleApi/user/delete/${userId}`);
   }
 
-    createMembership(userId: string): Observable<any> {
-    return this.http.post(`/consoleApi/membership/create`, {userId});
+    createMembership(userId: string, type:number): Observable<any> {
+      let body = { userId, type }
+    return this.http.post(`/consoleApi/membership/create`, body);
   }
 
     addUser(userId: string): Observable<any> {
