@@ -52,8 +52,11 @@
                 </option>
             </select>
             <button (click)="createMembership(user)">Create</button>
+            <button (click)="cancelCreateMembership()">
+            cancel
+            </button>
             </div>
-            <button *ngIf="showCreateMembershipFeature == 0" (click)="showCreateMembership(user, i)">
+            <button *ngIf="showCreateMembershipFeature != (i + 1)" (click)="showCreateMembership(user, i)">
             Create Membership
             </button>
 

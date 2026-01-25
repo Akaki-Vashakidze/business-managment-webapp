@@ -132,6 +132,10 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.selectedMembershipType = MembershipType.MONTHLY_8; // default
   }
 
+  cancelCreateMembership(){
+    this.showCreateMembershipFeature = 0;
+  }
+
   createMembership(user: User) {
     this.usersService.createMembership(user._id, JSON.parse(this.selectedMembershipType)).subscribe({
       next: () => {
