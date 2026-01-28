@@ -9,7 +9,7 @@ import { Business, ItemManagement, ReserveItem } from '../../../interfaces/share
 export class ItemManagementService {
     constructor(private http: HttpClient) { }
 
-    reserveitem(reserveItem: ReserveItem): Observable<any> {
+    reserveitem(reserveItem: ReserveItem | any): Observable<any> {
         return this.http.post(`/consoleApi/item/management/reserve-item`, reserveItem);
     }
 
