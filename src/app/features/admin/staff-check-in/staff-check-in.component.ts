@@ -7,7 +7,7 @@ import { BusinessService } from '../../auth/services/business.service';
 import { BranchesService } from '../../auth/services/branches.service';
 import { ItemsService } from '../../auth/services/items.service';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
-import { User } from '../../../interfaces/shared-interfaces';
+import { ItemManagement, User } from '../../../interfaces/shared-interfaces';
 import { Router } from '@angular/router';
 
 @Component({
@@ -24,12 +24,13 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   private codeReader = new BrowserMultiFormatReader();
   scanning = false;
   message = '';
-  items:any;
-  itemsIds!:string[];
-  allReservations:any;
+  items: any;
+  itemManagementData!: ItemManagement;
+  itemsIds!: string[];
+  allReservations: any;
   selectedBusinessId!: string;
   selectedBranchId!: string;
-  constructor(private membershipService: MembershipService, private router:Router,private snackbar:SnackbarService, private itemManagementService:ItemManagementService, private itemsService:ItemsService, private snackbarService: SnackbarService, private businessService: BusinessService, private branchService: BranchesService) {
+  constructor(private membershipService: MembershipService, private router: Router, private snackbar: SnackbarService, private itemManagementService: ItemManagementService, private itemsService: ItemsService, private snackbarService: SnackbarService, private businessService: BusinessService, private branchService: BranchesService) {
     businessService.businessSelected.subscribe(business => {
       this.selectedBusinessId = business?._id || ''
     })
@@ -63,30 +64,18 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
     );
   }
 
-  // {
-  //       next: (res) => {
-  //         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
-  //         this.restartScanner();
-  //       },
-  //       error: (err) => {
-  //         this.message = `❌ ${err.error?.message || 'Check-in failed'}`;
-  //         this.restartScanner();
-  //       }
-  //     }
-
   handleScan(qr: string) {
     const staffId = 'currentStaffUserId';
     const businessId = 'currentStaffBusinessId';
-    const branchId = 'currentStaffBranchId'; 
+    const branchId = 'currentStaffBranchId';
     let user;
-    this.membershipService.checkIn(qr, this.selectedBusinessId, this.selectedBranchId).subscribe(res => {
+    this.checkReservationData(qr)
+    this.membershipService.checkIn(qr, this.selectedBusinessId, this.selectedBranchId, this.itemManagementData).subscribe(res => {
       if (res.success) {
         this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
         this.snackbarService.success('Checked In')
-        user = res.user;
-        console.log(user)
         this.restartScanner();
-        this.reserveSelected(user)
+        this.router.navigate(['/admin/branchItems'])
       } else {
         this.message = `❌ ${res.errors || 'Check-in failed'}`;
         this.snackbarService.error(res.errors)
@@ -98,7 +87,7 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   getItemsByBranch() {
     this.itemsService.getItemsByBranch(this.selectedBranchId).subscribe(items => {
       this.items = items || [];
-      this.itemsIds = this.items.map((i:any) => i._id);
+      this.itemsIds = this.items.map((i: any) => i._id);
       this.loadReservations(this.itemsIds)
     });
   }
@@ -116,57 +105,47 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
     });
   }
 
-  reserveSelected(user: User) {
-  // ⏱️ now
-  const now = new Date();
-  const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+  checkReservationData(userId: string) {
+    // ⏱️ now
+    const now = new Date();
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
 
-  const todaysDate = now.toISOString().split('T')[0];
+    const todaysDate = now.toISOString().split('T')[0];
 
-  // convert time to minutes for comparison
-  const startMinutes = now.getHours() * 60 + now.getMinutes();
-  const endMinutes =
-    oneHourLater.getHours() * 60 + oneHourLater.getMinutes();
-    console.log(this.itemsIds)
-    console.log(this.allReservations)
-  const freeItem = this.itemsIds.find(itemId => {
-    return !this.allReservations.some((r: any) => {
-      const rDate = new Date(r.date).toISOString().split('T')[0];
-      if (r.item._id !== itemId || rDate !== todaysDate) return false;
+    // convert time to minutes for comparison
+    const startMinutes = now.getHours() * 60 + now.getMinutes();
+    const endMinutes =
+      oneHourLater.getHours() * 60 + oneHourLater.getMinutes();
+    const freeItem = this.itemsIds.find(itemId => {
+      return !this.allReservations.some((r: any) => {
+        const rDate = new Date(r.date).toISOString().split('T')[0];
+        if (r.item._id !== itemId || rDate !== todaysDate) return false;
+        
+        const rStart = r.startHour * 60 + r.startMinute;
+        const rEnd = r.endHour * 60 + r.endMinute;
 
-      const rStart = r.startHour * 60 + r.startMinute;
-      const rEnd = r.endHour * 60 + r.endMinute;
-
-      // ⛔ overlap check
-      return startMinutes < rEnd && endMinutes > rStart;
+        // ⛔ overlap check
+        return startMinutes < rEnd && endMinutes > rStart;
+      });
     });
-  });
 
-  if (!freeItem) {
-    this.snackbar.error('No item is free for this time range');
-    return;
-  }
-
-  const payload = {
-    item: freeItem,
-    user: user._id,
-    date: todaysDate,
-    startHour: now.getHours(),
-    startMinute: now.getMinutes(),
-    endHour: oneHourLater.getHours(),
-    endMinute: oneHourLater.getMinutes(),
-    isPaid: 0
-  };
-  
-  this.itemManagementService.reserveitem(payload).subscribe(res => {
-    if (res.statusCode === 400) {
-      this.snackbar.error(res.errors);
-    } else {
-      this.router.navigate(['/admin/branchItems'])
-      this.snackbar.success('Reserved successfully!');
+    if (!freeItem) {
+      this.snackbar.error('No item is free for this time range');
+      return;
     }
-  });
-}
+
+    this.itemManagementData = {
+      item: freeItem,
+      user: userId,
+      date: todaysDate.toString(),
+      startHour: now.getHours(),
+      startMinute: now.getMinutes(),
+      endHour: oneHourLater.getHours(),
+      endMinute: oneHourLater.getMinutes(),
+      isPaid: 1
+    };
+
+  }
 
 
   ngOnDestroy() {

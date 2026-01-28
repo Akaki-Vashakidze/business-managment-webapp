@@ -42,16 +42,16 @@ export interface User {
 }
 
 export interface ItemManagement {
-    _id: string;
+    _id?: string;
     user:string;
-    item:string;
-    acceptedBy:string;
+    item?:string | null;
+    acceptedBy?:string;
     startHour:number;
     startMinute:number;
     endHour:number;
     endMinute:number;
-    date:Date;
+    date:string;
     isPaid:number;
-    accepted:number;
+    accepted?:number;
 
 }
