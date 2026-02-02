@@ -18,10 +18,10 @@ export class SnackbarService {
   }
 
   success(message: string) {
-    this.open(message, 'OK', 3000);
+    this.open(message, 'OK', 8000);
   }
 
   error(message: string) {
-    this.open(message, 'Close', 4000);
+    this.open(message, 'Close', 8000);
   }
 }

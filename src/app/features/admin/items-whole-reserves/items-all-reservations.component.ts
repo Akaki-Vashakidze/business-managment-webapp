@@ -208,7 +208,7 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges {
 
     const payload = {
       item: freeItem,
-      user: this.selectedUser,
+      user: this.selectedUser || null,
       date: this.selectedDate,
       startHour: Math.floor(start / 60),
       startMinute: start % 60,
@@ -221,7 +221,7 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges {
       if (res.statusCode === 400) {
         this.snackbar.error(res.errors);
       } else {
-        this.snackbar.success('Reserved successfully!');
+        this.snackbar.success(`${res.reservation.item.name} დაიჯავშნა წარმატებით`);
         this.loadReservations(this.itemsIds);
         this.clearSelection();
       }

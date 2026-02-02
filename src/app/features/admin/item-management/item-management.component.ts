@@ -182,7 +182,7 @@ export class ItemManagementComponent implements OnInit {
 
     const payload = {
       item: this.item,
-      user: this.reservation.user,
+      user: this.reservation.user || null,
       date: this.reservation.date,
       startHour: this.reservation.startHour,
       startMinute: this.reservation.startMinute,

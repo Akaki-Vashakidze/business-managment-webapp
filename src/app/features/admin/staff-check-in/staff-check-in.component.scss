@@ -1,0 +1,14 @@
+video {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, 0);
+}
+
+.message {
+    width: 300px;
+    margin: auto;
+    text-align: center;
+}

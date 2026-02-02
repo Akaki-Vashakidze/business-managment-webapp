@@ -1,70 +1,132 @@
 <div class="users-container">
-  <h2>Users</h2>
+  <div class="header-section">
+    <h2>User Management</h2>
+    <div class="search-wrapper">
+      <i class="search-icon">🔍</i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Search users by name or email..."
+        (ngModelChange)="onSearchChange()"
+      />
+    </div>
+  </div>
 
-  <!-- Search -->
-<input
-  type="text"
-  [(ngModel)]="searchTerm"
-  placeholder="Search users..."
-  (ngModelChange)="onSearchChange()"
-/>
+  <div class="form-container">
+    <h3>{{ editingUser ? 'Edit User' : 'Create New User' }}</h3>
+    <form [formGroup]="userForm" (ngSubmit) ="saveUser()">
+      <div class="input-group">
+        <input formControlName="fullName" placeholder="Full Name" />
+        <input formControlName="email" placeholder="Email" type="email" />
+        <input formControlName="mobileNumber" placeholder="Mobile Number" />
+      </div>
+      
+      <div class="checkbox-group">
+        <label class="custom-checkbox">
+          <input type="checkbox" formControlName="isManager" />
+          <span>Manager</span>
+        </label>
+        <label class="custom-checkbox">
+          <input type="checkbox" formControlName="isOwner" />
+          <span>Owner</span>
+        </label>
+      </div>
 
-  <!-- Add/Edit Form -->
-  <form [formGroup]="userForm" (ngSubmit)="saveUser()">
-    <input formControlName="fullName" placeholder="Full Name" />
-    <input formControlName="email" placeholder="Email" type="email" />
-    <input formControlName="mobileNumber" placeholder="Mobile Number" />
-    <label>
-      <input type="checkbox" formControlName="isManager" /> Manager
-    </label>
-    <label>
-      <input type="checkbox" formControlName="isOwner" /> Owner
-    </label>
-    <button type="submit">{{ editingUser ? 'Update' : 'Add' }} User</button>
-  </form>
+      <div class="form-actions">
+        <button type="submit" [disabled]="userForm.invalid" class="btn-primary">
+          {{ editingUser ? 'Update User' : 'Add User' }}
+        </button>
+        <button *ngIf="editingUser" type="button" (click)="openAddUser()" class="btn-ghost">Cancel</button>
+      </div>
+    </form>
+  </div>
 
-  <!-- Users Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>Full Name</th>
-        <th>Email</th>
-        <th>Mobile</th>
-        <th>Manager</th>
-        <th>Owner</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users; let i = index;">
-        <td>{{ user.fullName }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.mobileNumber }}</td>
-        <td>{{ (user.isManager == 0 ? false : true) }}</td>
-        <td>{{ user.isOwner == 0 ? false : true }}</td>
-        <td>
-          <button (click)="openEditUser(user)">Edit</button>
-          <button (click)="deleteUser(user)">Delete</button>
-            <div *ngIf="(i + 1) == showCreateMembershipFeature">
-            <select [(ngModel)]="selectedMembershipType">
-                <option *ngFor="let key of membershipTypes" [value]="key">
-                {{ key }}
-                </option>
-            </select>
-            <button (click)="createMembership(user)">Create</button>
-            <button (click)="cancelCreateMembership()">
-            cancel
-            </button>
+  <div class="table-responsive">
+    <table class="desktop-table">
+      <thead>
+        <tr>
+          <th>User Info</th>
+          <th>Roles</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users; let i = index;">
+          <td>
+            <div class="user-info">
+              <span class="name">{{ user.fullName }}</span>
+              <span class="details">{{ user.email }} | {{ user.mobileNumber }}</span>
             </div>
-            <button *ngIf="showCreateMembershipFeature != (i + 1)" (click)="showCreateMembership(user, i)">
-            Create Membership
-            </button>
-            <button (click)="launchUserDetails(user._id)">
-            details
-            </button>
+          </td>
+          <td>
+            <span class="badge" [class.active]="user.isManager">Manager</span>
+            <span class="badge" [class.active]="user.isOwner">Owner</span>
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons">
+              <button class="btn-icon" (click)="openEditUser(user)" title="Edit">✏️</button>
+              <button class="btn-icon delete" (click)="deleteUser(user)" title="Delete">🗑️</button>
+              <button class="btn-outline" (click)="launchUserDetails(user._id)">Details</button>
+              
+              <button *ngIf="showCreateMembershipFeature !== (i + 1)" 
+                      class="btn-membership" 
+                      (click)="showCreateMembership(user, i)">
+                + Membership
+              </button>
+            </div>
 
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <div *ngIf="(i + 1) === showCreateMembershipFeature" class="membership-inline-form">
+              <select [(ngModel)]="selectedMembershipType">
+                <option *ngFor="let key of membershipTypes" [value]="key">{{ key }}</option>
+              </select>
+              <button (click)="createMembership(user)" class="btn-confirm">Create</button>
+              <button (click)="cancelCreateMembership()" class="btn-cancel">Cancel</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mobile-cards">
+    <div class="user-card" *ngFor="let user of users; let i = index;">
+      <div class="card-header">
+        <div class="user-meta">
+          <strong>{{ user.fullName }}</strong>
+          <span>{{ user.email }}</span>
+        </div>
+        <div class="card-badges">
+          <span *ngIf="user.isManager" class="badge active">M</span>
+          <span *ngIf="user.isOwner" class="badge active">O</span>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <p><strong>Mobile:</strong> {{ user.mobileNumber }}</p>
+      </div>
+
+      <div class="card-actions">
+        <button (click)="launchUserDetails(user._id)">Details</button>
+        <button (click)="openEditUser(user)">Edit</button>
+        <button class="delete" (click)="deleteUser(user)">Delete</button>
+      </div>
+
+      <div class="membership-section">
+        <button *ngIf="showCreateMembershipFeature !== (i + 1)" 
+                (click)="showCreateMembership(user, i)" class="btn-block">
+          Manage Membership
+        </button>
+        
+        <div *ngIf="(i + 1) === showCreateMembershipFeature" class="membership-controls">
+          <select [(ngModel)]="selectedMembershipType">
+            <option *ngFor="let key of membershipTypes" [value]="key">{{ key }}</option>
+          </select>
+          <div class="flex-row">
+            <button (click)="createMembership(user)" class="btn-confirm">Create</button>
+            <button (click)="cancelCreateMembership()" class="btn-cancel">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

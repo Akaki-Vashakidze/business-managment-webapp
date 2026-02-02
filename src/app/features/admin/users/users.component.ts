@@ -91,7 +91,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   openAddUser() {
     this.editingUser = null;
-    this.userForm.reset({ isManager: 0, isOwner: 0 });
+    this.userForm.reset({ 
+      isManager: 0, // Using 0 for compatibility with your template logic
+      isOwner: 0 
+    });
   }
 
   openEditUser(user: User) {
