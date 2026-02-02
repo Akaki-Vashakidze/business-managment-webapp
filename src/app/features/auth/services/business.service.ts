@@ -32,6 +32,10 @@ export class BusinessService {
     return this.http.get(`/consoleApi/business/get-all-my-businesses`);
   }
 
+  getAllBusinesses(): Observable<any> {
+    return this.http.get(`/consoleApi/business/get-all-businesses`);
+  }
+
   deletebusiness(businessId: string): Observable<any> {
     return this.http.delete(`/consoleApi/business/delete-business/${businessId}`);
   }

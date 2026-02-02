@@ -47,12 +47,12 @@ export class UserService {
     return this.userSubject.value;
   }
 
-  getAllUsers(): Observable<any> {
-    return this.http.get(`/consoleApi/user/get-all-users-minus-owner-and-managers`);
+  getAllUsers(businessId:string): Observable<any> {
+    return this.http.get(`/consoleApi/user/get-all-users-minus-owner-and-managers/${businessId}`);
   }
 
-  getFilteredUsers(searchTerm: string): Observable<any> {
-    return this.http.post(`/consoleApi/user/get-filtered-users`, {searchQuery:searchTerm});
+  getFilteredUsers(searchTerm: string, businessId:string): Observable<any> {
+    return this.http.post(`/consoleApi/user/get-filtered-users`, {searchQuery:searchTerm, businessId});
   }
 
   editUser(searchTerm: string, userData:any): Observable<any> {

@@ -1,40 +1,59 @@
 <div class="header_container">
-
     <div class="auth_cont">
         <form #loginForm="ngForm" class="login_form">
             <div class="inputs_cont">
 
                 <div *ngIf="step1" class="firstStep steps">
+                    <select name="business" [(ngModel)]="selectedBusinessId" required class="login_input">
+                        <option value="" disabled selected>Select a Business</option>
+                        <option *ngFor="let b of businesses" [value]="b._id">
+                            {{ b.name }}
+                        </option>
+                    </select>
+
                     <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required
                         class="login_input" />
-                    <button [disabled]="step2" (click)="sendVerificationCodeEmail()" class="main_button">Send Verification Code</button>
+                    
+                    <button [disabled]="step2 || !selectedBusinessId || !email" 
+                            (click)="sendVerificationCodeEmail()" 
+                            class="main_button">
+                        Send Verification Code
+                    </button>
                 </div>
+
                 <div *ngIf="step2" class="secondStep steps">
                     <div style="display: flex; flex-direction: row; gap: 10px; align-items: center;">
-                    <input type="text" name="Code" [(ngModel)]="code" placeholder="Code" required
-                        class="login_input" />
-                        <div class="countdown" style="white-space: nowrap;">Valid for {{countDownSeconds}} seconds.</div>
+                        <input type="text" name="Code" [(ngModel)]="code" placeholder="Code" required
+                            class="login_input" />
+                        <div class="countdown" style="white-space: nowrap;">Valid for {{countDownSeconds}}s</div>
                     </div>
-                    <button (click)="confirmCode()" class="main_button" style="width: 100%;">confirm</button>
+                    <button (click)="confirmCode()" class="main_button" style="width: 100%;">Confirm</button>
                 </div>
-                <input *ngIf="step3" type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required
-                    class="login_input" />
-                <div *ngIf="step3" class="mobileNumber_field">
-                    <div class="index_field">
-                        <span>+</span>
-                        <input type="text" name="index" [(ngModel)]="mobileNumberIndex" required
-                            class="index_input" />
+
+                <div *ngIf="step3" class="thirdStep steps">
+                    <input type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required
+                        class="login_input" />
+                    
+                    <div class="mobileNumber_field">
+                        <div class="index_field">
+                            <span>+</span>
+                            <input type="text" name="index" [(ngModel)]="mobileNumberIndex" required
+                                class="index_input" />
+                        </div>
+                        <input type="text" name="mobileNumber" maxlength="9" [(ngModel)]="mobileNumber" 
+                            placeholder="Mobile Number" required class="login_input" />
                     </div>
-                    <input type="text" name="mobileNumber" maxlength="9" [(ngModel)]="mobileNumber" placeholder="Mobile Number" required
+
+                    <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
+                        class="login_input" />
+                    <input type="password" name="password2" [(ngModel)]="password2" placeholder="Repeat Password" required
                         class="login_input" />
                 </div>
-                <input *ngIf="step3" type="password" name="password" [(ngModel)]="password" placeholder="Password" required
-                    class="login_input" />
-                <input *ngIf="step3" type="password" name="password2" [(ngModel)]="password2" placeholder="Repeat Password" required
-                    class="login_input" />
             </div>
-            <div *ngIf="errorMessage" style="color: red; text-align: center;">{{errorMessage}}</div>
-            <div *ngIf="successMessage" style="color: green; text-align: center;">{{successMessage}}</div>
+
+            <div *ngIf="errorMessage" style="color: red; text-align: center; margin-top: 10px;">{{errorMessage}}</div>
+            <div *ngIf="successMessage" style="color: green; text-align: center; margin-top: 10px;">{{successMessage}}</div>
+            
             <div class="actions" style="width: 100%;">
                 <button *ngIf="step3" (click)="signUp()" class="auth_buttons main_button login_bt">
                     {{ 'signUp' | translate }}
@@ -42,5 +61,4 @@
             </div>
         </form>
     </div>
-
 </div>

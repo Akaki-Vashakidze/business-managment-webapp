@@ -1,11 +1,15 @@
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { ItemManagement, User } from '../../../interfaces/shared-interfaces';
 import { UserService } from '../../auth/services/user.service';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
+import { BusinessService } from '../../auth/services/business.service';
 
 interface TimeSlot {
   start: number;
@@ -22,15 +26,15 @@ interface TimeSlot {
   templateUrl: './item-management.component.html',
   styleUrl: './item-management.component.scss'
 })
-export class ItemManagementComponent implements OnInit {
+export class ItemManagementComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
-  item!: string;
+  itemId!: string;
   users: User[] = [];
-
-  quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = null;
+  quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = 'today';
 
   reservation = {
-    user: '',
+    user: '', // Empty string for "Unregistered"
     date: '',
     startHour: 0,
     startMinute: 0,
@@ -50,41 +54,46 @@ export class ItemManagementComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private itemManagementService: ItemManagementService,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
+    private businessService: BusinessService
   ) {}
 
   ngOnInit(): void {
-    this.item = this.route.snapshot.paramMap.get('id')!;
-    this.getAllUsers();
-
-    // ✅ DEFAULT DATE = TODAY
+    this.itemId = this.route.snapshot.paramMap.get('id')!;
     this.setDateByOffset(0);
 
-    this.loadReservations();
+    // Context-aware initialization
+    this.businessService.businessSelected
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(biz => {
+        if (biz) {
+          this.getAllUsers(biz._id);
+          this.loadReservations(); // Load data once business is confirmed
+        }
+      });
   }
 
-  getAllUsers() {
-    this.userService.getAllUsers().subscribe(u => this.users = u);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  // QUICK DATE HANDLING
+  getAllUsers(businessId: string) {
+    this.userService.getAllUsers(businessId).subscribe({
+      next: (u) => this.users = u,
+      error: () => this.snackbar.error('Could not load users')
+    });
+  }
+
   setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter') {
-    if (this.quickDate === type) {
-      this.quickDate = null;
-      return;
-    }
-
     this.quickDate = type;
-
-    if (type === 'today') this.setDateByOffset(0);
-    if (type === 'tomorrow') this.setDateByOffset(1);
-    if (type === 'dayAfter') this.setDateByOffset(2);
+    const offset = type === 'today' ? 0 : type === 'tomorrow' ? 1 : 2;
+    this.setDateByOffset(offset);
   }
 
   setDateByOffset(days: number) {
     const d = new Date();
     d.setDate(d.getDate() + days);
-
     this.reservation.date = d.toISOString().split('T')[0];
     this.onDateChange();
   }
@@ -95,23 +104,25 @@ export class ItemManagementComponent implements OnInit {
   }
 
   onDateChange() {
-    const selected = new Date(this.reservation.date).toDateString();
-
-    this.dayReservations = this.allReservations.filter(r =>
-      new Date(r.date).toDateString() === selected
-    );
-
+    this.clearSelection();
+    this.filterDayReservations();
     this.buildSlots();
+  }
+
+  filterDayReservations() {
+    if (!this.reservation.date) return;
+    const selectedDateStr = new Date(this.reservation.date).toDateString();
+
+    this.dayReservations = this.allReservations.filter(r => 
+      new Date(r.date).toDateString() === selectedDateStr
+    );
   }
 
   buildSlots() {
     this.timeSlots = [];
-    this.clearSelection();
-
-    // ⏱ 15-minute slots from 12:00 → 24:00
+    // ⏱ 15-minute intervals (12:00 PM to 12:00 AM)
     for (let m = 12 * 60; m < 24 * 60; m += 15) {
       const end = m + 15;
-
       const reserved = this.dayReservations.some(r => {
         const rs = r.startHour * 60 + r.startMinute;
         const re = r.endHour * 60 + r.endMinute;
@@ -123,7 +134,7 @@ export class ItemManagementComponent implements OnInit {
         end,
         reserved,
         selected: false,
-        label: `${this.format(m)} - ${this.format(end)}`
+        label: `${this.format(m)}`
       });
     }
   }
@@ -131,6 +142,7 @@ export class ItemManagementComponent implements OnInit {
   selectSlot(slot: TimeSlot) {
     if (slot.reserved) return;
 
+    // Start a new selection
     if (!this.selectedStart || this.selectedEnd) {
       this.clearSelection();
       this.selectedStart = slot;
@@ -138,30 +150,37 @@ export class ItemManagementComponent implements OnInit {
       return;
     }
 
-    if (slot.start <= this.selectedStart.start) return;
+    // Prevents selecting a start time after an end time
+    if (slot.start <= this.selectedStart.start) {
+      this.clearSelection();
+      this.selectedStart = slot;
+      slot.selected = true;
+      return;
+    }
 
-    const invalid = this.timeSlots.some(s =>
-      s.reserved &&
-      s.start >= this.selectedStart!.start &&
-      s.end <= slot.end
+    // Check if any reserved slots exist between start and chosen end
+    const hasCollision = this.timeSlots.some(s =>
+      s.reserved && s.start >= this.selectedStart!.start && s.end <= slot.end
     );
 
-    if (invalid) return;
+    if (hasCollision) {
+      this.snackbar.error('Selection overlaps with existing reservation');
+      return;
+    }
 
     this.selectedEnd = slot;
-
-    this.timeSlots.forEach(s => {
-      if (s.start >= this.selectedStart!.start && s.end <= slot.end) {
-        s.selected = true;
-      }
-    });
-
+    this.highlightRange();
     this.applyReservationTime();
+  }
+
+  highlightRange() {
+    this.timeSlots.forEach(s => {
+      s.selected = s.start >= this.selectedStart!.start && s.end <= this.selectedEnd!.end;
+    });
   }
 
   applyReservationTime() {
     if (!this.selectedStart || !this.selectedEnd) return;
-
     this.reservation.startHour = Math.floor(this.selectedStart.start / 60);
     this.reservation.startMinute = this.selectedStart.start % 60;
     this.reservation.endHour = Math.floor(this.selectedEnd.end / 60);
@@ -176,13 +195,13 @@ export class ItemManagementComponent implements OnInit {
 
   reserveItem() {
     if (!this.selectedStart || !this.selectedEnd) {
-      this.snackbar.error('Select time interval');
+      this.snackbar.error('Please select a time range');
       return;
     }
 
     const payload = {
-      item: this.item,
-      user: this.reservation.user || null,
+      item: this.itemId,
+      user: this.reservation.user || null, // API handles null as unregistered
       date: this.reservation.date,
       startHour: this.reservation.startHour,
       startMinute: this.reservation.startMinute,
@@ -193,11 +212,11 @@ export class ItemManagementComponent implements OnInit {
 
     this.itemManagementService.reserveitem(payload).subscribe({
       next: () => {
-        this.snackbar.success('Reserved successfully');
+        this.snackbar.success('Reservation successful');
         this.loadReservations();
         this.clearSelection();
       },
-      error: () => this.snackbar.error('Reservation failed')
+      error: (err) => this.snackbar.error(err.error?.message || 'Reservation failed')
     });
   }
 
@@ -208,14 +227,15 @@ export class ItemManagementComponent implements OnInit {
   }
 
   loadReservations() {
-    this.reservation.isPaid = false;
-    this.reservation.user = '';
-
     this.itemManagementService
-      .getAllReservationsForItem(this.item)
+      .getAllReservationsForItem(this.itemId)
       .subscribe(res => {
         this.allReservations = res;
         this.onDateChange();
       });
+  }
+
+  get isSelectionComplete(): boolean {
+    return !!(this.selectedStart && this.selectedEnd);
   }
 }

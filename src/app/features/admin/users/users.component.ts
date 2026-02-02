@@ -5,7 +5,7 @@ import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { User } from '../../../interfaces/shared-interfaces';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, takeUntil, distinctUntilChanged } from 'rxjs/operators';
 import { MembershipType } from '../../../enums/membership.enum';
 import { Router } from '@angular/router';
 import { BusinessService } from '../../auth/services/business.service';
@@ -19,58 +19,49 @@ import { BranchesService } from '../../auth/services/branches.service';
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit, OnDestroy {
+  // Data
   users: User[] = [];
   searchTerm: string = '';
   userForm!: FormGroup;
   editingUser: User | null = null;
+  loading: boolean = false;
 
-  selectedBusinessId!: string;
-  selectedBranchId!: string;
+  // Context
+  selectedBusinessId: string = '';
+  selectedBranchId: string = '';
 
+  // Membership UI
   showCreateMembershipFeature: number = 0;
-  selectedMembershipType: any = MembershipType.MONTHLY_8;
-  membershipTypes = [MembershipType.MONTHLY_8,MembershipType.MONTHLY_12, MembershipType.MONTHLY_20, MembershipType.MONTHLY_28, MembershipType.UNLIMITED] // enum for template
+  selectedMembershipType: MembershipType = MembershipType.MONTHLY_8;
+  membershipTypes = Object.values(MembershipType); 
 
-  private searchSubject: Subject<string> = new Subject<string>();
-  private searchSubscription!: Subscription;
+  // Observables cleanup
+  private destroy$ = new Subject<void>();
+  private searchSubject = new Subject<string>();
 
   constructor(
-    private router:Router,
+    private router: Router,
     private usersService: UserService,
     private snackbarService: SnackbarService,
     private fb: FormBuilder,
-    private businessService:BusinessService,
-    private branchService:BranchesService
-  ) {
-      businessService.businessSelected.subscribe(business => {
-        this.selectedBusinessId = business?._id || ''
-      })
-  
-      branchService.selectedBranch.subscribe(branch => {
-        this.selectedBranchId = branch?._id || ''
-      })
-  }
+    private businessService: BusinessService,
+    private branchService: BranchesService
+  ) {}
 
   ngOnInit() {
     this.initForm();
-
-    // Debounced search
-    this.searchSubscription = this.searchSubject
-      .pipe(debounceTime(300))
-      .subscribe((term) => {
-        this.loadUsers(term);
-      });
-
-    this.loadUsers('');
+    this.initContextListeners();
+    this.initSearchListener();
   }
 
   ngOnDestroy() {
-    this.searchSubscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  initForm() {
+  private initForm() {
     this.userForm = this.fb.group({
-      fullName: ['', Validators.required],
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       mobileNumber: ['', Validators.required],
       isManager: [0],
@@ -78,10 +69,48 @@ export class UsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadUsers(term: string) {
-    this.usersService.getFilteredUsers(term).subscribe({
-      next: (res: User[]) => this.users = res,
-      error: () => this.snackbarService.error('Error loading users')
+  private initContextListeners() {
+    // Listen for business changes
+    this.businessService.businessSelected
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
+      .subscribe(business => {
+        this.selectedBusinessId = business?._id || '';
+        if (this.selectedBusinessId) this.loadUsers(this.searchTerm);
+      });
+
+    // Listen for branch changes
+    this.branchService.selectedBranch
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(branch => {
+        this.selectedBranchId = branch?._id || '';
+      });
+  }
+
+  private initSearchListener() {
+    this.searchSubject
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((term) => {
+        this.loadUsers(term);
+      });
+  }
+
+  loadUsers(term: string = '') {
+    if (!this.selectedBusinessId) return;
+
+    this.loading = true;
+    this.usersService.getFilteredUsers(term, this.selectedBusinessId).subscribe({
+      next: (res: User[]) => {
+        this.users = res;
+        this.loading = false;
+      },
+      error: () => {
+        this.snackbarService.error('Error loading users');
+        this.loading = false;
+      }
     });
   }
 
@@ -91,10 +120,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   openAddUser() {
     this.editingUser = null;
-    this.userForm.reset({ 
-      isManager: 0, // Using 0 for compatibility with your template logic
-      isOwner: 0 
-    });
+    this.userForm.reset({ isManager: 0, isOwner: 0 });
   }
 
   openEditUser(user: User) {
@@ -106,33 +132,29 @@ export class UsersComponent implements OnInit, OnDestroy {
       isManager: user.isManager,
       isOwner: user.isOwner
     });
+    // Scroll to form for better mobile UX
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   saveUser() {
-    if (this.userForm.invalid) return;
-
-    const userData = this.userForm.value;
-
-    if (this.editingUser) {
-      this.usersService.editUser(this.editingUser._id, userData).subscribe({
-        next: () => {
-          this.snackbarService.success('User updated successfully');
-          this.loadUsers(this.searchTerm);
-        },
-        error: () => this.snackbarService.error('Error updating user')
-      });
-    } else {
-      this.usersService.addUser(userData).subscribe({
-        next: () => {
-          this.snackbarService.success('User added successfully');
-          this.loadUsers(this.searchTerm);
-        },
-        error: () => this.snackbarService.error('Error adding user')
-      });
+    if (this.userForm.invalid) {
+      this.snackbarService.error('Please fill all required fields correctly');
+      return;
     }
 
-    this.userForm.reset({ isManager: 0, isOwner: 0 });
-    this.editingUser = null;
+    const userData = { ...this.userForm.value };
+    const request$ = this.editingUser 
+      ? this.usersService.editUser(this.editingUser._id, userData)
+      : this.usersService.addUser({ ...userData, business: this.selectedBusinessId });
+
+    request$.subscribe({
+      next: () => {
+        this.snackbarService.success(`User ${this.editingUser ? 'updated' : 'added'} successfully`);
+        this.loadUsers(this.searchTerm);
+        this.openAddUser(); // Reset form
+      },
+      error: (err) => this.snackbarService.error(err.error?.message || 'Action failed')
+    });
   }
 
   deleteUser(user: User) {
@@ -149,25 +171,39 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   showCreateMembership(user: User, index: number) {
     this.showCreateMembershipFeature = index + 1;
-    this.selectedMembershipType = MembershipType.MONTHLY_8; // default
   }
 
-  cancelCreateMembership(){
+  cancelCreateMembership() {
     this.showCreateMembershipFeature = 0;
   }
 
   createMembership(user: User) {
-    this.usersService.createMembership(user._id, JSON.parse(this.selectedMembershipType), this.selectedBusinessId, this.selectedBranchId).subscribe({
+    if (!this.selectedBusinessId || !this.selectedBranchId) {
+      this.snackbarService.error('Please select a business and branch first');
+      return;
+    }
+
+    // Ensure we send the enum value correctly
+    const membershipType = typeof this.selectedMembershipType === 'string' 
+      ? JSON.parse(this.selectedMembershipType) 
+      : this.selectedMembershipType;
+
+    this.usersService.createMembership(
+      user._id, 
+      membershipType, 
+      this.selectedBusinessId, 
+      this.selectedBranchId
+    ).subscribe({
       next: () => {
         this.snackbarService.success('Membership created successfully');
+        this.showCreateMembershipFeature = 0;
         this.loadUsers(this.searchTerm);
-        this.showCreateMembershipFeature = 0; // hide after creation
       },
       error: () => this.snackbarService.error('Error creating membership')
     });
   }
 
-  launchUserDetails(userId:string){
-    this.router.navigate([`/admin/user-details/${userId}`])
+  launchUserDetails(userId: string) {
+    this.router.navigate([`/admin/user-details/${userId}`]);
   }
 }

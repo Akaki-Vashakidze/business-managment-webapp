@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../../interfaces/shared-interfaces';
 import { UserService } from '../../auth/services/user.service';
+import { BusinessService } from '../../auth/services/business.service';
+import { Subject, takeUntil } from 'rxjs';
 
 interface TimeSlot {
   start: number;
@@ -21,7 +23,8 @@ interface TimeSlot {
   templateUrl: './items-all-reservations.component.html',
   styleUrls: ['./items-all-reservations.component.scss']
 })
-export class ItemsWholeReservesComponent implements OnInit, OnChanges {
+export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy {
+  private destroy$ = new Subject<void>();
   isPaid: boolean = false;
   rangeStart: TimeSlot | null = null;
   rangeEnd: TimeSlot | null = null;
@@ -39,11 +42,18 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges {
   constructor(
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private businessService:BusinessService
+  ) {
+
+    businessService.businessSelected.pipe(takeUntil(this.destroy$)).subscribe(item => {
+      this.getAllUsers(item?._id || '');
+    })
+  }
+
+  
 
   ngOnInit(): void {
-    this.getAllUsers();
 
     // ✅ default date = today
     this.setDateByOffset(0);
@@ -59,8 +69,8 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges {
     }
   }
 
-  getAllUsers() {
-    this.userService.getAllUsers().subscribe(u => this.users = u);
+  getAllUsers(businessId:string) {
+    this.userService.getAllUsers(businessId).subscribe(u => this.users = u);
   }
 
   /* ================= DATE LOGIC ================= */
@@ -226,5 +236,10 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges {
         this.clearSelection();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

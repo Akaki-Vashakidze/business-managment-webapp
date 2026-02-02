@@ -14,8 +14,8 @@ export class AuthService {
     return this.http.post(`/consoleApi/auth/login`, body);
   }
 
-  signUp(email: string, password: string, code:string, fullName: string, mobileNumber: string): Observable<any> {
-    const body = { email, password, code, fullName, mobileNumber };
+  signUp(email: string, password: string, code:string, fullName: string, mobileNumber: string, business:string): Observable<any> {
+    const body = { email, password, code, fullName, mobileNumber, business };
     return this.http.post(`/consoleApi/auth/signup`, body);
   }
 
