@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { User } from '../../../interfaces/shared-interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class UserService {
   private userSubject = new BehaviorSubject<any>(null);
   public user$: Observable<any> = this.userSubject.asObservable();
-  public userLoginStatus = new BehaviorSubject<any>(null);
 
   user!: any;
   constructor(private http: HttpClient) {
@@ -28,15 +28,11 @@ export class UserService {
     return this.user;
   }
 
-  userLoginStatusChange(user:any){
-    this.userLoginStatus.next(user);
-  }
-
-  setUser(user: any) {
+  setUser(user: {user:User, token:string} | null) {
     this.userSubject.next(user);
     if (user) {
-      localStorage.setItem('businesManagement_user', JSON.stringify(user));
-      localStorage.setItem('businesManagement_token', JSON.stringify(user));
+      localStorage.setItem('businesManagement_user', JSON.stringify(user.user));
+      localStorage.setItem('businesManagement_token', user.token);
     } else {
       localStorage.removeItem('businesManagement_user');
       localStorage.removeItem('businesManagement_token');

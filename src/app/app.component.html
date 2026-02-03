@@ -1,4 +1,10 @@
-<app-admin-header *ngIf="adminView"></app-admin-header>
-<app-user-header *ngIf="!adminView"></app-user-header>
+<ng-container *ngIf="adminView; else userHeader">
+  <app-admin-header></app-admin-header>
+</ng-container>
+
+<ng-template #userHeader>
+  <app-user-header></app-user-header>
+</ng-template>
+
 <router-outlet></router-outlet>
 <app-loader></app-loader>

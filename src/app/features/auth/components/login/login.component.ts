@@ -40,7 +40,7 @@ export class LoginComponent {
         let route = item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin/dashboard' : 'user/dashboard';
         this.router.navigate([route]);
         console.log('Login successful', item);
-        this.userService.userLoginStatusChange(item);
+        this.userService.setUser(item);
       }
     })
   }

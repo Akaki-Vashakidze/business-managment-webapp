@@ -30,7 +30,7 @@ export class AdminHeaderComponent {
       this.user = null;
     }
     
-    this.userService.userLoginStatus.subscribe(item => {
+    this.userService.user$.subscribe(item => {
       this.user = item;
     });
 

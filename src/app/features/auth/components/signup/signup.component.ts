@@ -149,7 +149,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           localStorage.setItem('businesManagement_user', JSON.stringify(item));
           localStorage.setItem('businesManagement_role', item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin' : 'user');
           localStorage.setItem('businesManagement_token', item.token);
-          this.userService.userLoginStatusChange(item);
+          this.userService.setUser(item);
           this.router.navigate(['dashboard']);
         }
       });

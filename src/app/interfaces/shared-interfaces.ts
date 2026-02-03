@@ -39,6 +39,7 @@ export interface User {
     isManager: number;
     isOwner: number;
     qrCode:string;
+    business:string;
 }
 
 export interface ItemManagement {

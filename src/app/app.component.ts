@@ -21,6 +21,7 @@ export class AppComponent {
     userService.user$.subscribe(item => {
       console.log('App Component User Update:', item);
       this.adminView = localStorage.getItem('businesManagement_role') == 'admin' ? true : false;
+      console.log(this.adminView)
     });
     this.translate.setTranslation('en', en);
     this.translate.setTranslation('ka', ka);

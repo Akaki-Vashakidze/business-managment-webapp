@@ -1,0 +1,137 @@
+.dashboard-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  .welcome-header {
+    margin-bottom: 2rem;
+    h1 { margin: 0; color: #1a1a1a; font-weight: 800; }
+    p { color: #666; margin-top: 5px; }
+  }
+}
+
+.branch-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 2.5rem;
+  overflow-x: auto;
+  padding-bottom: 5px;
+
+  .branch-chip {
+    background: #f0f2f5;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #444;
+    transition: 0.2s;
+    white-space: nowrap;
+
+    &.active {
+      background: #000;
+      color: #fff;
+    }
+  }
+}
+
+.item-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+
+  .item-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    .ps-avatar {
+      width: 45px; height: 45px;
+      background: #f1f3f5;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: #333;
+    }
+
+    .ps-details {
+      flex: 1;
+      h3 { margin: 0; font-size: 1.2rem; }
+      .status-indicator { font-size: 0.75rem; color: #2ecc71; font-weight: 700; text-transform: uppercase; }
+    }
+
+    .main-book-btn {
+      background: #000; color: #fff; border: none;
+      padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+  }
+}
+
+.timeline-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 14px;
+
+  label {
+    display: block; font-size: 0.7rem; font-weight: 800;
+    text-transform: uppercase; color: #999; margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .bubbles-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .time-bubble {
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 1px solid transparent;
+
+      .sep { opacity: 0.4; font-size: 0.7rem; }
+
+      &.busy {
+        background: #ffebe6;
+        color: #d63031;
+        border-color: #ffbdad;
+        border-left: 4px solid #ff7675;
+      }
+
+      &.free {
+        background: #e3fcef;
+        color: #00b894;
+        border-color: #abf5d1;
+        border-left: 4px solid #55efc4;
+        cursor: pointer;
+        &:hover { transform: scale(1.03); background: #d1f7e4; }
+      }
+    }
+  }
+}
+
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #2ecc71;
+  border-radius: 50%;
+  margin-left: 5px;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
