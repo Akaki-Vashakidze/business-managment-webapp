@@ -34,7 +34,7 @@ export class LoginComponent {
         this.errorMessage = item.keyword || 'Login failed';
       } else {
         localStorage.setItem('businesManagement_user', JSON.stringify(item));
-        localStorage.setItem('businesManagement_role', item.user.isOwner || item.user.isManager ? 'admin' : 'user');
+        localStorage.setItem('businesManagement_role', item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin' : 'user');
         localStorage.setItem('businesManagement_token', item.token)
 
         let route = item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin/dashboard' : 'user/dashboard';

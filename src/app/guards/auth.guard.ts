@@ -8,7 +8,6 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): boolean {
     const token = localStorage.getItem('businesManagement_token');
-
     if (!token) {
       this.router.navigate(['/login']);
       return false;

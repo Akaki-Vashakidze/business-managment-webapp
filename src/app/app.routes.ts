@@ -20,10 +20,11 @@ import { UsersComponent } from './features/admin/users/users.component';
 import { StaffCheckInComponent } from './features/admin/staff-check-in/staff-check-in.component';
 import { UserDetailsComponent } from './features/admin/user-details/user-details.component';
 import { UserItemManagementComponent } from './features/user/user-item-management/user-item-management.component';
+import { IsAlreadyAuthedGuard } from './guards/isAlreadyAuthed.guard';
 
 export const routes: Routes = [
   // 🔓 Public
-  { path: 'login', component: LoginComponent },
+  { path: 'login', canActivate:[IsAlreadyAuthedGuard], component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'password-recovery', component: PassRecoveryComponent },
   { path: 'reset-password', component: ForgetPassComponent },

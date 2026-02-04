@@ -1,0 +1,79 @@
+$accent: #3b82f6;
+$bg: #050811;
+$card: #16213e;
+
+.recovery-wrapper {
+  min-height: 100vh;
+  background: $bg;
+  padding: 40px 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 50px;
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: #2d3748; transition: 0.3s; 
+    &.active { background: $accent; box-shadow: 0 0 10px $accent; }
+  }
+  .line { width: 40px; height: 2px; background: #2d3748; 
+    &.active { background: $accent; }
+  }
+}
+
+.step-content {
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+  animation: fadeIn 0.4s ease-out;
+
+  h1 { font-size: 2rem; margin-bottom: 10px; font-weight: 800; }
+  p { color: #94a3b8; margin-bottom: 30px; font-size: 0.9rem; line-height: 1.6; }
+}
+
+.input-box {
+  text-align: left;
+  margin-bottom: 20px;
+  label { font-size: 0.7rem; font-weight: 700; color: $accent; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  input {
+    width: 100%;
+    background: $card;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 16px;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.1rem;
+    outline: none;
+    &:focus { border-color: $accent; }
+  }
+  .otp-field { text-align: center; letter-spacing: 8px; font-size: 1.5rem; }
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: none;
+  background: $accent;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba($accent, 0.3);
+  margin-top: 10px;
+  cursor: pointer;
+  &:disabled { opacity: 0.5; }
+}
+
+.text-link {
+  background: none; border: none; color: #94a3b8; margin-top: 20px; font-size: 0.8rem; cursor: pointer;
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
