@@ -1,0 +1,77 @@
+<div class="booking-page">
+  <header class="header">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-icons">arrow_back_ios</span>
+    </button>
+    <div class="title-area">
+      <h1>Station Booking</h1>
+      <p>REF: {{ itemId.slice(-6).toUpperCase() }}</p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section-header">
+      <span class="step">01</span>
+      <label>Choose your day</label>
+    </div>
+    <div class="date-tabs">
+      <div *ngFor="let tab of dateTabs" 
+           class="date-tab" 
+           [class.active]="reservation.date === tab.full"
+           (click)="setQuickDateTab(tab.full)">
+        <span class="day-name">{{ tab.day }}</span>
+        <span class="day-num">{{ tab.date }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <span class="step">02</span>
+      <label>Select your playtime</label>
+      <span class="hint-pill">Tap Start & End</span>
+    </div>
+
+    <div class="grid-wrapper">
+      <div class="slots-grid">
+        <div *ngFor="let slot of timeSlots"
+             class="slot"
+             [class.reserved]="slot.reserved"
+             [class.selected]="slot.selected"
+             (click)="selectSlot(slot)">
+          {{ slot.label }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="confirm-drawer" [class.show]="selectedStart && selectedEnd">
+    <div class="drawer-content">
+      <div class="booking-summary">
+        <div class="summary-item">
+          <span class="lbl">Date</span>
+          <span class="val">{{ reservation.date | date:'MMM d, y' }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="lbl">Time</span>
+          <span class="val" *ngIf="selectedStart && selectedEnd">
+            {{ format(selectedStart.start) }} — {{ format(selectedEnd.end) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <label class="paid-check">
+          <input type="checkbox" [(ngModel)]="reservation.isPaid">
+          <span class="box"></span>
+          Paid Now
+        </label>
+        <button class="confirm-btn" (click)="reserveItem()">Confirm Station</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loader-mask" *ngIf="loadingReservations">
+    <div class="loader"></div>
+  </div>
+</div>

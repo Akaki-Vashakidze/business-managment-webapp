@@ -10,15 +10,23 @@ export class SiteService {
     constructor(private http: HttpClient) { }
 
     reserveitem(reserveItem: ReserveItem | any): Observable<any> {
-        return this.http.post(`/consoleApi/item/management/reserve-item`, reserveItem);
+        return this.http.post(`/consoleApi/item/management/reserve-item-by-user`, reserveItem);
     }
 
     getBranchesByBusiness(business: string): Observable<ItemManagement[]> {
         return this.http.get<ItemManagement[]>(`/consoleApi/site/get-business-branches/${business}`);
     }
 
-    getItemsReservations(branchId:string){
-        return this.http.get<ItemManagement[]>(`/consoleApi/site/get-branch-items-reservations/${branchId}`);
+    getItemsReservations(body:{date:string,branchId:string}){
+        return this.http.post<ItemManagement[]>(`/consoleApi/site/get-branch-items-reservations`,body);
+    }
+
+    getMyReservations(): Observable<ItemManagement[]> {
+        return this.http.get<ItemManagement[]>(`/consoleApi/site/get-my-reservations`);
+    }
+
+    deleteMyReservation(id:string) {
+        return this.http.delete<any>(`/consoleApi/site/delete-my-reservation/${id}`);
     }
     
 }

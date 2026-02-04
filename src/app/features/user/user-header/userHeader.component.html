@@ -1,13 +1,33 @@
-<div class="header_container">
-    <!-- <div class="lang_select_cont">
-        <select (change)="changeLang($event)" class="main_select">
-            <option value="en">En</option>
-            <option value="ka">Ge</option>
-        </select>
-    </div> -->
-    <div class="auth_cont">
-        <button routerLink="/login" *ngIf="!user" class="auth_buttons main_button">{{'login' | translate}}</button>
-        <button (click)="logOut()" *ngIf="user" class="auth_buttons main_button">{{'logout' | translate}}</button>
-        <button routerLink="/signup" *ngIf="!user" class="auth_buttons main_button">{{'signUp' | translate}}</button>
+<header class="header-container">
+  <div class="header-content">
+    <div class="brand" routerLink="/">
+      <div class="logo-box">🎮</div>
+      <span class="brand-name">GAME<span>HUB</span></span>
     </div>
-</div>
+
+    <div class="nav-actions">
+      <div class="lang-wrapper">
+        <select (change)="changeLang($event)" class="lang-select">
+          <option value="en">EN</option>
+          <option value="ka">GE</option>
+        </select>
+      </div>
+
+      <div class="auth-box">
+        <ng-container *ngIf="!user">
+          <button routerLink="/login" class="btn-text">{{'login' | translate}}</button>
+          <button routerLink="/signup" class="btn-primary">{{'signUp' | translate}}</button>
+        </ng-container>
+
+        <ng-container *ngIf="user">
+          <div class="user-profile">
+            <span class="user-name">{{user.name || 'Gamer'}}</span>
+            <button (click)="logOut()" class="btn-outline">
+              <i class="logout-icon"></i> {{'logout' | translate}}
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</header>

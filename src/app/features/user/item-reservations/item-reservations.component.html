@@ -1,0 +1,71 @@
+<div class="res-container">
+  
+  <header class="page-header">
+    <div class="header-text">
+      <h1>The Gaming Hub</h1>
+      <p>Select your station and time</p>
+    </div>
+    <div class="live-badge">Live Updates</div>
+  </header>
+
+  <section class="selection-section">
+    <label class="section-label">Branches</label>
+    <div class="h-scroll">
+      <div *ngFor="let branch of branches" 
+           class="chip branch-chip" 
+           [class.active]="selectedBranchId === branch._id"
+           (click)="selectBranch(branch._id)">
+        <span class="dot-icon">📍</span> {{ branch.name }}
+      </div>
+    </div>
+  </section>
+
+  <section class="selection-section">
+    <label class="section-label">Date</label>
+    <div class="h-scroll">
+      <div *ngFor="let tab of dateTabs" 
+           class="date-card" 
+           [class.active]="selectedDate === tab.full"
+           (click)='onDateChange(tab.full)'>
+        <span class="day">{{ tab.day }}</span>
+        <span class="num">{{ tab.date }}</span>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <div *ngIf="loadingItems" class="loader-cont">
+    <div class="spin"></div>
+    <p>Loading consoles...</p>
+  </div>
+
+  <div class="items-list" *ngIf="!loadingItems">
+    <div class="ps-card" *ngFor="let item of items">
+      <div class="ps-card-header">
+        <div class="ps-main-info">
+          <div class="ps-icon">🎮</div>
+            <div class="ps-title">
+            <h3>{{ item.name }}</h3>
+            <span class="ps-status" [ngClass]="{'status-busy': isItemBusyNow(item._id)}">
+                {{ isItemBusyNow(item._id) ? 'Currently Busy' : 'Ready to Play' }}
+            </span>
+            </div>
+        </div>
+        <button class="btn-book-top" (click)="handleReserve(item._id)">Book Full</button>
+      </div>
+
+      <div class="timeline-grid">
+        <div *ngFor="let slot of getTimeline(item._id)" 
+             class="time-slot" 
+             [class.free]="slot.isFree"
+             [class.busy]="!slot.isFree"
+             (click)="slot.isFree ? handleReserve(item._id, slot) : null">
+          <span class="slot-time">{{ slot.start }} - {{ slot.end }}</span>
+          <span class="slot-type">{{ slot.isFree ? 'FREE' : 'TAKEN' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -19,6 +19,7 @@ import { ItemManagementComponent } from './features/admin/item-management/item-m
 import { UsersComponent } from './features/admin/users/users.component';
 import { StaffCheckInComponent } from './features/admin/staff-check-in/staff-check-in.component';
 import { UserDetailsComponent } from './features/admin/user-details/user-details.component';
+import { UserItemManagementComponent } from './features/user/user-item-management/user-item-management.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -33,6 +34,8 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: UserDashboardComponent },
+      { path: 'reservations/:itemId', component: UserItemManagementComponent },
+      { path: 'reservations/:itemId/:slotTIme', component: UserItemManagementComponent },
     ],
   },
 

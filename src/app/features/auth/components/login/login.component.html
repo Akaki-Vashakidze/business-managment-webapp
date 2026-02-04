@@ -1,32 +1,56 @@
-<div class="header_container">
+<div class="auth-page-wrapper">
+  <div class="glow-sphere top-right"></div>
+  <div class="glow-sphere bottom-left"></div>
 
-  <div class="auth_cont">
-    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login_form">
-        <div class="inputs_cont">
-      <input
-        type="email"
-        name="email"
-        [(ngModel)]="email"
-        placeholder="Email"
-        required
-        class="login_input"
-      />
-      <input
-        type="password"
-        name="password"
-        [(ngModel)]="password"
-        placeholder="Password"
-        required
-        class="login_input"
-      />
+  <div class="login-container">
+    <header class="login-header">
+      <div class="logo-box">🎮</div>
+      <h1>The Gaming Hub</h1>
+      <p>Log in to reserve your station</p>
+    </header>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
+      <div class="inputs-stack">
+        <div class="input-group">
+          <span class="material-icons">email</span>
+          <input
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="Email Address"
+            required
+            class="gaming-input"
+          />
         </div>
-        <div *ngIf="errorMessage" style="color: red; text-align: center;">{{errorMessage}}</div>
-        <div class="actions">
-        <div></div>
-      <button type="submit" class="auth_buttons main_button login_bt">
-        {{ 'login' | translate }}
-      </button>
+
+        <div class="input-group">
+          <span class="material-icons">lock</span>
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Password"
+            required
+            class="gaming-input"
+          />
         </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-toast">
+        <span class="material-icons">report_problem</span>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="login-submit-btn" [disabled]="!loginForm.form.valid">
+          {{ 'login' | translate }}
+        </button>
+      </div>
+
+      <div class="footer-links">
+        <a routerLink="/forgot-password">Forgot Password?</a>
+        <span>New player? <a routerLink="/register">Join now</a></span>
+      </div>
     </form>
   </div>
 </div>
