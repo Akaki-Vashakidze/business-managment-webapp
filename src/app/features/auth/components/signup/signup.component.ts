@@ -17,15 +17,12 @@ import { BusinessService } from '../../services/business.service';
 })
 export class SignupComponent implements OnInit, OnDestroy {
   lang: string = 'en';
-  email: string = '';
+  mobileNumber: string = '';
   code: string = '';
   fullName: string = '';
   password: string = '';
-  mobileNumberIndex: string = '';
-  mobileNumber: string = '';
   password2: string = '';
   
-  // New properties for business selection
   businesses: any[] = [];
   selectedBusinessId: string = '';
 
@@ -46,7 +43,6 @@ export class SignupComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.startCountDown();
     this.getAllbusinesses();
   }
 
@@ -56,23 +52,21 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   getAllbusinesses() {
     this.businessService.getAllBusinesses().subscribe(res => {
-      // Assuming res is the array of businesses you provided
       this.businesses = res;
+      // Auto-select if only one business exists
+      if (this.businesses && this.businesses.length === 1) {
+        this.selectedBusinessId = this.businesses[0]._id;
+      }
     });
   }
 
-  changeLang(event: any) {
-    const lang = event.target.value;
-    this.translateService.use(lang);
-  }
-
-  sendVerificationCodeEmail() {
+  sendVerificationCodeMobileMessage() {
     if (!this.selectedBusinessId) {
       this.errorMessage = 'Please select a business card above';
       return;
     }
     this.resetResponceMessages();
-    this.authService.sendVerificationCode(this.email).subscribe(item => {
+    this.authService.sendVerificationCodeMobileMessage(this.mobileNumber).subscribe(item => {
       if (!item.error) {
         let success = item?.result?.data;
         if (success) {
@@ -80,15 +74,11 @@ export class SignupComponent implements OnInit, OnDestroy {
             this.errorMessage = success.message;
           } else {
             this.successMessage = 'Code Sent';
-            setTimeout(() => {
               this.step1 = false;
               this.step2 = true;
-              this.countDownSeconds = 120; // Reset timer
+              this.countDownSeconds = 120;
               this.startCountDown();
-            }, 1000);
           }
-        } else {
-          this.errorMessage = 'Error occurred';
         }
       } else {
         this.errorMessage = item.keyword;
@@ -98,14 +88,12 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   confirmCode() {
     this.resetResponceMessages();
-    this.authService.confirmCode(this.email, this.code).subscribe(item => {
+    this.authService.confirmCodeMobileMessage(this.mobileNumber, this.code).subscribe(item => {
       if (item.result.data) {
         this.successMessage = 'Code confirmed';
-        setTimeout(() => {
           this.step1 = false;
           this.step2 = false;
           this.step3 = true;
-        }, 1000);
       } else {
         this.errorMessage = 'Invalid code';
       }
@@ -121,7 +109,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.countDownSeconds--;
-      if (this.countDownSeconds <= 0) {
+      if (this.countDownSeconds <= 0 && !this.step3) {
         this.step1 = true;
         this.step2 = false;
         clearInterval(this.interval);
@@ -132,15 +120,11 @@ export class SignupComponent implements OnInit, OnDestroy {
   signUp() {
     this.resetResponceMessages();
     if (this.password === this.password2) {
-      const fullMobile = this.mobileNumberIndex + this.mobileNumber;
-      
-      // Pass selectedBusinessId as the last argument
       this.authService.signUp(
-        this.email, 
+        this.mobileNumber, 
         this.password, 
         this.code, 
         this.fullName, 
-        fullMobile, 
         this.selectedBusinessId
       ).subscribe(item => {
         if (item.error) {

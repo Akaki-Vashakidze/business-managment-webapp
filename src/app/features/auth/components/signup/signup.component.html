@@ -1,64 +1,86 @@
 <div class="header_container">
-    <div class="auth_cont">
-        <form #loginForm="ngForm" class="login_form">
-            <div class="inputs_cont">
-
-                <div *ngIf="step1" class="firstStep steps">
-                    <select name="business" [(ngModel)]="selectedBusinessId" required class="login_input">
-                        <option value="" disabled selected>Select a Business</option>
-                        <option *ngFor="let b of businesses" [value]="b._id">
-                            {{ b.name }}
-                        </option>
-                    </select>
-
-                    <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required
-                        class="login_input" />
-                    
-                    <button [disabled]="step2 || !selectedBusinessId || !email" 
-                            (click)="sendVerificationCodeEmail()" 
-                            class="main_button">
-                        Send Verification Code
-                    </button>
-                </div>
-
-                <div *ngIf="step2" class="secondStep steps">
-                    <div style="display: flex; flex-direction: row; gap: 10px; align-items: center;">
-                        <input type="text" name="Code" [(ngModel)]="code" placeholder="Code" required
-                            class="login_input" />
-                        <div class="countdown" style="white-space: nowrap;">Valid for {{countDownSeconds}}s</div>
-                    </div>
-                    <button (click)="confirmCode()" class="main_button" style="width: 100%;">Confirm</button>
-                </div>
-
-                <div *ngIf="step3" class="thirdStep steps">
-                    <input type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required
-                        class="login_input" />
-                    
-                    <div class="mobileNumber_field">
-                        <div class="index_field">
-                            <span>+</span>
-                            <input type="text" name="index" [(ngModel)]="mobileNumberIndex" required
-                                class="index_input" />
-                        </div>
-                        <input type="text" name="mobileNumber" maxlength="9" [(ngModel)]="mobileNumber" 
-                            placeholder="Mobile Number" required class="login_input" />
-                    </div>
-
-                    <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
-                        class="login_input" />
-                    <input type="password" name="password2" [(ngModel)]="password2" placeholder="Repeat Password" required
-                        class="login_input" />
-                </div>
-            </div>
-
-            <div *ngIf="errorMessage" style="color: red; text-align: center; margin-top: 10px;">{{errorMessage}}</div>
-            <div *ngIf="successMessage" style="color: green; text-align: center; margin-top: 10px;">{{successMessage}}</div>
-            
-            <div class="actions" style="width: 100%;">
-                <button *ngIf="step3" (click)="signUp()" class="auth_buttons main_button login_bt">
-                    {{ 'signUp' | translate }}
-                </button>
-            </div>
-        </form>
+  <div class="auth_cont">
+    <div class="signup-header">
+      <h1>Join Our Platform</h1>
+      <p>Follow the steps to create your account</p>
     </div>
+
+    <form #loginForm="ngForm" class="login_form">
+      <div class="inputs_cont">
+
+        <div *ngIf="step1" class="step-animation">
+          
+          <div *ngIf="businesses.length > 1">
+            <label class="section-label">Choose your Business</label>
+            <div class="business-grid">
+              <div *ngFor="let b of businesses" 
+                   class="business-card" 
+                   [class.selected]="selectedBusinessId === b._id"
+                   (click)="selectedBusinessId = b._id">
+                <div class="card-header">
+                  <span class="biz-name">{{ b.name }}</span>
+                  <div class="selection-indicator"></div>
+                </div>
+                <div class="owner-info" *ngIf="b.owner">
+                  <div class="avatar">{{ b.owner.fullName[0] }}</div>
+                  <div class="owner-details">
+                    <span class="label">Owner</span>
+                    <span class="owner-name">{{ b.owner.fullName }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mobile-section">
+            <!-- <div *ngIf="businesses.length === 1" class="selected-business-badge">
+              Registering for: <strong>{{ businesses[0].name }}</strong>
+            </div> -->
+
+        <input 
+        type="text" 
+        name="mobile" 
+        [(ngModel)]="mobileNumber" 
+        placeholder="Enter your mobile" 
+        required 
+        maxlength="9"
+        class="login_input" 
+        />
+
+        <button 
+        [disabled]="!selectedBusinessId || mobileNumber.length !== 9" 
+        (click)="sendVerificationCodeMobileMessage()" 
+        class="main_button"
+        >
+        Next: Send Code
+        </button>
+          </div>
+        </div>
+
+        <div *ngIf="step2" class="step-animation">
+          <div class="verification-box">
+            <p>Verification code sent to <strong>{{mobileNumber}}</strong></p>
+            <div class="code-input-row">
+              <input type="text" name="Code" [(ngModel)]="code" placeholder="Enter 6-digit code" required class="login_input center-text" />
+              <div class="timer-ring">{{countDownSeconds}}s</div>
+            </div>
+            <button (click)="confirmCode()" class="main_button w-100">Confirm Code</button>
+          </div>
+        </div>
+
+        <div *ngIf="step3" class="step-animation">
+          <input type="text" name="fullName" [(ngModel)]="fullName" placeholder="Full Name" required class="login_input" />
+          <input type="password" name="password" [(ngModel)]="password" placeholder="Create Password" class="login_input" />
+          <input type="password" name="password2" [(ngModel)]="password2" placeholder="Repeat Password" class="login_input" />
+          
+          <button (click)="signUp()" class="main_button w-100 mt-20">Complete Registration</button>
+        </div>
+      </div>
+
+      <div class="message-area">
+        <div *ngIf="errorMessage" class="msg error">{{errorMessage}}</div>
+        <div *ngIf="successMessage" class="msg success">{{successMessage}}</div>
+      </div>
+    </form>
+  </div>
 </div>
