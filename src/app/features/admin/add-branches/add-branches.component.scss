@@ -1,13 +1,135 @@
-.branch-card {
-  max-width: 400px;
-  margin: 40px auto;
-  padding: 24px;
+@use 'sass:color'; // Fixes deprecation warnings
+
+$primary: #3b82f6;
+$bg-card: #1e293b;
+$text-dim: #94a3b8;
+$danger: #e94560;
+
+.cyber-add-container {
+  max-width: 450px;
+  margin: 30px auto;
+  padding: 0 15px;
 }
 
-.full-width {
-  width: 100%;
+.glass-panel {
+  background: rgba($bg-card, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 35px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-button {
-  margin-top: 16px;
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 35px;
+
+  .header-icon {
+    width: 50px; height: 50px;
+    background: rgba($primary, 0.1);
+    border: 1px solid rgba($primary, 0.5);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: $primary;
+    box-shadow: 0 0 20px rgba($primary, 0.2);
+  }
+
+  h2 { margin: 0; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px; color: white; text-transform: uppercase; }
+  p { margin: 2px 0 0; font-size: 0.7rem; color: $text-dim; font-family: monospace; }
+}
+
+.cyber-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.input-wrapper {
+  label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: $primary;
+    margin-bottom: 10px;
+    letter-spacing: 1.5px;
+  }
+}
+
+.input-container {
+  position: relative;
+  
+  input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 16px;
+    border-radius: 14px;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &::placeholder { color: #475569; }
+    &:focus { border-color: rgba($primary, 0.4); }
+  }
+
+  .focus-border {
+    position: absolute;
+    bottom: 0; left: 50%;
+    width: 0; height: 2px;
+    background: $primary;
+    transition: 0.4s ease-in-out;
+  }
+
+  input:focus + .focus-border {
+    width: 100%;
+    left: 0;
+    box-shadow: 0 0 15px $primary;
+  }
+
+  &.error input { border-color: rgba($danger, 0.4); }
+}
+
+.error-shelf {
+  margin-top: 8px;
+  min-height: 16px;
+  small { color: $danger; font-size: 0.7rem; font-weight: 600; display: block; animation: slideIn 0.3s ease; }
+}
+
+.cyber-btn {
+  background: $primary;
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 25px rgba($primary, 0.3);
+
+  &:disabled {
+    background: #334155;
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &:not(:disabled):hover {
+    transform: translateY(-3px);
+    background: color.mix(white, $primary, 10%);
+    box-shadow: 0 15px 30px rgba($primary, 0.4);
+  }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }

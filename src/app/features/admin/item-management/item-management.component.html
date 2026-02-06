@@ -1,76 +1,73 @@
-<div class="reservation-container">
-
-  <h2>Reserve Item</h2>
-
-  <label>User</label>
-  <select [(ngModel)]="reservation.user">
-    <option value="">Select user</option>
-    <option *ngFor="let user of users" [value]="user._id">
-      {{ user.fullName }}
-    </option>
-  </select>
-
-  <!-- QUICK DATE SELECT -->
-  <label>Quick date</label>
-  <div class="quick-dates">
-    <label>
-      <input
-        type="checkbox"
-        [checked]="quickDate === 'today'"
-        (change)="setQuickDate('today')"
-      />
-      Today
-    </label>
-
-    <label>
-      <input
-        type="checkbox"
-        [checked]="quickDate === 'tomorrow'"
-        (change)="setQuickDate('tomorrow')"
-      />
-      Tomorrow
-    </label>
-
-    <label>
-      <input
-        type="checkbox"
-        [checked]="quickDate === 'dayAfter'"
-        (change)="setQuickDate('dayAfter')"
-      />
-      Day after tomorrow
-    </label>
-  </div>
-
-  <!-- DATE INPUT -->
-  <label>Date</label>
-  <input
-    type="date"
-    [(ngModel)]="reservation.date"
-    (change)="onManualDateChange()"
-    [disabled]="quickDate !== null"
-    [class.faded]="quickDate !== null"
-  />
-
-  <p class="hint">
-    Click a start time, then click an end time
-  </p>
-
-  <div class="slots-grid">
-    <div
-      *ngFor="let slot of timeSlots"
-      class="time-slot"
-      [class.reserved]="slot.reserved"
-      [class.selected]="slot.selected"
-      (click)="selectSlot(slot)"
-    >
-      {{ slot.label }}
+<div class="management-container">
+  
+  <div class="control-card">
+    <label class="section-label">1. ASSIGN CUSTOMER</label>
+    <div class="user-picker">
+      <span class="material-icons">account_circle</span>
+      <select [(ngModel)]="reservation.user">
+        <option value="">Guest / Unregistered</option>
+        <option *ngFor="let user of users" [value]="user._id">{{ user.fullName }}</option>
+      </select>
     </div>
   </div>
 
-  <div class="checkbox-row">
-    <input type="checkbox" [(ngModel)]="reservation.isPaid" />
-    <label>Paid</label>
+  <div class="calendar-section">
+    <div class="section-header">
+      <label class="section-label">2. SELECT DATE</label>
+      <input type="date" [(ngModel)]="reservation.date" (change)="onManualDateChange()" class="hidden-date-input" #datePicker>
+      <button class="calendar-icon-btn" (click)="datePicker.showPicker()">
+        <span class="material-icons">calendar_month</span>
+      </button>
+    </div>
+
+    <div class="date-strip">
+      <div 
+        *ngFor="let day of weekDays" 
+        class="date-card" 
+        [class.active]="reservation.date === day.dateStr"
+        (click)="setDateByString(day.dateStr)"
+      >
+        <span class="day-name">{{ day.weekday }}</span>
+        <span class="day-num">{{ day.dayNum }}</span>
+        <span class="month-name">{{ day.month }}</span>
+      </div>
+    </div>
   </div>
 
-  <button (click)="reserveItem()">Reserve</button>
+  <div class="time-section">
+    <label class="section-label">3. SELECT TIME RANGE</label>
+    
+    <div class="time-grid">
+      <button
+        *ngFor="let slot of timeSlots"
+        class="slot-btn"
+        [class.reserved]="slot.reserved"
+        [class.selected]="slot.selected"
+        [class.start-point]="slot === selectedStart"
+        [disabled]="slot.reserved"
+        (click)="selectSlot(slot)"
+      >
+        {{ slot.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="action-bar" *ngIf="selectedStart">
+    <div class="summary">
+      <div class="time-range">
+        <span>{{ format(selectedStart.start) }}</span>
+        <span class="material-icons">east</span>
+        <span>{{ selectedEnd ? format(selectedEnd.end) : '...' }}</span>
+      </div>
+      <label class="paid-toggle">
+        <input type="checkbox" [(ngModel)]="reservation.isPaid" />
+        <div class="toggle-ui"></div>
+        <span>PAID</span>
+      </label>
+    </div>
+    
+    <button class="submit-btn" [disabled]="!isSelectionComplete" (click)="reserveItem()">
+      CONFIRM RESERVATION
+    </button>
+  </div>
 </div>

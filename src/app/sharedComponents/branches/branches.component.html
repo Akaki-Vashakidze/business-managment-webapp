@@ -1,8 +1,26 @@
-<button mat-button [matMenuTriggerFor]="branchesMenu" class="menu-button">
-    {{selectedBranch}}
-    <mat-icon>arrow_drop_down</mat-icon>
-</button>
+<div class="branch-switcher-container">
+  <button mat-button [matMenuTriggerFor]="branchesMenu" class="cyber-switcher">
+    <div class="status-indicator">
+      <span class="pulse-dot"></span>
+    </div>
+    
+    <div class="label-group">
+      <span class="prefix">CURRENT BRANCH</span>
+      <span class="branch-name">{{ selectedBranchName }}</span>
+    </div>
 
-<mat-menu #branchesMenu="matMenu">
-    <button *ngFor="let branch of branches" mat-menu-item (click)="selectBranch(branch)">{{ branch.name }}</button>
-</mat-menu>
+    <mat-icon class="chevron">expand_more</mat-icon>
+  </button>
+
+  <mat-menu #branchesMenu="matMenu" class="cyber-dropdown">
+    <div class="menu-header">Available Branches</div>
+    <button *ngFor="let branch of branches" mat-menu-item (click)="selectBranch(branch)" class="cyber-menu-item">
+      <mat-icon>location_on</mat-icon>
+      <span>{{ branch.name }}</span>
+    </button>
+    
+    <div *ngIf="branches.length === 0" class="no-branches">
+      No branches found for this business.
+    </div>
+  </mat-menu>
+</div>

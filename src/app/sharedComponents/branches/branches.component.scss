@@ -1,0 +1,125 @@
+@use 'sass:color';
+
+$primary: #3b82f6;
+$bg-dark: #0f172a;
+$text-dim: #94a3b8;
+$glass-bg: rgba(30, 41, 59, 0.7);
+
+.branch-switcher-container {
+  display: flex;
+  align-items: center;
+}
+
+.cyber-switcher {
+  background: $glass-bg !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  height: 48px !important;
+  padding: 0 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border-color: rgba($primary, 0.5) !important;
+    box-shadow: 0 0 20px rgba($primary, 0.2);
+  }
+
+  .status-indicator {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    
+    .pulse-dot {
+      width: 8px; height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+      animation: pulse 2s infinite;
+    }
+  }
+
+  .label-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+    margin-right: 8px;
+
+    .prefix {
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: $primary;
+      letter-spacing: 1px;
+    }
+
+    .branch-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .chevron {
+    color: $text-dim;
+    margin-left: auto;
+    transition: transform 0.3s;
+  }
+}
+
+// Global Menu Styling (Use ::ng-deep if needed, or put in styles.scss)
+::ng-deep .cyber-dropdown {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  margin-top: 8px !important;
+  min-width: 220px !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+
+  .menu-header {
+    padding: 12px 16px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: $primary;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .cyber-menu-item {
+    color: white !important;
+    font-size: 0.9rem !important;
+    padding: 12px 16px !important;
+    
+    mat-icon {
+      color: $text-dim;
+      font-size: 18px;
+      width: 18px; height: 18px;
+    }
+
+    &:hover {
+      background: rgba($primary, 0.1) !important;
+      color: $primary !important;
+      mat-icon { color: $primary; }
+    }
+  }
+
+  .no-branches {
+    padding: 16px;
+    font-size: 0.8rem;
+    color: $text-dim;
+    text-align: center;
+  }
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}

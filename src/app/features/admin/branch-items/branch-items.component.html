@@ -1,21 +1,41 @@
-<div class="page">
+<div class="dashboard-wrapper">
+  
+  <header class="dashboard-header">
+    <div class="branch-meta">
+      <span class="indicator"></span>
+      <h1>SYSTEM MONITOR <small>BRANCH_ID: {{ branchId.slice(-6) }}</small></h1>
+    </div>
+    
+    <button class="add-toggle-btn" [class.cancel]="addItemMode" (click)="addItemMode = !addItemMode">
+      <span class="material-icons">{{ addItemMode ? 'close' : 'add' }}</span>
+      {{ addItemMode ? 'CLOSE FORM' : 'ADD NEW STATION' }}
+    </button>
+  </header>
 
-  <!-- LIVE TIMES (NOW CONTROLS ITEMS) -->
-  <app-live-times
-    [items]="items"
-    (itemsChanged)="getItemsByBranch()"
-  ></app-live-times>
+  <div class="add-container" *ngIf="addItemMode">
+    <app-add-item (itemAdded)="onItemAdded()"></app-add-item>
+  </div>
 
-  <button (click)="addItemMode = !addItemMode">Add item</button>
+  <section class="live-section">
+    <div class="section-tag">REAL-TIME STATUS</div>
+    
+    <div class="empty-state" *ngIf="items.length === 0">
+      <span class="material-icons">inventory_2</span>
+      <p>No active stations detected in this branch.</p>
+    </div>
 
-  <app-add-item
-    *ngIf="addItemMode"
-    (itemAdded)="onItemAdded()"
-  ></app-add-item>
+    <app-live-times
+      *ngIf="items.length > 0"
+      [items]="items"
+      (itemsChanged)="getItemsByBranch()"
+    ></app-live-times>
+  </section>
 
-  <p class="empty" *ngIf="items.length === 0">
-    No items found for this branch.
-  </p>
+  <section class="log-section">
+    <div class="section-tag">RESERVATION ARCHIVE</div>
+    <div class="log-card">
+      <app-items-all-reservations [itemsIds]="itemIds"></app-items-all-reservations>
+    </div>
+  </section>
+  
 </div>
-
-<app-items-all-reservations [itemsIds]="itemIds"></app-items-all-reservations>

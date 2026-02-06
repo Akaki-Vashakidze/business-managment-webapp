@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { BranchItem } from '../../../interfaces/shared-interfaces';
-import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { ItemsService } from '../../auth/services/items.service';
-import { AddItemComponent } from "../add-item/add-item.component";
 import { BranchesService } from '../../auth/services/branches.service';
+
+// Child Components
+import { AddItemComponent } from "../add-item/add-item.component";
 import { ItemsWholeReservesComponent } from "../items-whole-reserves/items-all-reservations.component";
 import { LiveTimesComponent } from "../../../live-times/live-times.component";
 
@@ -29,30 +30,38 @@ import { LiveTimesComponent } from "../../../live-times/live-times.component";
 export class BranchItemsComponent {
 
   addItemMode = false;
-  branchId!: string;
+  branchId: string = '';
   items: BranchItem[] = [];
   itemIds: string[] = [];
 
   constructor(
     private itemsService: ItemsService,
-    private snackbar: SnackbarService,
     private branchService: BranchesService
   ) {
-    branchService.selectedBranch.subscribe(branch => {
-        this.branchId = branch?._id || '';
-      this.getItemsByBranch();
+    // Listen for branch changes and fetch items automatically
+    this.branchService.selectedBranch.subscribe(branch => {
+      if (branch) {
+        this.branchId = branch._id || '';
+        this.getItemsByBranch();
+      }
     });
   }
 
   getItemsByBranch() {
-    this.itemsService.getItemsByBranch(this.branchId).subscribe(items => {
-      this.items = items || [];
-      this.itemIds = this.items.map(i => i._id);
+    if (!this.branchId) return;
+    
+    this.itemsService.getItemsByBranch(this.branchId).subscribe({
+      next: (items) => {
+        this.items = items || [];
+        // Update itemIds so the global reservations component refreshes
+        this.itemIds = this.items.map(i => i._id);
+      },
+      error: (err) => console.error('Failed to load items', err)
     });
   }
 
   onItemAdded() {
-    this.addItemMode = false;
-    this.getItemsByBranch();
+    this.addItemMode = false; // Hide form after success
+    this.getItemsByBranch(); // Refresh list
   }
 }

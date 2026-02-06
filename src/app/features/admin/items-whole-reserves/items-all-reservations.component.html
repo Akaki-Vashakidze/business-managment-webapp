@@ -1,72 +1,73 @@
-<div class="reservation-container">
-
-  <h3>Open Slots</h3>
-
-  <label>User</label>
-  <select [(ngModel)]="selectedUser">
-    <option value="">Select user</option>
-    <option *ngFor="let user of users" [value]="user._id">
-      {{ user.fullName }}
-    </option>
-  </select>
-
-  <!-- QUICK DATE SELECT -->
-  <label>Quick date</label>
-  <div class="quick-dates">
-    <label>
-      <input
-        type="checkbox"
-        [checked]="quickDate === 'today'"
-        (change)="setQuickDate('today')"
-      />
-      Today
-    </label>
-
-    <label>
-      <input
-        type="checkbox"
-        [checked]="quickDate === 'tomorrow'"
-        (change)="setQuickDate('tomorrow')"
-      />
-      Tomorrow
-    </label>
-
-    <label>
-      <input
-        type="checkbox"
-        [checked]="quickDate === 'dayAfter'"
-        (change)="setQuickDate('dayAfter')"
-      />
-      Day after tomorrow
-    </label>
+<div class="reservation-card glass-panel">
+  <div class="card-header">
+    <span class="material-icons">event_available</span>
+    <h3>Instant Reservation</h3>
   </div>
 
-  <label>Date</label>
-  <input
-    type="date"
-    [(ngModel)]="selectedDate"
-    (change)="onManualDateChange()"
-    [disabled]="quickDate !== null"
-    [class.faded]="quickDate !== null"
-  />
+  <div class="reservation-body">
+    <div class="input-group">
+      <label><span class="material-icons">person</span> Customer</label>
+      <select [(ngModel)]="selectedUser" class="cyber-input">
+        <option value="">Guest User</option>
+        <option *ngFor="let user of users" [value]="user._id">
+          {{ user.fullName }}
+        </option>
+      </select>
+    </div>
 
-  <div class="slots-grid">
-    <div 
-      *ngFor="let slot of timeSlots" 
-      class="slot" 
-      [class.free]="slot.free" 
-      [class.busy]="!slot.free"
-      [class.selected]="slot.selected"
-      (click)="selectSlot(slot)"
-    >
-      {{ slot.label }}
+    <div class="input-group">
+      <label><span class="material-icons">bolt</span> Quick Select</label>
+      <div class="quick-date-chips">
+        <button [class.active]="quickDate === 'today'" (click)="setQuickDate('today')">Today</button>
+        <button [class.active]="quickDate === 'tomorrow'" (click)="setQuickDate('tomorrow')">Tomorrow</button>
+        <button [class.active]="quickDate === 'dayAfter'" (click)="setQuickDate('dayAfter')">Upcoming</button>
+      </div>
+    </div>
+
+    <div class="input-group" [class.faded]="quickDate !== null">
+      <label><span class="material-icons">calendar_today</span> Specific Date</label>
+      <input
+        type="date"
+        [(ngModel)]="selectedDate"
+        (change)="onManualDateChange()"
+        [disabled]="quickDate !== null"
+        class="cyber-input"
+      />
+    </div>
+
+    <div class="slots-section">
+      <div class="section-label">
+        <label>Select Time Range</label>
+        <span class="hint">Tap start & end time</span>
+      </div>
+      
+      <div class="slots-grid-container">
+        <div class="slots-grid">
+          <div 
+            *ngFor="let slot of timeSlots" 
+            class="slot-pill" 
+            [class.free]="slot.free" 
+            [class.busy]="!slot.free"
+            [class.selected]="slot.selected"
+            (click)="selectSlot(slot)"
+          >
+            <span class="time">{{ slot.label.split(' - ')[0] }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reservation-footer">
+      <label class="paid-toggle">
+        <input type="checkbox" [(ngModel)]="isPaid" />
+        <span class="toggle-box"></span>
+        <span class="toggle-text">Payment Received</span>
+      </label>
+
+      <button class="btn-reserve" (click)="reserveSelected()">
+        <span class="material-icons">add_task</span>
+        Confirm Reservation
+      </button>
     </div>
   </div>
-
-  <label style="margin-bottom: 20px;">
-  <input type="checkbox" [(ngModel)]="isPaid" />
-  Mark as paid
-</label>
-  <button (click)="reserveSelected()">Reserve Selected Slot</button>
-
 </div>

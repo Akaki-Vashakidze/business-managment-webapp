@@ -1,5 +1,5 @@
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -12,38 +12,34 @@ import { BusinessesComponent } from "../businesses/businesses.component";
 
 @Component({
   selector: 'app-admin-header',
-  imports: [CommonModule, MatButtonModule, TranslateModule, BusinessesComponent, RouterModule, BranchesComponent, AdminSettingsComponent],
+  standalone: true,
+  imports: [
+    CommonModule, 
+    MatButtonModule, 
+    TranslateModule, 
+    BusinessesComponent, 
+    RouterModule, 
+    BranchesComponent, 
+    AdminSettingsComponent
+  ],
   templateUrl: './adminHeader.component.html',
   styleUrl: './adminHeader.component.scss'
 })
-export class AdminHeaderComponent {
-  lang: string = 'en'
+export class AdminHeaderComponent implements OnDestroy {
   user: any;
   private destroy$ = new Subject<void>();
-  constructor(private translateService: TranslateService, private authService: AuthService, private userService: UserService, private router: Router) {
-    try {
-      const storedUser = localStorage.getItem('businesManagement_user');
-      this.user = storedUser ? JSON.parse(storedUser) : null;
-      console.log(this.user)
-    } catch (error) {
-      console.error('Failed to parse user from localStorage:', error);
-      this.user = null;
-    }
-    
-    this.userService.user$.subscribe(item => {
-      this.user = item;
-    });
 
+  constructor(
+    private translateService: TranslateService, 
+    private authService: AuthService, 
+    private userService: UserService, 
+    private router: Router
+  ) {
     this.userService.user$
       .pipe(takeUntil(this.destroy$))
       .subscribe(item => {
         this.user = item;
-        console.log('Header User Update:', this.user);
       });
-  }
-  changeLang(event: any) {
-    let lang = event.target.value
-    this.translateService.use(lang);
   }
 
   logOut(): void {
@@ -54,9 +50,6 @@ export class AdminHeaderComponent {
           this.userService.setUser(null);
           localStorage.removeItem('businesManagement_user');
           localStorage.removeItem('businesManagement_token');
-          localStorage.removeItem('businesManagement_role');
-          localStorage.removeItem('businesManagement_selectedBranch');
-          localStorage.removeItem('businesManagement_selectedBusiness');
           this.router.navigate(['/login']);
         }
       });

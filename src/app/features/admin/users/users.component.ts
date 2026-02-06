@@ -115,6 +115,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   onSearchChange() {
+    console.log(this.searchTerm)
     this.searchSubject.next(this.searchTerm);
   }
 

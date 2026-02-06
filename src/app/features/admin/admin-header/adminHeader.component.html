@@ -1,16 +1,33 @@
 <div class="header_container">
-    <!-- <div class="lang_select_cont">
-        <select (change)="changeLang($event)" class="main_select">
-            <option value="en">En</option>
-            <option value="ka">Ge</option>
-        </select>
-    </div> -->
-    <div class="auth_cont">
-        <button routerLink="/login" *ngIf="!user" class="auth_buttons main_button">{{'login' | translate}}</button>
-        <button (click)="logOut()" *ngIf="user" class="auth_buttons main_button">{{'logout' | translate}}</button>
-        <button routerLink="/signup" *ngIf="!user" class="auth_buttons main_button">{{'signUp' | translate}}</button>
+    <div class="brand_section" routerLink="/admin/branchItems">
+        <div class="logo_glow">BM</div>
+        <span class="brand_name">ADMIN</span>
     </div>
-    <app-businesses *ngIf="user"></app-businesses>
-    <app-branches *ngIf="user"></app-branches>
-    <app-admin-settings *ngIf="user"></app-admin-settings>
+
+    <div class="hud_controls" *ngIf="user">
+        <div class="hud_item">
+            <label>BUSINESS</label>
+            <app-businesses></app-businesses>
+        </div>
+        <div class="hud_divider"></div>
+        <div class="hud_item">
+            <label>BRANCH</label>
+            <app-branches></app-branches>
+        </div>
+    </div>
+
+    <div class="auth_cont">
+        <ng-container *ngIf="user; else guestButtons">
+            <app-admin-settings></app-admin-settings>
+            <button (click)="logOut()" class="auth_buttons logout_btn">
+                <span class="material-icons">power_settings_new</span>
+                <span class="btn_text">LOGOUT</span>
+            </button>
+        </ng-container>
+
+        <ng-template #guestButtons>
+            <button routerLink="/login" class="auth_buttons login_btn">LOGIN</button>
+            <button routerLink="/signup" class="auth_buttons signup_btn">SIGN UP</button>
+        </ng-template>
+    </div>
 </div>

@@ -1,0 +1,94 @@
+$primary: #3b82f6;
+$bg-dark: #0f172a;
+$text-dim: #94a3b8;
+
+.business-selector-wrapper {
+  display: inline-block;
+}
+
+.cyber-select-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
+  height: auto !important;
+  line-height: 1.2 !important;
+  transition: all 0.3s ease !important;
+
+  &:hover {
+    background: rgba($primary, 0.1) !important;
+    border-color: rgba($primary, 0.4) !important;
+  }
+
+  &.has-selection {
+    border-color: rgba($primary, 0.2);
+    .selected-text { color: white; }
+  }
+
+  .btn-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    margin-right: 12px;
+
+    .context-label {
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: $primary;
+      letter-spacing: 1px;
+    }
+
+    .selected-text {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $text-dim;
+    }
+  }
+
+  .chevron {
+    color: $text-dim;
+    transition: transform 0.3s;
+  }
+}
+
+/* Menu Customization */
+::ng-deep .cyber-menu-panel {
+  background: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px !important;
+  margin-top: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+
+  .menu-header {
+    padding: 12px 16px;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: $primary;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    letter-spacing: 1px;
+  }
+
+  .cyber-menu-item {
+    color: #e2e8f0 !important;
+    font-size: 0.9rem !important;
+    margin: 4px 8px;
+    border-radius: 8px;
+    width: calc(100% - 16px);
+
+    mat-icon {
+      color: $text-dim;
+      margin-right: 8px;
+    }
+
+    &:hover {
+      background: rgba($primary, 0.1) !important;
+    }
+
+    &.active-item {
+      background: rgba($primary, 0.2) !important;
+      color: $primary !important;
+      mat-icon { color: $primary; }
+    }
+  }
+}

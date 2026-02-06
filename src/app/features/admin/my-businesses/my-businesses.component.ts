@@ -1,28 +1,48 @@
-import { Component } from '@angular/core';
-import { BusinessService } from '../../auth/services/business.service';
-import { MatCardModule } from '@angular/material/card';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Business } from '../../../interfaces/shared-interfaces';
 import { FormsModule } from '@angular/forms';
-import { SnackbarService } from '../../auth/services/snack-bar.service';
+
+// Material Imports
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+
+// Services & Components
+import { BusinessService } from '../../auth/services/business.service';
 import { BranchesService } from '../../auth/services/branches.service';
+import { SnackbarService } from '../../auth/services/snack-bar.service';
+import { Business } from '../../../interfaces/shared-interfaces';
 import { AddBusinessComponent } from '../add-business/add-business.component';
 
 @Component({
   selector: 'app-my-businesses',
-  imports: [MatCardModule, CommonModule, FormsModule, MatIconModule, AddBusinessComponent],
+  standalone: true,
+  imports: [
+    MatCardModule, 
+    CommonModule, 
+    FormsModule, 
+    MatIconModule, 
+    MatButtonModule,
+    AddBusinessComponent
+  ],
   templateUrl: './my-businesses.component.html',
   styleUrl: './my-businesses.component.scss'
 })
-export class MyBusinessesComponent {
+export class MyBusinessesComponent implements OnInit {
   myBusinesses: Business[] = [];
   addBranchMode: number = -1;
-  branchName:string = '';
+  branchName: string = '';
   addBusinessMode: boolean = false;
-  businessUpdatedName:string = '';
-  updateModeOn:number = -1;
-  constructor(private businessService: BusinessService, private branchService:BranchesService,private snackbarService:SnackbarService) {
+  businessUpdatedName: string = '';
+  updateModeOn: number = -1;
+
+  constructor(
+    private businessService: BusinessService, 
+    private branchService: BranchesService,
+    private snackbarService: SnackbarService
+  ) {}
+
+  ngOnInit() {
     this.getAllMyBusinesses();
   }
 
@@ -30,70 +50,63 @@ export class MyBusinessesComponent {
     this.businessService.getAllMyBusinesses().subscribe((businesses: Business[]) => {
       this.myBusinesses = businesses || [];
     });
-  } 
+  }
 
-  onBusinessAdded(event:Event){
+  onBusinessAdded(event: any) {
     this.addBusinessMode = false;
     this.getAllMyBusinesses();
   }
 
-  addBranchModeOn(index:number){
+  addBranchModeOn(index: number) {
     this.addBranchMode = index;
     this.updateModeOn = -1;
+    this.branchName = '';
   }
 
-  closeModes(){
+  onUpdateModeChange(index: number) {
+    this.updateModeOn = index;
+    this.addBranchMode = -1;
+    this.businessUpdatedName = this.myBusinesses[index - 1].name;
+  }
+
+  closeModes() {
     this.addBranchMode = -1;
     this.updateModeOn = -1;
   }
 
   addBranchToBusiness(businessId: string) {
-    console.log('Add branch to business with ID:', businessId);
-    this.addBranchMode = -1;
+    if (!this.branchName.trim()) return;
     this.branchService.createBranch(this.branchName, businessId).subscribe({
-      next: (response) => {
-        console.log('Branch added successfully:', response);
-        this.branchName = '';
+      next: () => {
         this.snackbarService.success('Branch added successfully');
+        this.branchName = '';
+        this.closeModes();
         this.branchService.onBranchesUpdate();
-      },
-      error: (error) => {
-        console.error('Error adding branch:', error);
       }
     });
   }
 
-  onUpdateModeChange(index:number){
-    this.updateModeOn = index;
-    this.addBranchMode = -1;
-  }
-
-  updateBusiness(businessId: string, name: string = 'Updated Business Name') {
-    console.log('Edit business with ID:', businessId);
+  updateBusiness(businessId: string, name: string) {
+    if (!name.trim()) return;
     this.businessService.updateBusiness(businessId, name).subscribe({
-      next: (response) => {
-        console.log('Business updated successfully:', response);
+      next: () => {
+        this.snackbarService.success('Business renamed');
         this.getAllMyBusinesses();
-        this.snackbarService.success('Business updated successfully');
-      },
-      error: (error) => {
-        console.error('Error updating business:', error);
+        this.closeModes();
+        this.businessService.onBusinessesUpdated();
       }
     });
   }
-  
+
   deletebusiness(businessId: string) {
-    console.log('Delete business with ID:', businessId);    
-    this.businessService.deletebusiness(businessId).subscribe({
-      next: (response) => {
-        console.log('Business deleted successfully:', response);
-        this.snackbarService.success('Business deleted successfully');
-        this.businessService.onBusinessesUpdated();
-        this.getAllMyBusinesses()
-      },
-      error: (error) => {
-        console.error('Error deleting business:', error);
-      }
-    });
+    if (confirm('Are you sure? This will delete all branches associated with this business.')) {
+      this.businessService.deletebusiness(businessId).subscribe({
+        next: () => {
+          this.snackbarService.success('Business deleted');
+          this.businessService.onBusinessesUpdated();
+          this.getAllMyBusinesses();
+        }
+      });
+    }
   }
 }

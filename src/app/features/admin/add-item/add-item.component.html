@@ -1,29 +1,47 @@
-<mat-card class="item-card">
-  <h2>Add item</h2>
+<div class="cyber-add-container">
+  <div class="glass-panel">
+    
+    <div class="panel-header">
+      <div class="header-icon">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2>CREATE NEW ITEM</h2>
+        <p>Deployment for Branch: {{ branchId ? branchId.slice(-6) : 'N/A' }}</p>
+      </div>
+    </div>
 
-  <form [formGroup]="itemForm" (ngSubmit)="submit()">
+    <form [formGroup]="itemForm" (ngSubmit)="submit()" class="cyber-form">
+      <div class="input-wrapper">
+        <label for="itemName">RESOURCE NAME</label>
+        <div class="input-container" [class.error]="itemForm.controls.name.invalid && itemForm.controls.name.touched">
+          <input 
+            id="itemName"
+            type="text" 
+            formControlName="name" 
+            placeholder="Ex: PlayStation 5 - Zone A"
+            autocomplete="off"
+          />
+          <span class="focus-border"></span>
+        </div>
+        
+        <div class="error-shelf">
+          <small *ngIf="itemForm.controls.name.touched && itemForm.controls.name.hasError('required')">Protocol Error: Name is required</small>
+          <small *ngIf="itemForm.controls.name.touched && itemForm.controls.name.hasError('minlength')">Signal Weak: Min 2 characters needed</small>
+        </div>
+      </div>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Item name</mat-label>
-      <input matInput formControlName="name" />
+      <button 
+        type="submit" 
+        class="cyber-btn" 
+        [disabled]="itemForm.invalid"
+      >
+        <span class="btn-content">
+          <mat-icon>add_box</mat-icon>
+          INITIALIZE ITEM
+        </span>
+      </button>
+    </form>
 
-      <mat-error *ngIf="itemForm.controls.name.hasError('required')">
-        Name is required
-      </mat-error>
-
-      <mat-error *ngIf="itemForm.controls.name.hasError('minlength')">
-        Minimum 2 characters
-      </mat-error>
-    </mat-form-field>
-
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="itemForm.invalid"
-    >
-      Add item
-    </button>
-
-  </form>
-</mat-card>
+  </div>
+</div>

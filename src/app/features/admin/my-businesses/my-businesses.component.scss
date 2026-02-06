@@ -1,41 +1,107 @@
-.page {
-  padding: 24px;
+@use 'sass:color'; // Needed for modern Sass functions
+
+$primary: #3b82f6;
+$bg-dark: #0f172a;
+$card-dark: #1e293b;
+$text-dim: #94a3b8;
+$danger: #ef4444;
+
+.workspace-wrapper {
+  padding: 40px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 24px;
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  h1 { font-size: 2rem; font-weight: 800; color: white; margin: 0; }
+  p { color: $text-dim; margin-top: 4px; }
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-}
-
-.business-card {
-  border-radius: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+.add-biz-btn {
+  background: $primary; color: white; border: none; padding: 12px 24px;
+  border-radius: 12px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; transition: 0.3s;
+  box-shadow: 0 4px 14px rgba($primary, 0.4);
+  
+  &.cancel { background: #334155; box-shadow: none; }
+  &:hover { 
+    transform: translateY(-2px); 
+    // Fix for your Warning: instead of lighten($primary, 5%)
+    background: color.mix(white, $primary, 10%); 
   }
 }
 
-.description {
-  color: #666;
-  font-size: 14px;
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
 }
 
-.empty {
-  margin-top: 40px;
-  text-align: center;
-  color: #999;
+.biz-card {
+  background: $card-dark !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 24px !important;
+  overflow: hidden;
+  position: relative;
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover { border-color: rgba($primary, 0.5); transform: translateY(-4px); }
 }
 
-.hoverGray:hover {
-  background-color: gray;
+.card-content-area { padding: 24px; }
+
+.biz-badge {
+  width: 44px; height: 44px; background: rgba($primary, 0.1);
+  color: $primary; border-radius: 12px; display: flex;
+  align-items: center; justify-content: center; margin-bottom: 20px;
+}
+
+mat-card-title { font-weight: 800 !important; color: white !important; font-size: 1.25rem !important; }
+mat-card-subtitle { color: $text-dim !important; font-family: monospace; }
+.description { color: $text-dim; font-size: 0.85rem; line-height: 1.5; margin: 16px 0; }
+
+.biz-actions {
+  background: rgba(0, 0, 0, 0.2); padding: 8px 16px !important;
+  display: flex; justify-content: flex-end; gap: 4px;
+  button { color: $text-dim; &:hover { color: $primary; background: rgba(255,255,255,0.05); } }
+  .btn-delete:hover { color: $danger; }
+}
+
+/* Slide-up Drawer System */
+.action-drawer {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: $card-dark; z-index: 10; padding: 30px 24px;
+  transform: translateY(100%); transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column; justify-content: center;
+
+  &.is-open { transform: translateY(0); }
+
+  .drawer-close {
+    position: absolute; top: 16px; right: 16px; 
+    background: none; border: none; color: $text-dim; cursor: pointer;
+  }
+
+  label { font-size: 0.65rem; font-weight: 900; color: $primary; 
+          text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px; }
+
+  .custom-input-group {
+    display: flex; gap: 8px;
+    input { 
+      flex: 1; background: #0f172a; border: 1px solid #334155; color: white;
+      padding: 10px; border-radius: 10px; outline: none; &:focus { border-color: $primary; }
+    }
+    button { 
+      background: $primary; color: white; border: none; padding: 0 16px; 
+      border-radius: 10px; font-weight: 700; cursor: pointer;
+    }
+  }
+}
+
+.empty-state {
+  text-align: center; margin-top: 100px; color: $text-dim;
+  .huge-icon { font-size: 4rem; width: 4rem; height: 4rem; opacity: 0.2; margin-bottom: 20px; }
+  h3 { color: white; margin-bottom: 8px; }
 }

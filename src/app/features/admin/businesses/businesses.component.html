@@ -1,13 +1,28 @@
+<div class="business-selector-wrapper">
+  <button
+    mat-button
+    [matMenuTriggerFor]="businessesMenu"
+    class="cyber-select-btn"
+    [class.has-selection]="selectedBusiness !== 'ბიზნესები'"
+  >
+    <div class="btn-content">
+      <span class="context-label">CURRENT BUSINESS</span>
+      <span class="selected-text">{{ selectedBusiness }}</span>
+    </div>
+    <mat-icon class="chevron">expand_more</mat-icon>
+  </button>
 
-<button
-mat-button
-[matMenuTriggerFor]="businessesMenu"
-class="menu-button"
->
-{{selectedBusiness}}
-<mat-icon>arrow_drop_down</mat-icon>
-</button>
-
-<mat-menu #businessesMenu="matMenu">
-    <button *ngFor="let business of businesses" (click)="selectBusiness(business)" mat-menu-item>{{ business.name }}</button>
-</mat-menu>
+  <mat-menu #businessesMenu="matMenu" class="cyber-menu-panel">
+    <div class="menu-header">SELECT WORKSPACE</div>
+    <button 
+      *ngFor="let business of businesses" 
+      (click)="selectBusiness(business)" 
+      mat-menu-item
+      class="cyber-menu-item"
+      [class.active-item]="business.name === selectedBusiness"
+    >
+      <mat-icon>business_center</mat-icon>
+      <span>{{ business.name }}</span>
+    </button>
+  </mat-menu>
+</div>

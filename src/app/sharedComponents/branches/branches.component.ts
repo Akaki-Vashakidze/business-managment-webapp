@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,38 +15,48 @@ import { Router } from '@angular/router';
   templateUrl: './branches.component.html',
   styleUrl: './branches.component.scss'
 })
-export class BranchesComponent {
+export class BranchesComponent implements OnInit {
   branches: Branch[] = [];
-  selectedBranch: string = 'ფილიალები';
+  selectedBranchName: string = 'Select Branch';
   selectedBusinessId: string = '';
-  constructor(private businessService:BusinessService, private router:Router, private branchservice:BranchesService) {
-    branchservice.selectedBranch.subscribe(branch => {
-      this.selectedBranch = branch?.name || 'ფილიალები'; 
-    })
 
-    businessService.businessSelected.subscribe(item => {
-      this.selectedBusinessId = item?._id || '';
-      this.getBusinessBranches()
+  constructor(
+    private businessService: BusinessService, 
+    private router: Router, 
+    private branchService: BranchesService
+  ) {}
+
+  ngOnInit() {
+    // 1. Listen for Branch selection changes
+    this.branchService.selectedBranch.subscribe(branch => {
+      this.selectedBranchName = branch?.name || 'Select Branch'; 
     });
 
-    branchservice.BranchesUpdate.subscribe(item => {
+    // 2. Listen for Business selection (to load relevant branches)
+    this.businessService.businessSelected.subscribe(business => {
+      if (business) {
+        this.selectedBusinessId = business._id;
+        this.getBusinessBranches();
+      }
+    });
+
+    // 3. Listen for manual updates (from Add Branch component)
+    this.branchService.BranchesUpdate.subscribe(() => {
       this.getBusinessBranches(); 
-    })
+    });
   }   
   
-  selectBranch(branch:Branch){
+  selectBranch(branch: Branch) {
     localStorage.setItem('businesManagement_selectedBranch', JSON.stringify(branch));
-    this.selectedBranch = branch.name;
+    this.branchService.onSelectedBranch(branch);
     this.router.navigate(['/admin/branchItems']);
-    this.branchservice.onSelectedBranch(branch);
   }
 
-  getBusinessBranches(){
-    if(this.selectedBusinessId){
-      this.branchservice.getBranchesByBusiness(this.selectedBusinessId).subscribe((branches:any) => {
-        this.branches = branches;
+  getBusinessBranches() {
+    if (this.selectedBusinessId) {
+      this.branchService.getBranchesByBusiness(this.selectedBusinessId).subscribe((branches: any) => {
+        this.branches = branches || [];
       });
     }
   }
-} 
-    
+}

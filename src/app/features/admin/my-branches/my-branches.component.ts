@@ -1,8 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { BranchesService } from '../../auth/services/branches.service';
@@ -22,22 +23,20 @@ export interface Branch {
     FormsModule,
     MatCardModule,
     MatIconModule,
+    MatButtonModule,
     AddBranchesComponent
   ],
   templateUrl: './my-branches.component.html',
   styleUrl: './my-branches.component.scss'
 })
-export class MyBranchesComponent {
+export class MyBranchesComponent implements OnInit {
 
-  @Input() businessId!: string; // 👈 branches belong to business
-
+  @Input() businessId!: string; 
   branches: Branch[] = [];
 
-  addItemMode = false;
-  addBranchMode:boolean = false;
-  updateModeOn = -1;
-  branchName = '';
-  updatedBranchName = '';
+  addBranchMode: boolean = false;
+  updateModeOn: number = -1;
+  updatedBranchName: string = '';
 
   constructor(
     private branchesService: BranchesService,
@@ -54,12 +53,8 @@ export class MyBranchesComponent {
     });
   }
 
-  onBranchAdded(event:any) {
-    this.addBranchMode = false;
-    this.getBranchesByBusiness();
-  }
-
   getBranchesByBusiness() {
+    if (!this.businessId) return;
     this.branchesService.getBranchesByBusiness(this.businessId).subscribe(
       (branches: Branch[]) => {
         this.branches = branches || [];
@@ -67,53 +62,44 @@ export class MyBranchesComponent {
     );
   }
 
-  openAddBranch() {
-    this.addItemMode = !this.addItemMode;
-    this.updateModeOn = -1;
+  onBranchAdded() {
+    this.addBranchMode = false;
+    this.getBranchesByBusiness();
+  }
+
+  onUpdateModeChange(index: number, currentName: string) {
+    this.updateModeOn = index;
+    this.updatedBranchName = currentName;
   }
 
   closeModes() {
-    this.addItemMode = false;
+    this.addBranchMode = false;
     this.updateModeOn = -1;
   }
 
-  onUpdateModeChange(index: number) {
-    this.updateModeOn = index;
-    this.addItemMode = false;
-  }
-
-  addBranch() {
-    this.branchesService.createBranch(this.branchName, this.businessId).subscribe({
-      next: () => {
-        this.branchName = '';
-        this.snackbarService.success('Branch added successfully');
-        this.branchesService.onBranchesUpdate();
-        this.getBranchesByBusiness();
-        this.closeModes();
-      },
-      error: (error) => console.error(error)
-    });
-  }
-
   updateBranch(branchId: string) {
+    if (!this.updatedBranchName.trim()) return;
     this.branchesService.updateBranch(branchId, this.updatedBranchName).subscribe({
       next: () => {
-        this.snackbarService.success('Branch updated');
+        this.snackbarService.success('Branch identity updated');
         this.getBranchesByBusiness();
         this.closeModes();
+        this.branchesService.onBranchesUpdate();
       },
       error: (error) => console.error(error)
     });
   }
 
   deleteBranch(branchId: string) {
-    this.branchesService.deleteBranch(branchId).subscribe({
-      next: () => {
-        this.snackbarService.success('Branch deleted');
-        this.branchesService.onBranchesUpdate();
-        this.getBranchesByBusiness();
-      },
-      error: (error) => console.error(error)
-    });
+    if (confirm('Are you sure? All items in this branch will be removed from view.')) {
+      this.branchesService.deleteBranch(branchId).subscribe({
+        next: () => {
+          this.snackbarService.success('Branch decommissioned');
+          this.branchesService.onBranchesUpdate();
+          this.getBranchesByBusiness();
+        },
+        error: (error) => console.error(error)
+      });
+    }
   }
 }

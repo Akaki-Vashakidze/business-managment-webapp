@@ -1,13 +1,128 @@
+$primary: #3b82f6;
+$bg-dark: #0f172a;
+$bg-card: #16213e;
+$danger: #e94560;
+$text-dim: #94a3b8;
+
 .header_container {
-    background-color: var(--secondary);
+    background-color: $bg-dark;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 10px;
+    padding: 10px 20px;
+    min-height: 70px;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    @media (max-width: 768px) {
+        padding: 10px;
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
-.lang_select_cont {
+/* Brand Styling */
+.brand_section {
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 12px;
+    cursor: pointer;
+
+    .logo_glow {
+        background: $primary;
+        color: white;
+        width: 35px; height: 35px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900;
+        box-shadow: 0 0 15px rgba($primary, 0.4);
+    }
+    .brand_name {
+        color: white;
+        font-weight: 800;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+        @media (max-width: 768px) { display: none; }
+    }
+}
+
+/* Central HUD Controls */
+.hud_controls {
+    display: flex;
+    background: $bg-card;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 5px 15px;
+    flex: 1;
+    max-width: 600px;
+    margin: 0 20px;
+
+    @media (max-width: 768px) {
+        margin: 0;
+        padding: 8px;
+    }
+
+    .hud_item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        
+        label {
+            font-size: 0.6rem;
+            color: $primary;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        ::ng-deep select {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            width: 100%;
+        }
+    }
+
+    .hud_divider {
+        width: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 5px 15px;
+    }
+}
+
+/* Auth Buttons */
+.auth_cont {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.auth_buttons {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.3s;
+    border: 1px solid transparent;
+
+    &.logout_btn {
+        background: rgba($danger, 0.1);
+        color: $danger;
+        border-color: rgba($danger, 0.2);
+        display: flex; align-items: center; gap: 8px;
+        
+        &:hover { background: $danger; color: white; }
+        .material-icons { font-size: 18px; }
+        @media (max-width: 480px) { .btn_text { display: none; } }
+    }
+
+    &.login_btn { color: white; background: transparent; }
+    &.signup_btn { background: $primary; color: white; border: none; }
 }

@@ -1,76 +1,78 @@
-<div class="live-container">
-  <h3>Live Item Status</h3>
+<div class="live-dashboard">
+  <div class="header-row">
+    <h3><span class="pulse-dot"></span> LIVE STATION MONITOR</h3>
+    <span class="system-time">SYNC_ACTIVE</span>
+  </div>
 
-  <div
-    class="item-card"
-    *ngFor="let item of itemStatuses; trackBy: trackByItemId"
-  >
-    <div class="item-name">{{ item.name }}</div>
-
-    <div class="status" [class.free]="!item.isBusy" [class.busy]="item.isBusy">
-      <ng-container *ngIf="!item.isBusy">
-        🟢 Free
-      </ng-container>
-
-      <ng-container *ngIf="item.isBusy">
-        🔴 Busy <br />
-        <div>
-          Ends at {{ item.endsAt }} <br />
-          {{ formatRemaining(item.remainingSeconds!) }}
+  <div class="monitor-grid">
+    <div
+      class="station-card"
+      *ngFor="let item of itemStatuses; trackBy: trackByItemId"
+      [class.busy-mode]="item.isBusy"
+    >
+      <div class="card-top">
+        <div class="station-info">
+          <span class="id-tag">ST-{{ item.itemId.slice(-4) }}</span>
+          <div class="name-wrapper" *ngIf="editItemId !== item.itemId">
+             <h4 class="station-name">{{ item.name }}</h4>
+          </div>
+          <div class="edit-inline" *ngIf="editItemId === item.itemId">
+            <input [(ngModel)]="updatedItemName" class="cyber-input-mini" />
+            <button class="save-icon" (click)="updateItem(item.itemId)"><span class="material-icons">check</span></button>
+            <button class="cancel-icon" (click)="cancelEdit()"><span class="material-icons">close</span></button>
+          </div>
         </div>
-      </ng-container>
+        
+        <div class="live-badge" [class.free]="!item.isBusy" [class.busy]="item.isBusy">
+          {{ item.isBusy ? 'OCCUPIED' : 'AVAILABLE' }}
+        </div>
+      </div>
 
-      <ng-container>
-        <small>
-            {{item.fullName}}
-        </small>
-      </ng-container>
+      <div class="card-mid">
+        <div class="timer-display" *ngIf="item.isBusy">
+          <div class="countdown">{{ formatRemaining(item.remainingSeconds!) }}</div>
+          <div class="ends-at">FINISH AT: {{ item.endsAt }}</div>
+        </div>
 
-        <ng-container>
-            <small>
-                {{item.mobile}}
-            </small>
-        </ng-container>
+        <div class="user-data" *ngIf="item.isBusy">
+          <div class="u-info">
+            <span class="material-icons">person</span>
+            <span class="u-name">{{ item.fullName || 'Anonymous' }}</span>
+          </div>
+          <div class="u-info">
+            <span class="material-icons">phone</span>
+            <span class="u-phone">{{ item.mobile || 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="idle-display" *ngIf="!item.isBusy">
+          <span class="material-icons">power_settings_new</span>
+          <p>READY FOR DEPLOYMENT</p>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <div class="primary-actions">
+          <button class="action-btn manage" (click)="onManageItemTime(item.itemId)" title="History">
+            <span class="material-icons">analytics</span>
+          </button>
+          <button class="action-btn edit" (click)="$event.stopPropagation(); startEdit(item)" title="Rename">
+            <span class="material-icons">edit_note</span>
+          </button>
+          <button class="action-btn delete" (click)="deleteItem(item.itemId)" title="Remove">
+            <span class="material-icons">delete_sweep</span>
+          </button>
+        </div>
+
+        <div class="payment-action">
+          <div class="status-pill paid" *ngIf="item.isPaid === 1">
+            <span class="material-icons">verified</span> PAID
+          </div>
+          <button class="pay-trigger" *ngIf="item.isBusy && item.isPaid === 0" (click)="markAsPaid(item)">
+            <span class="material-icons">payments</span> MARK AS PAID
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div class="action-buttons">
-      <button class="btn btn-primary"
-              (click)="onManageItemTime(item.itemId)">
-        Manage
-      </button>
-
-      <button class="btn btn-warning"
-              (click)="startEdit(item)">
-        Edit
-      </button>
-
-      <button class="btn btn-danger"
-              (click)="deleteItem(item.itemId)">
-        Delete
-      </button>
-
-
-    <button class="btn btn-neutral"
-              *ngIf="item.isPaid == 1">
-         paid
-    </button>
-
-      <button class="btn btn-neutral"
-              *ngIf="item.isBusy && item.isPaid == 0"
-              (click)="markAsPaid(item)">
-        Mark as paid
-      </button>
-    </div>
-
-    <div class="edit-row" *ngIf="editItemId === item.itemId">
-      <input
-        class="edit-input"
-        [(ngModel)]="updatedItemName"
-        placeholder="New name"
-      />
-      <button class="btn btn-primary" (click)="updateItem(item.itemId)">Save</button>
-      <button class="btn btn-neutral" (click)="cancelEdit()">Cancel</button>
-    </div>
-
   </div>
 </div>

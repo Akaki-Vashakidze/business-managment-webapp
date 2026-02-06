@@ -19,6 +19,13 @@ interface TimeSlot {
   selected: boolean;
 }
 
+interface DayInfo {
+  weekday: string;
+  dayNum: string;
+  month: string;
+  dateStr: string;
+}
+
 @Component({
   selector: 'app-item-management',
   standalone: true,
@@ -31,10 +38,10 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
 
   itemId!: string;
   users: User[] = [];
-  quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = 'today';
+  weekDays: DayInfo[] = []; // Holds the 7-day strip data
 
   reservation = {
-    user: '', // Empty string for "Unregistered"
+    user: '', 
     date: '',
     startHour: 0,
     startMinute: 0,
@@ -60,15 +67,20 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.itemId = this.route.snapshot.paramMap.get('id')!;
-    this.setDateByOffset(0);
+    
+    // 1. Initialize the 7-day calendar strip
+    this.generateWeek();
+    
+    // 2. Set default date to Today (first item in our weekDays array)
+    this.setDateByString(this.weekDays[0].dateStr);
 
-    // Context-aware initialization
+    // 3. Load business context and data
     this.businessService.businessSelected
       .pipe(takeUntil(this.destroy$))
       .subscribe(biz => {
         if (biz) {
           this.getAllUsers(biz._id);
-          this.loadReservations(); // Load data once business is confirmed
+          this.loadReservations();
         }
       });
   }
@@ -78,28 +90,36 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  getAllUsers(businessId: string) {
-    this.userService.getAllUsers(businessId).subscribe({
-      next: (u) => this.users = u,
-      error: () => this.snackbar.error('Could not load users')
-    });
+  /**
+   * Generates an array of the next 7 days for the horizontal scroller
+   */
+  generateWeek() {
+    const days: DayInfo[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      days.push({
+        weekday: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        dayNum: d.getDate().toString(),
+        month: d.toLocaleDateString('en-US', { month: 'short' }),
+        dateStr: d.toISOString().split('T')[0]
+      });
+    }
+    this.weekDays = days;
   }
 
-  setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter') {
-    this.quickDate = type;
-    const offset = type === 'today' ? 0 : type === 'tomorrow' ? 1 : 2;
-    this.setDateByOffset(offset);
-  }
-
-  setDateByOffset(days: number) {
-    const d = new Date();
-    d.setDate(d.getDate() + days);
-    this.reservation.date = d.toISOString().split('T')[0];
+  /**
+   * Sets the current reservation date and refreshes slots
+   */
+  setDateByString(dateStr: string) {
+    this.reservation.date = dateStr;
     this.onDateChange();
   }
 
+  /**
+   * Handles changes from the hidden native HTML5 date picker
+   */
   onManualDateChange() {
-    this.quickDate = null;
     this.onDateChange();
   }
 
@@ -109,8 +129,25 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
     this.buildSlots();
   }
 
+  getAllUsers(businessId: string) {
+    this.userService.getAllUsers(businessId).subscribe({
+      next: (u) => this.users = u,
+      error: () => this.snackbar.error('Could not load users')
+    });
+  }
+
+  loadReservations() {
+    this.itemManagementService
+      .getAllReservationsForItem(this.itemId)
+      .subscribe(res => {
+        this.allReservations = res;
+        this.onDateChange();
+      });
+  }
+
   filterDayReservations() {
     if (!this.reservation.date) return;
+    // We use toDateString to compare just the date parts without time interference
     const selectedDateStr = new Date(this.reservation.date).toDateString();
 
     this.dayReservations = this.allReservations.filter(r => 
@@ -120,12 +157,13 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
 
   buildSlots() {
     this.timeSlots = [];
-    // ⏱ 15-minute intervals (12:00 PM to 12:00 AM)
+    // Generating 15-minute intervals from 12:00 (720 mins) to 00:00 (1440 mins)
     for (let m = 12 * 60; m < 24 * 60; m += 15) {
       const end = m + 15;
       const reserved = this.dayReservations.some(r => {
         const rs = r.startHour * 60 + r.startMinute;
         const re = r.endHour * 60 + r.endMinute;
+        // Check for any overlap
         return m < re && end > rs;
       });
 
@@ -134,7 +172,7 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
         end,
         reserved,
         selected: false,
-        label: `${this.format(m)}`
+        label: this.format(m)
       });
     }
   }
@@ -142,7 +180,7 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
   selectSlot(slot: TimeSlot) {
     if (slot.reserved) return;
 
-    // Start a new selection
+    // Reset or start first point of selection
     if (!this.selectedStart || this.selectedEnd) {
       this.clearSelection();
       this.selectedStart = slot;
@@ -150,7 +188,7 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Prevents selecting a start time after an end time
+    // Logic for setting the end point
     if (slot.start <= this.selectedStart.start) {
       this.clearSelection();
       this.selectedStart = slot;
@@ -158,13 +196,13 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Check if any reserved slots exist between start and chosen end
+    // Collision check for the range
     const hasCollision = this.timeSlots.some(s =>
       s.reserved && s.start >= this.selectedStart!.start && s.end <= slot.end
     );
 
     if (hasCollision) {
-      this.snackbar.error('Selection overlaps with existing reservation');
+      this.snackbar.error('Overlap detected with another booking');
       return;
     }
 
@@ -174,6 +212,7 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
   }
 
   highlightRange() {
+    if (!this.selectedStart || !this.selectedEnd) return;
     this.timeSlots.forEach(s => {
       s.selected = s.start >= this.selectedStart!.start && s.end <= this.selectedEnd!.end;
     });
@@ -195,13 +234,13 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
 
   reserveItem() {
     if (!this.selectedStart || !this.selectedEnd) {
-      this.snackbar.error('Please select a time range');
+      this.snackbar.error('Select a time range first');
       return;
     }
 
     const payload = {
       item: this.itemId,
-      user: this.reservation.user || null, // API handles null as unregistered
+      user: this.reservation.user || null,
       date: this.reservation.date,
       startHour: this.reservation.startHour,
       startMinute: this.reservation.startMinute,
@@ -212,7 +251,7 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
 
     this.itemManagementService.reserveitem(payload).subscribe({
       next: () => {
-        this.snackbar.success('Reservation successful');
+        this.snackbar.success('Successfully reserved');
         this.loadReservations();
         this.clearSelection();
       },
@@ -224,15 +263,6 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
     const h = Math.floor(min / 60);
     const m = min % 60;
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  }
-
-  loadReservations() {
-    this.itemManagementService
-      .getAllReservationsForItem(this.itemId)
-      .subscribe(res => {
-        this.allReservations = res;
-        this.onDateChange();
-      });
   }
 
   get isSelectionComplete(): boolean {

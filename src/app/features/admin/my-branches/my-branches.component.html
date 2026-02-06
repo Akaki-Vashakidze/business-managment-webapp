@@ -1,61 +1,67 @@
-<div class="page">
-
-  <button (click)="addBranchMode = !addBranchMode">Add branch</button>
-
-    <div *ngIf="addBranchMode" >
-        <app-add-branches (branchAdded)="onBranchAdded($event)"></app-add-branches>
+<div class="workspace-wrapper">
+  
+  <header class="page-header">
+    <div class="title-meta">
+      <h1>Operational Branches</h1>
+      <p>Manage localized nodes and resource distribution.</p>
     </div>
+    <button class="add-btn" [class.cancel]="addBranchMode" (click)="addBranchMode = !addBranchMode">
+      <mat-icon>{{ addBranchMode ? 'close' : 'add_location' }}</mat-icon>
+      {{ addBranchMode ? 'Cancel' : 'New Branch' }}
+    </button>
+  </header>
 
-  <h2 class="title">Branches</h2>
+  <div class="form-reveal" *ngIf="addBranchMode">
+    <app-add-branches (branchAdded)="onBranchAdded()"></app-add-branches>
+  </div>
 
-  <div class="cards">
-    <mat-card class="branch-card" *ngFor="let branch of branches; let i = index">
+  <div class="branch-grid">
+    <mat-card class="node-card" *ngFor="let branch of branches; let i = index">
+      
+      <div class="card-body">
+        <div class="node-icon">
+          <mat-icon>location_on</mat-icon>
+        </div>
 
-      <mat-card-header>
-        <mat-card-title>{{ branch.name }}</mat-card-title>
-      </mat-card-header>
+        <mat-card-header>
+          <mat-card-title>{{ branch.name }}</mat-card-title>
+          <mat-card-subtitle>Node ID: {{ branch._id.slice(-6) }}</mat-card-subtitle>
+        </mat-card-header>
 
-      <mat-card-content>
-        <p class="description">
-          Manage branch items and settings
-        </p>
-      </mat-card-content>
+        <mat-card-content>
+          <p class="description">Active branch node. Manage specific inventory items and local settings.</p>
+        </mat-card-content>
+      </div>
 
-      <mat-card-actions align="end">
-        <button mat-button class="hoverGray" color="warn"
-                (click)="onUpdateModeChange(i + 1)">
-          Edit
+      <div class="action-drawer" [class.is-open]="updateModeOn === i + 1">
+        <button class="drawer-close" (click)="closeModes()">
+          <mat-icon>close</mat-icon>
         </button>
 
-        <button mat-button class="hoverGray" color="warn"
-                (click)="deleteBranch(branch._id)">
-          Delete
+        <div class="drawer-inner">
+          <label>Update Branch Name</label>
+          <div class="input-group">
+            <input [(ngModel)]="updatedBranchName" [placeholder]="branch.name" />
+            <button (click)="updateBranch(branch._id)">Save</button>
+          </div>
+        </div>
+      </div>
+
+      <mat-card-actions class="card-footer">
+        <button mat-icon-button (click)="onUpdateModeChange(i + 1, branch.name)" title="Edit Node">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button class="btn-delete" (click)="deleteBranch(branch._id)" title="Decommission">
+          <mat-icon>delete_outline</mat-icon>
         </button>
       </mat-card-actions>
-
-      <div>
-        <mat-icon *ngIf="updateModeOn > 0 || addBranchMode"
-                  (click)="closeModes()">
-          close
-        </mat-icon>
-      </div>
-
-      <!-- ADD BRANCH -->
-      <div *ngIf="addBranchMode" class="addBranchCont">
-        <input [(ngModel)]="branchName" placeholder="Branch name" />
-        <button (click)="addBranch()">Add</button>
-      </div>
-
-      <!-- UPDATE BRANCH -->
-      <div *ngIf="updateModeOn === i + 1" class="addBranchCont">
-        <input [(ngModel)]="updatedBranchName" placeholder="Update name" />
-        <button (click)="updateBranch(branch._id)">Update</button>
-      </div>
 
     </mat-card>
   </div>
 
-  <p class="empty" *ngIf="branches.length === 0">
-    You don’t have any branches yet.
-  </p>
+  <div class="empty-state" *ngIf="branches.length === 0 && !addBranchMode">
+    <mat-icon class="huge-icon">map</mat-icon>
+    <h3>No Branches Found</h3>
+    <p>This workspace currently has no operational nodes.</p>
+  </div>
 </div>

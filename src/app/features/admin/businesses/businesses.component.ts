@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -9,31 +9,50 @@ import { BranchesService } from '../../auth/services/branches.service';
 
 @Component({
   selector: 'app-businesses',
+  standalone: true, // Ensure standalone is marked
   imports: [MatMenuModule, MatButtonModule, MatIconModule, CommonModule],
   templateUrl: './businesses.component.html',
   styleUrl: './businesses.component.scss'
 })
-export class BusinessesComponent {
-  businesses!:Business[];
-  selectedBusiness:string = 'ბიზნესები'
-  constructor(private businessService:BusinessService, private branchservice:BranchesService) {
+export class BusinessesComponent implements OnInit {
+  businesses: Business[] = [];
+  selectedBusiness: string = 'ბიზნესები';
 
-    businessService.businessSelected.subscribe((business:any) => {
-      this.selectedBusiness = business.name;
-    })
+  constructor(
+    private businessService: BusinessService, 
+    private branchService: BranchesService
+  ) {}
 
-    businessService.businessesUpdated.subscribe(item => {
-      businessService.getAllMyBusinesses().subscribe((businesses:any) => {
-        this.businesses = businesses;
-      });
-    }); 
+  ngOnInit() {
+    // 1. Listen for selection changes
+    this.businessService.businessSelected.subscribe((business: any) => {
+      if (business) this.selectedBusiness = business.name;
+    });
+
+    // 2. Fetch businesses initially
+    this.refreshBusinesses();
+
+    // 3. Listen for updates (creation/deletion)
+    this.businessService.businessesUpdated.subscribe(() => {
+      this.refreshBusinesses();
+    });
   }
 
-  selectBusiness(business:Business){
+  refreshBusinesses() {
+    this.businessService.getAllMyBusinesses().subscribe((businesses: any) => {
+      this.businesses = businesses || [];
+    });
+  }
+
+  selectBusiness(business: Business) {
+    // Standardize storage
     localStorage.setItem('businesManagement_selectedBusiness', JSON.stringify(business));
     localStorage.removeItem('businesManagement_selectedBranch');
+    
     this.selectedBusiness = business.name;
+    
+    // Notify services
     this.businessService.selectBusiness(business);
-    this.branchservice.onSelectedBranch(null)
+    this.branchService.onSelectedBranch(null);
   }
 }
