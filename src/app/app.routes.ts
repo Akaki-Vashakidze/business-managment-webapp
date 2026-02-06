@@ -21,6 +21,7 @@ import { StaffCheckInComponent } from './features/admin/staff-check-in/staff-che
 import { UserDetailsComponent } from './features/admin/user-details/user-details.component';
 import { UserItemManagementComponent } from './features/user/user-item-management/user-item-management.component';
 import { IsAlreadyAuthedGuard } from './guards/isAlreadyAuthed.guard';
+import { UserProfileComponent } from './features/user/user-profile/user-profile.component';
 
 export const routes: Routes = [
   // 🔓 Public
@@ -35,6 +36,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'dashboard', component: UserDashboardComponent },
+      { path: 'profile', component: UserProfileComponent },
       { path: 'reservations/:itemId', component: UserItemManagementComponent },
       { path: 'reservations/:itemId/:slotTIme', component: UserItemManagementComponent },
     ],

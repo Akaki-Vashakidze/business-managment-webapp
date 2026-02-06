@@ -2,16 +2,11 @@
   <div class="header-content">
     <div class="brand" routerLink="/">
       <div class="logo-box">🎮</div>
-      <span class="brand-name">GAME<span>HUB</span></span>
+      <span class="brand-name show-pc">GAME<span>TIME</span></span>
+      <span class="brand-name show-mob">G<span>T</span></span>
     </div>
 
     <div class="nav-actions">
-      <div class="lang-wrapper">
-        <select (change)="changeLang($event)" class="lang-select">
-          <option value="en">EN</option>
-          <option value="ka">GE</option>
-        </select>
-      </div>
 
       <div class="auth-box">
         <ng-container *ngIf="!user">
@@ -21,12 +16,21 @@
 
         <ng-container *ngIf="user">
           <div class="user-profile">
-            <span class="user-name">{{user.name || 'Gamer'}}</span>
+            <span class="user-name" routerLink="/user/profile">
+              {{ user.fullName || 'Gamer' }}
+            </span>
             <button (click)="logOut()" class="btn-outline">
-              <i class="logout-icon"></i> {{'logout' | translate}}
+              {{'logout' | translate}}
             </button>
           </div>
         </ng-container>
+
+              <div class="lang-wrapper">
+        <select (change)="changeLang($event)" class="lang-select">
+          <option value="en">EN</option>
+          <option value="ka">GE</option>
+        </select>
+      </div>
       </div>
     </div>
   </div>

@@ -40,6 +40,7 @@ export interface User {
     isOwner: number;
     qrCode:string;
     business:string;
+    record:Record;
 }
 
 export interface ItemManagement {

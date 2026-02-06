@@ -1,5 +1,8 @@
+/* ==========================================================================
+   HEADER BASE STYLES
+   ========================================================================== */
 .header-container {
-  background-color: #1a1a2e; /* Deep dark blue */
+  background-color: #1a1a2e;
   border-bottom: 1px solid #30305a;
   padding: 0.75rem 2rem;
   position: sticky;
@@ -27,6 +30,9 @@
     background: #e94560;
     padding: 5px;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .brand-name {
@@ -37,10 +43,19 @@
   }
 }
 
+/* ==========================================================================
+   NAVIGATION & BUTTONS
+   ========================================================================== */
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+}
+
+.auth-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .lang-select {
@@ -50,6 +65,7 @@
   border-radius: 4px;
   padding: 4px 8px;
   outline: none;
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -61,6 +77,7 @@
   font-weight: 600;
   transition: 0.3s;
   cursor: pointer;
+  white-space: nowrap;
   &:hover { background: #ff4d6d; transform: translateY(-1px); }
 }
 
@@ -69,6 +86,8 @@
   border: none;
   color: #ccc;
   cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
   &:hover { color: white; }
 }
 
@@ -79,6 +98,9 @@
   padding: 6px 15px;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: 0.2s;
   &:hover { background: #e94560; color: white; }
 }
 
@@ -86,5 +108,87 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  .user-name { font-weight: 500; color: #00d2ff; }
+  .user-name { 
+    font-weight: 500; 
+    color: #00d2ff; 
+    cursor: pointer;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE LOGIC (Fixing ShowMob / ShowPc)
+   ========================================================================== */
+
+/* 1. Default State: Hide Mobile, Show PC */
+.show-mob {
+  display: none !important;
+}
+
+.show-pc {
+  display: block !important;
+}
+
+/* 2. Tablet & Mobile Breakpoint (Standard is 768px) */
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0.6rem 1rem; // Less bulk on mobile
+  }
+
+  // Swap Brand Text
+  .show-pc {
+    display: none !important;
+  }
+  .show-mob {
+    display: block !important;
+  }
+
+  .nav-actions {
+    gap: 0.8rem;
+  }
+
+  .auth-box {
+    gap: 0.5rem;
+  }
+
+  .user-name {
+    font-size: 0.85rem;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-primary, .btn-outline {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+  }
+}
+
+/* 3. Small Phone Breakpoint (Below 400px) */
+@media (max-width: 400px) {
+  .brand .logo-box {
+    font-size: 1.2rem;
+  }
+
+  .nav-actions {
+    gap: 0.4rem;
+  }
+
+  .lang-select {
+    padding: 2px 4px;
+    font-size: 0.7rem;
+  }
+
+  .btn-text {
+    font-size: 0.75rem;
+  }
+  
+  .user-profile {
+    gap: 8px;
+  }
+
+  .my-reservations{
+    margin-bottom: 10px;
+  }
 }

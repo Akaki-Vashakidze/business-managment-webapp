@@ -1,0 +1,55 @@
+<div class="profile-viewport" *ngIf="user">
+  <div class="cyber-id-card">
+    
+    <div class="identity-header">
+      <div class="avatar-container">
+        <div class="avatar-inner">{{ user.fullName[0] }}</div>
+      </div>
+      <div class="user-titles">
+        <h2>{{ user.fullName }}</h2>
+        <span class="role-chip">{{ user.isOwner ? 'OWNER' : 'OPERATOR' }}</span>
+      </div>
+      <div class="live-indicator">
+        <span class="pulse-dot"></span> <span>LIVE</span>
+      </div>
+    </div>
+
+    <div class="identity-content">
+      <div class="data-stack">
+        <div class="field">
+          <label>EMAIL REGISTER</label>
+          <div class="val">{{ user.email }}</div>
+        </div>
+        
+        <div class="field">
+          <label>MOBILE TETHER</label>
+          <div class="val">{{ user.mobileNumber || 'NOT LINKED' }}</div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>JOINED</label>
+            <div class="val">{{ user.record.createdAt | date:'shortDate' }}</div>
+          </div>
+          <div class="field">
+            <label>NODE ID</label>
+            <div class="val code">{{ user._id.slice(-6).toUpperCase() }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qr-vault">
+        <div class="scanner-box">
+          <img [src]="qrImageUrl" alt="Access Key" *ngIf="qrImageUrl">
+          <div class="laser-line"></div>
+        </div>
+        <p class="vault-label">ENCRYPTED ACCESS KEY</p>
+      </div>
+    </div>
+
+    <div class="identity-footer">
+      <mat-icon>security</mat-icon>
+      <span>Verified Business Management Protocol v2.6</span>
+    </div>
+  </div>
+</div>

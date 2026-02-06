@@ -1,0 +1,136 @@
+$primary: #3b82f6;
+$bg-dark: #0f172a;
+$card-bg: #1e293b;
+$text-dim: #94a3b8;
+
+.profile-viewport {
+  width: 100%;
+  min-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px; // Standard mobile padding
+  box-sizing: border-box;
+}
+
+.cyber-id-card {
+  background: rgba($card-bg, 0.95);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 750px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+.identity-header {
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+
+  .avatar-container {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, $primary, #1d4ed8);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; // Prevent avatar from squishing on mobile
+
+    .avatar-inner { font-size: 1.5rem; font-weight: 800; color: white; }
+  }
+
+  .user-titles {
+    flex-grow: 1;
+    h2 { margin: 0; color: white; font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
+    .role-chip { font-size: 0.65rem; color: $primary; font-weight: 900; letter-spacing: 1px; }
+  }
+
+  .live-indicator {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.6rem; color: #10b981; font-weight: 900;
+    .pulse-dot {
+      width: 6px; height: 6px; background: #10b981; border-radius: 50%;
+      animation: blink 2s infinite;
+    }
+  }
+
+  // Mobile tweak for header
+  @media (max-width: 480px) {
+    padding: 20px;
+    .avatar-container { width: 50px; height: 50px; }
+    h2 { font-size: 1rem; }
+    .live-indicator { position: absolute; top: 10px; right: 20px; }
+  }
+}
+
+.identity-content {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  padding: 32px;
+  gap: 32px;
+
+  // Tablet/Mobile View
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 24px;
+    gap: 40px;
+    text-align: center;
+  }
+}
+
+.data-stack {
+  display: flex; flex-direction: column; gap: 20px;
+  text-align: left;
+
+  .field {
+    label { font-size: 0.6rem; color: $text-dim; font-weight: 800; letter-spacing: 1px; }
+    .val { color: white; font-size: 1rem; font-weight: 500; margin-top: 4px; word-break: break-all; }
+    .code { font-family: monospace; color: $primary; font-weight: 700; }
+  }
+
+  .field-row {
+    display: flex; gap: 20px;
+    .field { flex: 1; }
+  }
+}
+
+.qr-vault {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+
+  .scanner-box {
+    position: relative;
+    padding: 12px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba($primary, 0.2);
+    
+    img { width: 160px; height: 160px; display: block; }
+    
+    .laser-line {
+      position: absolute; left: 0; width: 100%; height: 2px;
+      background: $primary; box-shadow: 0 0 10px $primary;
+      animation: scan-vertical 3s infinite ease-in-out;
+    }
+  }
+  .vault-label { margin-top: 16px; font-size: 0.65rem; color: $text-dim; font-weight: 900; letter-spacing: 2px; }
+}
+
+.identity-footer {
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.15);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 0.7rem; color: rgba(255, 255, 255, 0.2);
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes scan-vertical { 0%, 100% { top: 10%; } 50% { top: 90%; } }
+
+// Extra small phone support
+@media (max-width: 380px) {
+  .identity-content { padding: 16px; }
+  .scanner-box img { width: 140px; height: 140px; }
+}

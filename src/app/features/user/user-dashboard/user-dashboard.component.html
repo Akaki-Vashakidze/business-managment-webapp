@@ -3,7 +3,7 @@
   <div class="promo-banner">
     <div class="banner-content">
       <h1>Welcome Back, Champion!</h1>
-      <p>Ready for your next session? {{availableCount}} PlayStations are waiting for you.</p>
+      <p>Ready for your next session? {{availableCount}} PlayStations are waiting.</p>
       <div class="banner-badge">10 GEL / HOUR</div>
     </div>
   </div>
@@ -13,8 +13,10 @@
       
       <section class="card-section my-reservations">
         <div class="section-header">
-          <h2>My Bookings</h2>
-          <span class="count-badge">{{ myReservations.length }}</span>
+          <div class="title-with-badge">
+            <h2>My Bookings</h2>
+            <span class="count-badge">{{ myReservations.length }}</span>
+          </div>
         </div>
 
         <div class="reservations-list" *ngIf="myReservations.length > 0; else noReservations">
@@ -25,21 +27,25 @@
                 {{ formatTime(res.startHour, res.startMinute) }} - {{ formatTime(res.endHour, res.endMinute) }}
               </span>
             </div>
-            <div class="res-status">
-              <span class="status-pill" [class.paid]="res.isPaid">
-                {{ res.isPaid ? 'PAID' : 'UNPAID' }}
-              </span>
-                <span class="status-pill" (click)="deleteMyReservation(res._id || '')" [class.paid]="res.isPaid">
-                cancel
-              </span>
-              <span class="status-pill highlight" *ngIf="res.accepted">READY</span>
+            
+            <div class="res-actions">
+              <div class="status-group">
+                <span class="status-pill" [class.paid]="res.isPaid">
+                  {{ res.isPaid ? 'PAID' : 'UNPAID' }}
+                </span>
+                <span class="status-pill highlight" *ngIf="res.accepted">READY</span>
+              </div>
+              
+              <button class="cancel-btn" (click)="deleteMyReservation(res._id || '')">
+                Cancel
+              </button>
             </div>
           </div>
         </div>
 
         <ng-template #noReservations>
           <div class="empty-state">
-            <p>You have no active reservations. Grab a station now!</p>
+            <p>No active reservations. Grab a station now!</p>
           </div>
         </ng-template>
       </section>
@@ -49,27 +55,23 @@
           <h2>Quick Booking</h2>
           <span class="live-indicator">LIVE</span>
         </div>
-        <app-item-reservations 
-          (statsUpdated)="statsUpdated($event)">
-        </app-item-reservations>
+        <app-item-reservations (statsUpdated)="statsUpdated($event)"></app-item-reservations>
       </section>
     </div>
 
-    <div class="sidebar-content">
+    <aside class="sidebar-content">
       <div class="stat-card" [class.low-stock]="availableCount <= 1">
         <h3>Available Now</h3>
-        <div class="stat-value">
-          {{ availableCount }} / {{ totalItems }}
-        </div>
-        <p>{{ availableCount > 0 ? 'Stations free to play' : 'All stations occupied' }}</p>
+        <div class="stat-value">{{ availableCount }} / {{ totalItems }}</div>
+        <p>{{ availableCount > 0 ? 'Stations free' : 'Fully booked' }}</p>
       </div>
 
       <div class="info-card">
         <h3>Location Info</h3>
         <p>📍 Rustavi, Georgia</p>
         <p>📞 +995 598 120 220</p>
-        <a href="https://maps.google.com" target="_blank" class="map-link">Open in Google Maps</a>
+        <a href="https://maps.google.com" target="_blank" class="map-link">Open in Maps</a>
       </div>
-    </div>
+    </aside>
   </div>
 </div>

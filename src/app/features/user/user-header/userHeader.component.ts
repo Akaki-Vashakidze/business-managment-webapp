@@ -6,10 +6,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../auth/services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../../auth/services/user.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-header',
-  imports: [CommonModule, MatButtonModule, TranslateModule, RouterModule,],
+  imports: [CommonModule, MatButtonModule, TranslateModule, RouterModule, MatIconModule],
   templateUrl: './userHeader.component.html',
   styleUrl: './userHeader.component.scss'
 })
@@ -55,7 +56,7 @@ export class UserHeaderComponent {
         }
       });
   }
-
+  
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

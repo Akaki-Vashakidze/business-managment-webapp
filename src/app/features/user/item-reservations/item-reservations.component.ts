@@ -13,11 +13,8 @@ import { Router } from '@angular/router';
   styleUrl: './item-reservations.component.scss'
 })
 export class ItemReservationsComponent implements OnInit, OnDestroy {
-  // FIXED: Added @Input so the parent can bind to these properties
   @Input() items: any[] = [];
   @Input() reservations: any[] = [];
-
-  // FIXED: Added @Output so we can tell the parent when stats change
   @Output() statsUpdated = new EventEmitter<{available: number, total: number}>();
 
   user: any = null;
@@ -34,7 +31,7 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
 
   private refreshSub?: Subscription;
 
-  constructor(private siteService: SiteService, private router:Router) {}
+  constructor(private siteService: SiteService, private router: Router) {}
 
   ngOnInit() {
     this.generateDateTabs();
@@ -46,19 +43,18 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.refreshSub) {
-      this.refreshSub.unsubscribe();
-    }
+    if (this.refreshSub) this.refreshSub.unsubscribe();
   }
 
   generateDateTabs() {
     this.dateTabs = [];
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     for (let i = 0; i < 7; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
       this.dateTabs.push({
         full: d.toISOString().split('T')[0],
-        day: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        day: days[d.getDay()],
         date: d.getDate()
       });
     }
@@ -68,9 +64,7 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
     this.siteService.getBranchesByBusiness(this.user.business).subscribe({
       next: (res: any) => {
         this.branches = res.result.data;
-        if (this.branches.length > 0) {
-          this.selectBranch(this.branches[0]._id);
-        }
+        if (this.branches.length > 0) this.selectBranch(this.branches[0]._id);
         this.loading = false;
       },
       error: () => this.loading = false
@@ -79,29 +73,19 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
 
   onDateChange(date: string) {
     this.selectedDate = date;
-    if (this.selectedBranchId) {
-      this.selectBranch(this.selectedBranchId);
-    }
+    if (this.selectedBranchId) this.selectBranch(this.selectedBranchId);
   }
 
   selectBranch(branchId: string) {
     this.selectedBranchId = branchId;
     this.loadingItems = true;
-
-    if (this.refreshSub) {
-      this.refreshSub.unsubscribe();
-    }
+    if (this.refreshSub) this.refreshSub.unsubscribe();
 
     this.refreshSub = interval(20000)
-      .pipe(
-        startWith(0),
-        switchMap(() => {
-          return this.siteService.getItemsReservations({
-            branchId: this.selectedBranchId || '',
-            date: this.selectedDate
-          });
-        })
-      )
+      .pipe(startWith(0), switchMap(() => this.siteService.getItemsReservations({
+        branchId: this.selectedBranchId || '',
+        date: this.selectedDate
+      })))
       .subscribe({
         next: (res: any) => {
           this.items = res.result.data.items;
@@ -109,18 +93,13 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
           this.updateParentStats();
           this.loadingItems = false;
         },
-        error: (err) => {
-          console.error('Refresh failed', err);
-          this.loadingItems = false;
-        }
+        error: () => this.loadingItems = false
       });
   }
 
-  // UPDATED: Logic to find out if PS is busy at this exact moment
   isItemBusyNow(itemId: string): boolean {
     const now = new Date();
     const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
-    
     return this.reservations.some(r => {
       if (r.item._id !== itemId) return false;
       const start = r.startHour * 60 + r.startMinute;
@@ -129,13 +108,9 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  // NEW: Calculates counts for the Sidebar in the Parent
   updateParentStats() {
     const busyCount = this.items.filter(item => this.isItemBusyNow(item._id)).length;
-    this.statsUpdated.emit({
-      available: this.items.length - busyCount,
-      total: this.items.length
-    });
+    this.statsUpdated.emit({ available: this.items.length - busyCount, total: this.items.length });
   }
 
   getTimeline(itemId: string) {
@@ -143,32 +118,20 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
       .filter(r => r.item._id === itemId)
       .sort((a, b) => (a.startHour * 60 + a.startMinute) - (b.startHour * 60 + b.startMinute));
     
-    const timeline: { start: string, end: string, isFree: boolean }[] = [];
+    const timeline: any[] = [];
     let lastEnd = this.openingHour * 60;
 
     res.forEach(r => {
       const start = r.startHour * 60 + r.startMinute;
       if (start > lastEnd) {
-        timeline.push({ 
-          start: this.minutesToTime(lastEnd), 
-          end: this.minutesToTime(start), 
-          isFree: true 
-        });
+        timeline.push({ start: this.minutesToTime(lastEnd), end: this.minutesToTime(start), isFree: true });
       }
-      timeline.push({ 
-        start: this.minutesToTime(start), 
-        end: this.minutesToTime(r.endHour * 60 + r.endMinute), 
-        isFree: false 
-      });
+      timeline.push({ start: this.minutesToTime(start), end: this.minutesToTime(r.endHour * 60 + r.endMinute), isFree: false });
       lastEnd = r.endHour * 60 + r.endMinute;
     });
 
     if (lastEnd < this.closingHour * 60) {
-      timeline.push({ 
-        start: this.minutesToTime(lastEnd), 
-        end: this.minutesToTime(this.closingHour * 60), 
-        isFree: true 
-      });
+      timeline.push({ start: this.minutesToTime(lastEnd), end: this.minutesToTime(this.closingHour * 60), isFree: true });
     }
     return timeline;
   }
@@ -180,7 +143,6 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   }
 
   handleReserve(itemId: string, slot?: any) {
-    console.log('Booking Action:', itemId, slot, 'Date:', this.selectedDate);
     if(slot) {
       this.router.navigate([`user/reservations/${itemId}/${slot.start}-${slot.end}`])
     } else {

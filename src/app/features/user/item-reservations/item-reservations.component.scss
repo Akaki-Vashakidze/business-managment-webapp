@@ -1,288 +1,109 @@
-/* ==========================================================================
-   VARIABLES & THEME
-   ========================================================================== */
-$bg-main: #0f172a;        /* Deep midnight blue */
-$bg-card: #1e293b;        /* Lighter blue for cards */
-$accent-red: #e94560;     /* Primary action color */
-$text-primary: #f8fafc;
-$text-muted: #94a3b8;
+$bg-main: #0f172a;
+$bg-card: #1e293b;
+$accent-red: #e94560;
 $success-green: #4ade80;
-$busy-red: #ff4d6d;
 $border-color: #334155;
 
-/* ==========================================================================
-   GLOBAL CONTAINER
-   ========================================================================== */
 .res-container {
-  padding: 16px;
+  padding: 12px; // tighter padding for mobile
   background: $bg-main;
-  min-height: 100vh;
-  color: $text-primary;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  max-width: 1000px;
-  margin: 0 auto;
+  color: #fff;
 }
 
-/* ==========================================================================
-   HEADER SECTION
-   ========================================================================== */
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  
-  .header-text {
-    h1 { margin: 0; font-size: 1.5rem; font-weight: 800; }
-    p { margin: 4px 0 0; font-size: 0.85rem; color: $text-muted; }
-  }
+  align-items: center;
+  margin-bottom: 20px;
+  h1 { font-size: 1.3rem; margin: 0; }
+  p { font-size: 0.8rem; color: #94a3b8; margin: 0; }
 }
 
 .live-badge {
-  background: rgba($accent-red, 0.15);
-  color: $accent-red;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  border: 1px solid rgba($accent-red, 0.3);
-  text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba($accent-red, 0.1); color: $accent-red;
+  padding: 4px 10px; border-radius: 20px; font-size: 0.65rem; font-weight: 900;
+  .pulse { width: 6px; height: 6px; background: $accent-red; border-radius: 50%; animation: p 1.5s infinite; }
 }
 
-/* ==========================================================================
-   SELECTION SECTIONS (Branches & Dates)
-   ========================================================================== */
-.section-label {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #64748b;
-  margin-bottom: 12px;
-  letter-spacing: 1px;
-}
+@keyframes p { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.4); } 100% { opacity: 1; transform: scale(1); } }
 
-.selection-section { 
-  margin-bottom: 24px; 
-}
+.section-label { font-size: 0.65rem; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
 
-/* Horizontal Scrolling Logic */
+/* Horizontal Scrollers */
 .h-scroll {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   overflow-x: auto;
-  padding: 4px 4px 12px 0;
-  -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
-  
-  &::-webkit-scrollbar { display: none; } /* Hide scrollbar for clean look */
-  scrollbar-width: none;
+  padding-bottom: 10px;
+  scrollbar-width: none; // Firefox
+  &::-webkit-scrollbar { display: none; } // Chrome/Safari
 }
 
 .branch-chip {
-  flex: 0 0 auto;
-  padding: 10px 20px;
-  background: $bg-card;
-  border-radius: 50px;
-  border: 1px solid $border-color;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  cursor: pointer;
-
-  &.active { 
-    background: #fff; 
-    color: #000; 
-    border-color: #fff;
-    transform: translateY(-2px);
-  }
+  flex: 0 0 auto; white-space: nowrap; padding: 8px 16px; 
+  background: $bg-card; border-radius: 12px; border: 1px solid $border-color;
+  &.active { background: #fff; color: #000; border-color: #fff; }
 }
 
 .date-card {
-  flex: 0 0 65px;
-  height: 80px;
-  background: $bg-card;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid $border-color;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  
-  .day { font-size: 0.7rem; color: $text-muted; margin-bottom: 4px; }
-  .num { font-size: 1.2rem; font-weight: 800; }
-
-  &.active {
-    background: $accent-red;
-    border-color: $accent-red;
-    box-shadow: 0 8px 16px rgba($accent-red, 0.3);
-    .day { color: #fff; opacity: 0.8; }
-    .num { transform: scale(1.1); }
-  }
+  flex: 0 0 60px; height: 70px;
+  background: $bg-card; border-radius: 12px; border: 1px solid $border-color;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  .day { font-size: 0.65rem; color: #94a3b8; }
+  .num { font-size: 1.1rem; font-weight: 800; }
+  &.active { background: $accent-red; border-color: $accent-red; .day { color: #fff; } }
 }
 
-.divider { 
-  border: 0; 
-  border-top: 1px solid $border-color; 
-  margin: 20px 0; 
-  opacity: 0.5;
-}
-
-/* ==========================================================================
-   PLAYSTATION CARDS
-   ========================================================================== */
+/* Item Cards */
 .ps-card {
-  background: $bg-card;
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 20px;
+  background: $bg-card; border-radius: 16px; padding: 16px; margin-bottom: 16px;
   border: 1px solid $border-color;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .ps-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-
-  .ps-main-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    .ps-icon { 
-      font-size: 1.5rem; 
-      background: $bg-main; 
-      padding: 10px; 
-      border-radius: 14px; 
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    h3 { margin: 0; font-size: 1.15rem; font-weight: 700; }
-  }
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+  .ps-main-info { display: flex; align-items: center; gap: 10px; }
+  .ps-icon { font-size: 1.2rem; background: #0f172a; padding: 8px; border-radius: 10px; }
+  h3 { margin: 0; font-size: 1rem; }
 }
 
-/* Item Status Text */
 .ps-status {
-  font-size: 0.75rem;
-  color: $success-green;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  &::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    background: currentColor;
-    border-radius: 50%;
-  }
-
-  &.status-busy {
-    color: #fca5a5;
-    &::before {
-      animation: status-pulse 1.5s infinite;
-    }
-  }
-}
-
-@keyframes status-pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.4; }
-  100% { transform: scale(1); opacity: 1; }
+  font-size: 0.65rem; color: $success-green; font-weight: 800;
+  &.status-busy { color: #fca5a5; }
 }
 
 .btn-book-top {
-  background: #fff; 
-  color: #000; 
-  border: none; 
-  padding: 10px 16px; 
-  border-radius: 10px; 
-  font-weight: 800; 
-  font-size: 0.8rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  &:active { transform: scale(0.95); }
+  background: #fff; color: #000; padding: 6px 14px; border-radius: 8px;
+  font-weight: 900; font-size: 0.7rem; border: none;
 }
 
-/* ==========================================================================
-   TIMELINE / SLOT GRID
-   ========================================================================== */
+/* Timeline Grid - Responsive Logic */
 .timeline-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr); // Default 2 columns for small phones
+  gap: 8px;
 
-  /* Switch to 3 columns on larger phones/tablets */
-  @media (min-width: 480px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  @media (min-width: 400px) { grid-template-columns: repeat(3, 1fr); }
+  @media (min-width: 600px) { grid-template-columns: repeat(4, 1fr); }
 }
 
 .time-slot {
-  padding: 14px 10px;
-  border-radius: 14px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  cursor: default;
+  padding: 10px 5px; border-radius: 10px; text-align: center;
+  display: flex; flex-direction: column; gap: 2px;
+  .slot-time { font-size: 0.75rem; font-weight: 700; font-family: monospace; }
+  .slot-type { font-size: 0.55rem; font-weight: 900; opacity: 0.7; }
 
-  .slot-time { 
-    font-size: 0.85rem; 
-    font-weight: 700; 
-    font-family: 'Monaco', 'Courier New', monospace; 
-  }
-  
-  .slot-type { 
-    font-size: 0.6rem; 
-    font-weight: 800; 
-    margin-top: 4px; 
-    letter-spacing: 0.5px;
-  }
-
-  &.busy { 
-    background: rgba($accent-red, 0.08); 
-    color: #ff6b81; 
-    border-color: rgba($accent-red, 0.15);
-  }
-
-  &.free { 
-    background: rgba($success-green, 0.08); 
-    color: $success-green; 
-    border-color: rgba($success-green, 0.15);
-    cursor: pointer;
-    
-    &:hover {
-      background: rgba($success-green, 0.12);
-      border-color: $success-green;
-    }
-    
-    &:active { transform: scale(0.96); }
-  }
+  &.busy { background: rgba($accent-red, 0.1); color: #fca5a5; border: 1px solid rgba($accent-red, 0.2); }
+  &.free { background: rgba($success-green, 0.1); color: $success-green; border: 1px solid rgba($success-green, 0.2); }
 }
 
-/* ==========================================================================
-   LOADER
-   ========================================================================== */
 .loader-cont {
-  text-align: center; 
-  padding: 60px 0; 
-  color: $text-muted;
-
+  text-align: center; padding: 40px; color: #94a3b8;
   .spin { 
-    width: 35px; 
-    height: 35px; 
-    border: 3px solid rgba(#fff, 0.1); 
-    border-top-color: $accent-red; 
-    border-radius: 50%; 
-    animation: rot 0.8s linear infinite; 
-    margin: 0 auto 15px;
+    width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); 
+    border-top-color: $accent-red; border-radius: 50%; 
+    animation: r 0.8s linear infinite; margin: 0 auto 10px;
   }
 }
-
-@keyframes rot { to { transform: rotate(360deg); } }
+@keyframes r { to { transform: rotate(360deg); } }
