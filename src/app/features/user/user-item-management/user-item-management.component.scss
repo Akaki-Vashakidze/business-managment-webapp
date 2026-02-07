@@ -147,6 +147,10 @@ $text: #f8fafc;
   }
 }
 
+.date-tabs {
+  cursor: pointer;
+}
+
 .loader-mask {
   position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;
   .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid $accent; border-radius: 50%; width: 30px; height: 30px; animation: spin 0.8s linear infinite; }

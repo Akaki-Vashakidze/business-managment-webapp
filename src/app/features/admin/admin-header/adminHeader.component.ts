@@ -9,18 +9,20 @@ import { UserService } from '../../auth/services/user.service';
 import { BranchesComponent } from '../../../sharedComponents/branches/branches.component';
 import { AdminSettingsComponent } from "../admin-settings/admin-settings.component";
 import { BusinessesComponent } from "../businesses/businesses.component";
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-admin-header',
   standalone: true,
   imports: [
-    CommonModule, 
-    MatButtonModule, 
-    TranslateModule, 
-    BusinessesComponent, 
-    RouterModule, 
-    BranchesComponent, 
-    AdminSettingsComponent
+    CommonModule,
+    MatButtonModule,
+    TranslateModule,
+    BusinessesComponent,
+    RouterModule,
+    BranchesComponent,
+    AdminSettingsComponent,
+    MatIconModule
   ],
   templateUrl: './adminHeader.component.html',
   styleUrl: './adminHeader.component.scss'
@@ -28,11 +30,12 @@ import { BusinessesComponent } from "../businesses/businesses.component";
 export class AdminHeaderComponent implements OnDestroy {
   user: any;
   private destroy$ = new Subject<void>();
+  intervalAdminActive:any;
 
   constructor(
-    private translateService: TranslateService, 
-    private authService: AuthService, 
-    private userService: UserService, 
+    private translateService: TranslateService,
+    private authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) {
     this.userService.user$
@@ -40,6 +43,12 @@ export class AdminHeaderComponent implements OnDestroy {
       .subscribe(item => {
         this.user = item;
       });
+
+    this.intervalAdminActive = setInterval(() => {
+      this.userService.checkIfAdminIsActive().subscribe(item => {
+        item ? this.user.isActiveAdmin = 1: this.user.isActiveAdmin = 0;
+      })
+    }, 30000);
   }
 
   logOut(): void {
@@ -55,8 +64,15 @@ export class AdminHeaderComponent implements OnDestroy {
       });
   }
 
+  makeAdminActive() {
+    this.userService.makeAdminActive().subscribe(item => {
+      this.user = item;
+    })
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    clearInterval(this.intervalAdminActive);
   }
 }

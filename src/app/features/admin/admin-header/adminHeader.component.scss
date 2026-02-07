@@ -126,3 +126,16 @@ $text-dim: #94a3b8;
     &.login_btn { color: white; background: transparent; }
     &.signup_btn { background: $primary; color: white; border: none; }
 }
+
+mat-icon {
+    color: red;
+}
+
+.active-glow {
+    color: #3b82f6;
+    text-shadow: 0 0 10px #3b82f6;
+}
+.inactive-dim {
+    color: #94a3b8;
+    opacity: 0.5;
+}

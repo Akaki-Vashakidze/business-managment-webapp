@@ -19,6 +19,7 @@
     <div class="auth_cont">
         <ng-container *ngIf="user; else guestButtons">
             <app-admin-settings></app-admin-settings>
+            <mat-icon [ngClass]="{'active-glow': user?.isActiveAdmin === 1, 'inactive-dim': user?.isActiveAdmin === 0}" (click)="makeAdminActive()">bolt</mat-icon>
             <button (click)="logOut()" class="auth_buttons logout_btn">
                 <span class="material-icons">power_settings_new</span>
                 <span class="btn_text">LOGOUT</span>

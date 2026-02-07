@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../../../interfaces/shared-interfaces';
+import { SKIP_LOADER } from './loading.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -72,6 +73,16 @@ export class UserService {
   
   getUserById(userId:string){
     return this.http.get<any>(`/consoleApi/user/getById/${userId}`);
+  }
+
+  makeAdminActive(){
+    return this.http.post(`/consoleApi/user/makeAdminActive`, {});
+  }
+
+  checkIfAdminIsActive(){
+    return this.http.post(`/consoleApi/user/checkIfAdminIsActive`, {},{
+            context: new HttpContext().set(SKIP_LOADER, true)
+        });
   }
 
 }
