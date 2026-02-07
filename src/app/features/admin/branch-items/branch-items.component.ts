@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -28,6 +28,8 @@ import { LiveTimesComponent } from "../../../live-times/live-times.component";
   styleUrl: './branch-items.component.scss'
 })
 export class BranchItemsComponent {
+  // ✅ This allows the parent to talk to the LiveTimes child
+  @ViewChild(LiveTimesComponent) liveMonitor!: LiveTimesComponent;
 
   addItemMode = false;
   branchId: string = '';
@@ -38,7 +40,6 @@ export class BranchItemsComponent {
     private itemsService: ItemsService,
     private branchService: BranchesService
   ) {
-    // Listen for branch changes and fetch items automatically
     this.branchService.selectedBranch.subscribe(branch => {
       if (branch) {
         this.branchId = branch._id || '';
@@ -47,13 +48,18 @@ export class BranchItemsComponent {
     });
   }
 
+  // ✅ This method is triggered when the Reservation child emits (onReserve)
+  onReservation() {
+    if (this.liveMonitor) {
+      this.liveMonitor.getAllReservations();
+    }
+  }
+
   getItemsByBranch() {
     if (!this.branchId) return;
-    
     this.itemsService.getItemsByBranch(this.branchId).subscribe({
       next: (items) => {
         this.items = items || [];
-        // Update itemIds so the global reservations component refreshes
         this.itemIds = this.items.map(i => i._id);
       },
       error: (err) => console.error('Failed to load items', err)
@@ -61,7 +67,7 @@ export class BranchItemsComponent {
   }
 
   onItemAdded() {
-    this.addItemMode = false; // Hide form after success
-    this.getItemsByBranch(); // Refresh list
+    this.addItemMode = false;
+    this.getItemsByBranch();
   }
 }

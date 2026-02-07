@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { SignupComponent } from './features/auth/components/signup/signup.component';
 import { PassRecoveryComponent } from './features/auth/components/pass-recovery/pass-recovery.component';
-import { ForgetPassComponent } from './features/auth/components/forget-pass/forget-pass.component';
 import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
 
 import { AuthGuard } from './guards/auth.guard';
@@ -22,13 +21,14 @@ import { UserDetailsComponent } from './features/admin/user-details/user-details
 import { UserItemManagementComponent } from './features/user/user-item-management/user-item-management.component';
 import { IsAlreadyAuthedGuard } from './guards/isAlreadyAuthed.guard';
 import { UserProfileComponent } from './features/user/user-profile/user-profile.component';
+import { ResetPasswordComponent } from './features/auth/components/reset-password/reset-password.component';
 
 export const routes: Routes = [
   // 🔓 Public
   { path: 'login', canActivate:[IsAlreadyAuthedGuard], component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'password-recovery', component: PassRecoveryComponent },
-  { path: 'reset-password', component: ForgetPassComponent },
+  { path: 'newpass/:token', component: ResetPasswordComponent },
 
   // 👤 User routes
   {
@@ -44,7 +44,7 @@ export const routes: Routes = [
 
   // 👑 Admin routes
   {
-    path: 'admin',
+  path: 'admin',
     canActivate: [AuthGuard, AdminGuard],
     children: [
       { path: 'dashboard', component: AdminDashboardComponent },

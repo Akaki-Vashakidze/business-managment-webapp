@@ -86,7 +86,8 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
         branchId: this.selectedBranchId || '',
         date: this.selectedDate
       })))
-      .subscribe({
+      .subscribe(
+        {
         next: (res: any) => {
           this.items = res.result.data.items;
           this.reservations = res.result.data.reservations;
@@ -94,7 +95,8 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
           this.loadingItems = false;
         },
         error: () => this.loadingItems = false
-      });
+      }
+    );
   }
 
   isItemBusyNow(itemId: string): boolean {

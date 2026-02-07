@@ -19,7 +19,7 @@ export class SiteService {
     }
 
     getItemsReservations(body:{date:string,branchId:string}){
-        return this.http.post<ItemManagement[]>(`/consoleApi/site/get-branch-items-reservations`,body,{
+        return this.http.post<any>(`/consoleApi/site/get-branch-items-reservations`,body,{
             context: new HttpContext().set(SKIP_LOADER, true)
         });
     }

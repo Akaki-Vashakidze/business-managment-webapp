@@ -29,6 +29,7 @@ export interface ReserveItem {
     item: string;
     date: string;
     user:string;
+    branchId:string;
 }
 
 export interface User {

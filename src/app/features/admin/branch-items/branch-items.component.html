@@ -1,5 +1,4 @@
 <div class="dashboard-wrapper">
-  
   <header class="dashboard-header">
     <div class="branch-meta">
       <span class="indicator"></span>
@@ -18,7 +17,6 @@
 
   <section class="live-section">
     <div class="section-tag">REAL-TIME STATUS</div>
-    
     <div class="empty-state" *ngIf="items.length === 0">
       <span class="material-icons">inventory_2</span>
       <p>No active stations detected in this branch.</p>
@@ -34,8 +32,10 @@
   <section class="log-section">
     <div class="section-tag">RESERVATION ARCHIVE</div>
     <div class="log-card">
-      <app-items-all-reservations [itemsIds]="itemIds"></app-items-all-reservations>
+      <app-items-all-reservations 
+        (onReserve)="onReservation()" 
+        [itemsIds]="itemIds">
+      </app-items-all-reservations>
     </div>
   </section>
-  
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { FormsModule } from '@angular/forms';
@@ -7,6 +7,7 @@ import { User } from '../../../interfaces/shared-interfaces';
 import { UserService } from '../../auth/services/user.service';
 import { BusinessService } from '../../auth/services/business.service';
 import { Subject, takeUntil } from 'rxjs';
+import { BranchesService } from '../../auth/services/branches.service';
 
 interface TimeSlot {
   start: number;
@@ -30,24 +31,29 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
   rangeEnd: TimeSlot | null = null;
 
   @Input() itemsIds!: string[];
-
+  @Output() onReserve = new EventEmitter<boolean>();  
   allReservations: any[] = [];
   timeSlots: TimeSlot[] = [];
   selectedDate: string = '';
   users: User[] = [];
   selectedUser!: string;
-
+  selectedBranch!:string;
   quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = null;
 
   constructor(
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService,
     private userService: UserService,
-    private businessService:BusinessService
+    private businessService:BusinessService,
+    private branchesService:BranchesService
   ) {
 
     businessService.businessSelected.pipe(takeUntil(this.destroy$)).subscribe(item => {
       this.getAllUsers(item?._id || '');
+    })
+
+    branchesService.selectedBranch.pipe(takeUntil(this.destroy$)).subscribe(item => {
+      this.selectedBranch = item?._id || '';
     })
   }
 
@@ -224,15 +230,17 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
       startMinute: start % 60,
       endHour: Math.floor(end / 60),
       endMinute: end % 60,
-      isPaid: this.isPaid ? 1 : 0
+      isPaid: this.isPaid ? 1 : 0,
+      branchId: this.selectedBranch
     };
 
-    this.itemManagementService.reserveitem(payload).subscribe(res => {
+    this.itemManagementService.reserveitemByAdmin(payload).subscribe(res => {
       if (res.statusCode === 400) {
         this.snackbar.error(res.errors);
       } else {
         this.snackbar.success(`${res.reservation.item.name} დაიჯავშნა წარმატებით`);
         this.loadReservations(this.itemsIds);
+        this.onReserve.next(true)
         this.clearSelection();
       }
     });

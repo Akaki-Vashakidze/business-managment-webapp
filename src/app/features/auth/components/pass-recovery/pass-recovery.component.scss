@@ -1,79 +1,184 @@
 $accent: #3b82f6;
 $bg: #050811;
 $card: #16213e;
+$text-muted: #94a3b8;
 
 .recovery-wrapper {
   min-height: 100vh;
   background: $bg;
-  padding: 40px 20px;
+  padding: 60px 20px;
   color: white;
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: 'Inter', sans-serif;
 }
 
 .progress-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 50px;
-  .dot { width: 12px; height: 12px; border-radius: 50%; background: #2d3748; transition: 0.3s; 
-    &.active { background: $accent; box-shadow: 0 0 10px $accent; }
+
+  .dot { 
+    width: 14px; 
+    height: 14px; 
+    border-radius: 50%; 
+    background: #2d3748; 
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    
+    &.active { 
+      background: $accent; 
+      box-shadow: 0 0 15px rgba($accent, 0.6); 
+      transform: scale(1.1);
+    }
   }
-  .line { width: 40px; height: 2px; background: #2d3748; 
-    &.active { background: $accent; }
+
+  .line { 
+    width: 50px; 
+    height: 3px; 
+    background: #2d3748; 
+    border-radius: 2px;
+    transition: background 0.4s ease;
+
+    &.active { 
+      background: $accent; 
+    }
   }
 }
 
 .step-content {
   width: 100%;
-  max-width: 350px;
+  max-width: 380px;
   text-align: center;
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.5s ease-out forwards;
 
-  h1 { font-size: 2rem; margin-bottom: 10px; font-weight: 800; }
-  p { color: #94a3b8; margin-bottom: 30px; font-size: 0.9rem; line-height: 1.6; }
+  h1 { 
+    font-size: 2.2rem; 
+    margin-bottom: 12px; 
+    font-weight: 800; 
+    letter-spacing: -1px;
+  }
+
+  p { 
+    color: $text-muted; 
+    margin-bottom: 35px; 
+    font-size: 0.95rem; 
+    line-height: 1.6; 
+  }
 }
 
 .input-box {
   text-align: left;
-  margin-bottom: 20px;
-  label { font-size: 0.7rem; font-weight: 700; color: $accent; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  margin-bottom: 24px;
+
+  label { 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+    color: $accent; 
+    text-transform: uppercase; 
+    margin-bottom: 10px; 
+    display: block; 
+    letter-spacing: 1px;
+  }
+
   input {
     width: 100%;
     background: $card;
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 16px;
-    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 18px;
+    border-radius: 14px;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1rem;
     outline: none;
-    &:focus { border-color: $accent; }
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    &:focus { 
+      border-color: $accent; 
+      background: lighten($card, 3%);
+      box-shadow: 0 0 0 4px rgba($accent, 0.1);
+    }
   }
-  .otp-field { text-align: center; letter-spacing: 8px; font-size: 1.5rem; }
+
+  .otp-field { 
+    text-align: center; 
+    letter-spacing: 4px; 
+    font-size: 1.2rem; 
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: $accent;
+  }
 }
 
 .primary-btn {
   width: 100%;
-  padding: 16px;
-  border-radius: 12px;
+  padding: 18px;
+  border-radius: 14px;
   border: none;
   background: $accent;
   color: white;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 1rem;
-  box-shadow: 0 4px 15px rgba($accent, 0.3);
+  box-shadow: 0 10px 25px rgba($accent, 0.25);
   margin-top: 10px;
   cursor: pointer;
-  &:disabled { opacity: 0.5; }
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba($accent, 0.35);
+    background: lighten($accent, 5%);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled { 
+    opacity: 0.4; 
+    cursor: not-allowed;
+    box-shadow: none;
+  }
 }
 
 .text-link {
-  background: none; border: none; color: #94a3b8; margin-top: 20px; font-size: 0.8rem; cursor: pointer;
-  text-decoration: underline;
+  background: none; 
+  border: none; 
+  color: $text-muted; 
+  margin-top: 25px; 
+  font-size: 0.85rem; 
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: white;
+    text-decoration: underline;
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* Responsive Tweaks */
+@media (max-width: 480px) {
+  .step-content {
+    max-width: 100%;
+  }
+  
+  .progress-bar .line {
+    width: 30px;
+  }
 }

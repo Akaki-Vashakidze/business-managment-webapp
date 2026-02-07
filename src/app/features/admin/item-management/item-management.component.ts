@@ -10,6 +10,7 @@ import { UserService } from '../../auth/services/user.service';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { BusinessService } from '../../auth/services/business.service';
+import { BranchesService } from '../../auth/services/branches.service';
 
 interface TimeSlot {
   start: number;
@@ -53,7 +54,7 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
   allReservations: ItemManagement[] = [];
   dayReservations: ItemManagement[] = [];
   timeSlots: TimeSlot[] = [];
-
+  branchId!:string;
   selectedStart: TimeSlot | null = null;
   selectedEnd: TimeSlot | null = null;
 
@@ -62,8 +63,15 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService,
-    private businessService: BusinessService
-  ) {}
+    private businessService: BusinessService,
+    private branchService: BranchesService
+  ) {
+    this.branchService.selectedBranch.subscribe(branch => {
+      if (branch) {
+        this.branchId = branch._id || '';
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.itemId = this.route.snapshot.paramMap.get('id')!;
@@ -246,10 +254,11 @@ export class ItemManagementComponent implements OnInit, OnDestroy {
       startMinute: this.reservation.startMinute,
       endHour: this.reservation.endHour,
       endMinute: this.reservation.endMinute,
-      isPaid: this.reservation.isPaid ? 1 : 0
+      isPaid: this.reservation.isPaid ? 1 : 0,
+      branchId:this.branchId
     };
 
-    this.itemManagementService.reserveitem(payload).subscribe({
+    this.itemManagementService.reserveitemByAdmin(payload).subscribe({
       next: () => {
         this.snackbar.success('Successfully reserved');
         this.loadReservations();

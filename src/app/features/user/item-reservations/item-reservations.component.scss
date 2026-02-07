@@ -41,12 +41,14 @@ $border-color: #334155;
 }
 
 .branch-chip {
+  cursor: pointer;
   flex: 0 0 auto; white-space: nowrap; padding: 8px 16px; 
   background: $bg-card; border-radius: 12px; border: 1px solid $border-color;
   &.active { background: #fff; color: #000; border-color: #fff; }
 }
 
 .date-card {
+  cursor: pointer;
   flex: 0 0 60px; height: 70px;
   background: $bg-card; border-radius: 12px; border: 1px solid $border-color;
   display: flex; flex-direction: column; align-items: center; justify-content: center;

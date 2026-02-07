@@ -1,45 +1,54 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { BrowserMultiFormatReader } from '@zxing/browser';
+import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 import { MembershipService } from '../../auth/services/membership.service';
 import { CommonModule } from '@angular/common';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
-import { BusinessService } from '../../auth/services/business.service';
-import { BranchesService } from '../../auth/services/branches.service';
 import { ItemsService } from '../../auth/services/items.service';
 import { ItemManagementService } from '../../auth/services/itemManagement.service';
-import { ItemManagement, User } from '../../../interfaces/shared-interfaces';
+import { BusinessService } from '../../auth/services/business.service';
+import { BranchesService } from '../../auth/services/branches.service';
+import { ItemManagement } from '../../../interfaces/shared-interfaces';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-staff-check-in',
   templateUrl: './staff-check-in.component.html',
+  standalone: true,
   imports: [CommonModule],
   styleUrl: './staff-check-in.component.scss'
 })
 export class StaffCheckInComponent implements OnInit, OnDestroy {
-
-  @ViewChild('video', { static: true })
-  video!: ElementRef<HTMLVideoElement>;
+  @ViewChild('video', { static: true }) video!: ElementRef<HTMLVideoElement>;
 
   private codeReader = new BrowserMultiFormatReader();
+  private controls?: IScannerControls; // Store controls here
+  
   scanning = false;
   message = '';
-  items: any;
+  itemsIds: string[] = [];
+  allReservations: any[] = [];
   itemManagementData!: ItemManagement;
-  itemsIds!: string[];
-  allReservations: any;
+  
   selectedBusinessId!: string;
   selectedBranchId!: string;
-  constructor(private membershipService: MembershipService, private router: Router, private snackbar: SnackbarService, private itemManagementService: ItemManagementService, private itemsService: ItemsService, private snackbarService: SnackbarService, private businessService: BusinessService, private branchService: BranchesService) {
-    businessService.businessSelected.subscribe(business => {
-      this.selectedBusinessId = business?._id || ''
-    })
 
-    branchService.selectedBranch.subscribe(branch => {
-      this.selectedBranchId = branch?._id || ''
-      this.getItemsByBranch();
-    })
+  constructor(
+    private membershipService: MembershipService, 
+    private router: Router, 
+    private snackbar: SnackbarService, 
+    private itemManagementService: ItemManagementService, 
+    private itemsService: ItemsService, 
+    private businessService: BusinessService, 
+    private branchService: BranchesService
+  ) {
+    this.businessService.businessSelected.subscribe(business => {
+      this.selectedBusinessId = business?._id || '';
+    });
 
+    this.branchService.selectedBranch.subscribe(branch => {
+      this.selectedBranchId = branch?._id || '';
+      if (this.selectedBranchId) this.getItemsByBranch();
+    });
   }
 
   async ngOnInit() {
@@ -47,75 +56,68 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
   }
 
   async startScanner() {
-    this.scanning = true; // ✅ REQUIRED
+    if (this.scanning) return;
+    this.scanning = true;
 
-    const devices = await BrowserMultiFormatReader.listVideoInputDevices();
-    const deviceId = devices[0]?.deviceId;
+    try {
+      const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
+      const selectedDevice = videoInputDevices[0].deviceId;
 
-    await this.codeReader.decodeFromVideoDevice(
-      deviceId,
-      this.video.nativeElement,
-      (result) => {
-        if (result && this.scanning) {
-          this.scanning = false;
-          this.handleScan(result.getText());
+      // decodeFromVideoDevice now returns controls
+      this.controls = await this.codeReader.decodeFromVideoDevice(
+        selectedDevice,
+        this.video.nativeElement,
+        (result, error, controls) => {
+          if (result && this.scanning) {
+            this.scanning = false;
+            
+            // ✅ This is the correct way to stop in @zxing/browser
+            controls.stop(); 
+            
+            this.handleScan(result.getText());
+          }
         }
-      }
-    );
+      );
+    } catch (err) {
+      this.snackbar.error('Camera access denied');
+    }
   }
 
   handleScan(qr: string) {
-    const staffId = 'currentStaffUserId';
-    const businessId = 'currentStaffBusinessId';
-    const branchId = 'currentStaffBranchId';
-    let user;
-    this.checkReservationData(qr)
-    this.membershipService.checkIn(qr, this.selectedBusinessId, this.selectedBranchId, this.itemManagementData).subscribe(res => {
-      if (res.success) {
-        this.message = `✅ Check-in successful. Remaining visits: ${res.remainingVisits}`;
-        this.snackbarService.success('Checked In')
-        this.restartScanner();
-        this.router.navigate(['/admin/branchItems'])
-      } else {
-        this.message = `❌ ${res.errors || 'Check-in failed'}`;
-        this.snackbarService.error(res.errors)
-        this.restartScanner();
-      }
-    });
+    this.message = 'Processing...';
+
+    const canProceed = this.checkReservationData(qr);
+    if (!canProceed) {
+      this.restartScanner();
+      return;
+    }
+
+    this.membershipService.checkIn(qr, this.selectedBusinessId, this.selectedBranchId, this.itemManagementData)
+      .subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.snackbar.success('Check-in successful');
+            this.router.navigate(['/admin/branchItems']);
+          } else {
+            this.snackbar.error(res.errors || 'Check-in failed');
+            this.restartScanner();
+          }
+        },
+        error: () => {
+          this.snackbar.error('Server error');
+          this.restartScanner();
+        }
+      });
   }
 
-  getItemsByBranch() {
-    this.itemsService.getItemsByBranch(this.selectedBranchId).subscribe(items => {
-      this.items = items || [];
-      this.itemsIds = this.items.map((i: any) => i._id);
-      this.loadReservations(this.itemsIds)
-    });
-  }
-
-  restartScanner() {
-    setTimeout(() => {
-      this.scanning = true;
-      this.message = '';
-    }, 2000);
-  }
-
-  loadReservations(ids: string[]) {
-    this.itemManagementService.getAllItemsReservations(ids).subscribe(res => {
-      this.allReservations = res;
-    });
-  }
-
-  checkReservationData(userId: string) {
-    // ⏱️ now
+  checkReservationData(userId: string): boolean {
     const now = new Date();
     const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-
     const todaysDate = now.toISOString().split('T')[0];
 
-    // convert time to minutes for comparison
     const startMinutes = now.getHours() * 60 + now.getMinutes();
-    const endMinutes =
-      oneHourLater.getHours() * 60 + oneHourLater.getMinutes();
+    const endMinutes = oneHourLater.getHours() * 60 + oneHourLater.getMinutes();
+
     const freeItem = this.itemsIds.find(itemId => {
       return !this.allReservations.some((r: any) => {
         const rDate = new Date(r.date).toISOString().split('T')[0];
@@ -123,21 +125,19 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
         
         const rStart = r.startHour * 60 + r.startMinute;
         const rEnd = r.endHour * 60 + r.endMinute;
-
-        // ⛔ overlap check
         return startMinutes < rEnd && endMinutes > rStart;
       });
     });
 
     if (!freeItem) {
-      this.snackbar.error('No item is free for this time range');
-      return;
+      this.snackbar.error('No free stations available');
+      return false;
     }
 
     this.itemManagementData = {
       item: freeItem,
       user: userId,
-      date: todaysDate.toString(),
+      date: todaysDate,
       startHour: now.getHours(),
       startMinute: now.getMinutes(),
       endHour: oneHourLater.getHours(),
@@ -145,15 +145,35 @@ export class StaffCheckInComponent implements OnInit, OnDestroy {
       isPaid: 1
     };
 
+    return true;
   }
 
+  getItemsByBranch() {
+    this.itemsService.getItemsByBranch(this.selectedBranchId).subscribe(items => {
+      const itemsArr = items as any[] || [];
+      this.itemsIds = itemsArr.map(i => i._id);
+      this.loadReservations(this.itemsIds);
+    });
+  }
+
+  loadReservations(ids: string[]) {
+    this.itemManagementService.getAllItemsReservations(ids).subscribe(res => {
+      this.allReservations = res as any[];
+    });
+  }
+
+  restartScanner() {
+    this.message = 'Preparing scanner...';
+    setTimeout(() => {
+      this.startScanner();
+      this.message = '';
+    }, 2500);
+  }
 
   ngOnDestroy() {
-    const video = this.video?.nativeElement;
-    if (video && video.srcObject) {
-      const stream = video.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
-      video.srcObject = null;
+    // ✅ Clean up controls on component destroy
+    if (this.controls) {
+      this.controls.stop();
     }
   }
 }

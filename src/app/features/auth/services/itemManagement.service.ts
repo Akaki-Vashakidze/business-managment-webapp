@@ -9,8 +9,8 @@ import { Business, ItemManagement, ReserveItem } from '../../../interfaces/share
 export class ItemManagementService {
     constructor(private http: HttpClient) { }
 
-    reserveitem(reserveItem: ReserveItem | any): Observable<any> {
-        return this.http.post(`/consoleApi/item/management/reserve-item`, reserveItem);
+    reserveitemByAdmin(reserveItem: ReserveItem | any): Observable<any> {
+        return this.http.post(`/consoleApi/item/management/reserve-item-by-admin`, reserveItem);
     }
 
     getAllReservationsForItem(itemId: string): Observable<ItemManagement[]> {
@@ -27,14 +27,6 @@ export class ItemManagementService {
 
     markItemAsPaid(itemManagingId:string){
         return this.http.post<any>(`/consoleApi/item/management/mark-item-as-paid/${itemManagingId}`,{});
-    }
-
-    sendMailWhenReservationIsFinished(email:string,subject:string,text:string){
-         return this.http.post<any>(`/consoleApi/item/management/send-finishedReservation-mail`,{
-            email,
-            subject,
-            text,
-         });
     }
     
 }

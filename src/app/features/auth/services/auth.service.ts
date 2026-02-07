@@ -39,6 +39,17 @@ export class AuthService {
     return this.http.post(`/consoleApi/auth/confirmCodeMobileNumber`, body);
   }
 
+  forgotPassword(number:string): Observable<any> {
+    let mobileNumber = JSON.parse(number)
+    const body = { mobileNumber };
+    return this.http.post(`/consoleApi/auth/forgot-password`, body);
+  }
+
+  resetPassword(accessToken:string, newPassword:string): Observable<any> {
+    const body = { accessToken, newPassword };
+    return this.http.post(`/consoleApi/auth/reset-password`, body);
+  }
+
   logOut(){ 
     return this.http.post(`/consoleApi/auth/logout`, {});
   }
