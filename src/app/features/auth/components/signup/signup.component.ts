@@ -11,7 +11,7 @@ import { BusinessService } from '../../services/business.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MatButtonModule, TranslateModule],
+  imports: [CommonModule, FormsModule, RouterModule, MatButtonModule, TranslateModule, TranslateModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })

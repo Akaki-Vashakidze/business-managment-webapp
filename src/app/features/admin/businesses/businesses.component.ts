@@ -6,17 +6,18 @@ import { BusinessService } from '../../auth/services/business.service';
 import { Business } from '../../../interfaces/shared-interfaces';
 import { CommonModule } from '@angular/common';
 import { BranchesService } from '../../auth/services/branches.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-businesses',
   standalone: true, // Ensure standalone is marked
-  imports: [MatMenuModule, MatButtonModule, MatIconModule, CommonModule],
+  imports: [MatMenuModule, MatButtonModule, MatIconModule, CommonModule, TranslateModule],
   templateUrl: './businesses.component.html',
   styleUrl: './businesses.component.scss'
 })
 export class BusinessesComponent implements OnInit {
   businesses: Business[] = [];
-  selectedBusiness: string = 'ბიზნესები';
+  selectedBusiness: string = 'Businesses';
 
   constructor(
     private businessService: BusinessService, 

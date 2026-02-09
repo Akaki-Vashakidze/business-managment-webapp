@@ -1,8 +1,8 @@
 <div class="header_container">
   <div class="auth_cont">
     <div class="signup-header">
-      <h1>Join Our Platform</h1>
-      <p>Follow the steps to create your account</p>
+      <h1>{{'Join_Our_Platform' | translate}}</h1>
+      <p>{{'Follow_the_steps_to_create_your_account' | translate}}</p>
     </div>
 
     <form #loginForm="ngForm" class="login_form">
@@ -11,7 +11,7 @@
         <div *ngIf="step1" class="step-animation">
           
           <div *ngIf="businesses.length > 1">
-            <label class="section-label">Choose your Business</label>
+            <label class="section-label">{{'Choose_your_Business' | translate}}</label>
             <div class="business-grid">
               <div *ngFor="let b of businesses" 
                    class="business-card" 
@@ -24,7 +24,7 @@
                 <div class="owner-info" *ngIf="b.owner">
                   <div class="avatar">{{ b.owner.fullName[0] }}</div>
                   <div class="owner-details">
-                    <span class="label">Owner</span>
+                    <span class="label">{{'Owner' | translate}}</span>
                     <span class="owner-name">{{ b.owner.fullName }}</span>
                   </div>
                 </div>
@@ -52,19 +52,19 @@
         (click)="sendVerificationCodeMobileMessage()" 
         class="main_button"
         >
-        Next: Send Code
+        {{'Next_Send_Code' | translate}}
         </button>
           </div>
         </div>
 
         <div *ngIf="step2" class="step-animation">
           <div class="verification-box">
-            <p>Verification code sent to <strong>{{mobileNumber}}</strong></p>
+            <p> {{'Verification_code_sent_to' | translate}} <strong>{{mobileNumber}}</strong></p>
             <div class="code-input-row">
               <input type="text" name="Code" [(ngModel)]="code" placeholder="Enter 6-digit code" required class="login_input center-text" />
               <div class="timer-ring">{{countDownSeconds}}s</div>
             </div>
-            <button (click)="confirmCode()" class="main_button w-100">Confirm Code</button>
+            <button (click)="confirmCode()" class="main_button w-100">{{'Confirm_Code' | translate}}</button>
           </div>
         </div>
 
@@ -73,7 +73,7 @@
           <input type="password" name="password" [(ngModel)]="password" placeholder="Create Password" class="login_input" />
           <input type="password" name="password2" [(ngModel)]="password2" placeholder="Repeat Password" class="login_input" />
           
-          <button (click)="signUp()" class="main_button w-100 mt-20">Complete Registration</button>
+          <button (click)="signUp()" class="main_button w-100 mt-20">{{'Complete_Registration' | translate}}</button>
         </div>
       </div>
 

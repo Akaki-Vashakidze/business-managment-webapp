@@ -5,19 +5,19 @@
   <div class="login-container">
     <header class="login-header">
       <div class="logo-box">🎮</div>
-      <h1>The Gaming Hub</h1>
-      <p>Log in to reserve your station</p>
+      <h1>Game Time</h1>
+      <p>{{'LOG_IN_TO_RESERVE_YOUR_STATION' | translate}}</p>
     </header>
 
     <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
       <div class="inputs-stack">
         <div class="input-group">
-          <span class="material-icons">email</span>
+          <span class="material-icons">smartphone</span>
           <input
-            type="email"
-            name="email"
-            [(ngModel)]="email"
-            placeholder="Email Address"
+            type="tel"
+            name="mobile"
+            [(ngModel)]="mobile"
+            placeholder="Mobile Number"
             required
             class="gaming-input"
           />
@@ -48,8 +48,8 @@
       </div>
 
       <div class="footer-links">
-        <a routerLink="/password-recovery">Forgot Password?</a>
-        <span>New player? <a routerLink="/signup">Join now</a></span>
+        <a routerLink="/password-recovery">{{'FORGOT_PASSWORD' | translate}}</a>
+        <span>{{'NEW_PLAYER' | translate}} <a routerLink="/signup">{{'JOIN_NOW' | translate}}</a></span>
       </div>
     </form>
   </div>

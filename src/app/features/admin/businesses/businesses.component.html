@@ -6,14 +6,14 @@
     [class.has-selection]="selectedBusiness !== 'ბიზნესები'"
   >
     <div class="btn-content">
-      <span class="context-label">CURRENT BUSINESS</span>
+      <span class="context-label">{{'CURRENT_BUSINESS' | translate}}</span>
       <span class="selected-text">{{ selectedBusiness }}</span>
     </div>
     <mat-icon class="chevron">expand_more</mat-icon>
   </button>
 
   <mat-menu #businessesMenu="matMenu" class="cyber-menu-panel">
-    <div class="menu-header">SELECT WORKSPACE</div>
+    <div class="menu-header">{{'SELECT_WORKSPACE' | translate}}</div>
     <button 
       *ngFor="let business of businesses" 
       (click)="selectBusiness(business)" 
@@ -22,7 +22,7 @@
       [class.active-item]="business.name === selectedBusiness"
     >
       <mat-icon>business_center</mat-icon>
-      <span>{{ business.name }}</span>
+      <span>{{ business.name | translate}}</span>
     </button>
   </mat-menu>
 </div>

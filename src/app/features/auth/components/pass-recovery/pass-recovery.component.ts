@@ -5,11 +5,12 @@ import { Router, RouterModule } from '@angular/router';
 import { SiteService } from '../../services/site.service';
 import { SnackbarService } from '../../services/snack-bar.service';
 import { AuthService } from '../../services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pass-recovery',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
   templateUrl: './pass-recovery.component.html',
   styleUrl: './pass-recovery.component.scss'
 })
@@ -36,8 +37,9 @@ export class PassRecoveryComponent {
     this.authService.forgotPassword(this.recoveryData.phone).subscribe({
       next: (res: any) => {
         this.loading = false;
-        this.currentStep = 2;
+        // this.currentStep = 2;
         this.snackbar.success('If registered, a reset link was sent.');
+        this.router.navigate(['/login'])
       },
       error: (err) => {
         this.loading = false;

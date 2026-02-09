@@ -70,6 +70,11 @@ export class AdminHeaderComponent implements OnDestroy {
     })
   }
 
+  changeLang(event: any) {
+    let lang = event.target.value
+    this.translateService.use(lang);
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

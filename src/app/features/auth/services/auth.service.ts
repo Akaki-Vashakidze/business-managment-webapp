@@ -9,8 +9,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(email: string, password: string): Observable<any> {
-    const body = { email, password };
+  login(mobile: string, password: string): Observable<any> {
+    const body = { mobile, password };
     return this.http.post(`/consoleApi/auth/login`, body);
   }
 

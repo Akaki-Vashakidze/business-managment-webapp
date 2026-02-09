@@ -8,23 +8,23 @@
   </div>
 
   <div class="step-content" *ngIf="currentStep === 1">
-    <h1>Identity</h1>
-    <p>Enter your phone number to receive a reset code.</p>
+    <h1>{{'Identity' | translate}}</h1>
+    <p>{{'enter_mobile_number' | translate}}</p>
     <div class="input-box">
-      <input type="tel" [(ngModel)]="recoveryData.phone" placeholder="+995 5xx xxx xxx">
+      <input type="tel" [(ngModel)]="recoveryData.phone" placeholder="5xx xxx xxx">
     </div>
     <button class="primary-btn" (click)="sendCode()" [disabled]="loading">
-      {{ loading ? 'Sending...' : 'Send SMS Code' }}
+      {{ loading ? 'Sending' : 'Send_SMS_Code'  | translate}}
     </button>
   </div>
 
   <div class="step-content" *ngIf="currentStep === 2">
-    <h1>Verification</h1>
-    <p>Paste the reset token sent to your phone.</p>
+    <h1>{{'verification' | translate}}</h1>
+    <p>{{'paste_token_msg' | translate}}</p>
     <div class="input-box">
       <input type="text" [(ngModel)]="recoveryData.token" placeholder="Enter Token" class="otp-field">
     </div>
-    <button class="primary-btn" (click)="verifyCode()">Next: Set Password</button>
-    <button class="text-link" (click)="currentStep = 1">Wrong number?</button>
+    <button class="primary-btn" (click)="verifyCode()">{{'set_new_password' | translate}}</button>
+    <button class="text-link" (click)="currentStep = 1">{{'wrong_number' | translate}}</button>
   </div>
 </div>

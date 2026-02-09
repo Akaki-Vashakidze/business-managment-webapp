@@ -7,17 +7,18 @@ import { BranchesService } from '../../features/auth/services/branches.service';
 import { Branch } from '../../interfaces/shared-interfaces';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-branches',
   standalone: true,
-  imports: [MatMenuModule, MatButtonModule, MatIconModule, CommonModule],
+  imports: [MatMenuModule, MatButtonModule, MatIconModule, CommonModule, TranslateModule],
   templateUrl: './branches.component.html',
   styleUrl: './branches.component.scss'
 })
 export class BranchesComponent implements OnInit {
   branches: Branch[] = [];
-  selectedBranchName: string = 'Select Branch';
+  selectedBranchName: string = 'Select_Branch';
   selectedBusinessId: string = '';
 
   constructor(
@@ -29,7 +30,7 @@ export class BranchesComponent implements OnInit {
   ngOnInit() {
     // 1. Listen for Branch selection changes
     this.branchService.selectedBranch.subscribe(branch => {
-      this.selectedBranchName = branch?.name || 'Select Branch'; 
+      this.selectedBranchName = branch?.name || 'Select_Branch'; 
     });
 
     // 2. Listen for Business selection (to load relevant branches)

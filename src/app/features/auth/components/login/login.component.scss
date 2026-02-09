@@ -92,6 +92,13 @@
     font-size: 1rem;
     transition: all 0.3s ease;
 
+    /* Removed spinner for number/tel inputs if you use type="number" */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
     &:focus {
       outline: none;
       border-color: #3b82f6;

@@ -1,17 +1,17 @@
 <div class="header_container">
     <div class="brand_section" routerLink="/admin/branchItems">
         <div class="logo_glow">BM</div>
-        <span class="brand_name">ADMIN</span>
+        <span class="brand_name">{{'ADMIN' | translate}}</span>
     </div>
 
     <div class="hud_controls" *ngIf="user">
         <div class="hud_item">
-            <label>BUSINESS</label>
+            <label>{{'BUSINESS' | translate}}</label>
             <app-businesses></app-businesses>
         </div>
         <div class="hud_divider"></div>
         <div class="hud_item">
-            <label>BRANCH</label>
+            <label>{{'BRANCH' | translate}}</label>
             <app-branches></app-branches>
         </div>
     </div>
@@ -22,13 +22,20 @@
             <mat-icon [ngClass]="{'active-glow': user?.isActiveAdmin === 1, 'inactive-dim': user?.isActiveAdmin === 0}" (click)="makeAdminActive()">bolt</mat-icon>
             <button (click)="logOut()" class="auth_buttons logout_btn">
                 <span class="material-icons">power_settings_new</span>
-                <span class="btn_text">LOGOUT</span>
+                <span class="btn_text">{{'LOGOUT' | translate}}</span>
             </button>
         </ng-container>
 
         <ng-template #guestButtons>
-            <button routerLink="/login" class="auth_buttons login_btn">LOGIN</button>
-            <button routerLink="/signup" class="auth_buttons signup_btn">SIGN UP</button>
+            <button routerLink="/login" class="auth_buttons login_btn">{{'LOGIN' | translate}}</button>
+            <button routerLink="/signup" class="auth_buttons signup_btn">{{'SIGN_UP' | translate}}</button>
         </ng-template>
+
+        <div class="lang-wrapper">
+        <select (change)="changeLang($event)" class="lang-select">
+          <option value="en">EN</option>
+          <option value="ka">GE</option>
+        </select>
+      </div>
     </div>
 </div>

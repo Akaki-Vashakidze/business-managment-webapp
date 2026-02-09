@@ -5,8 +5,8 @@
     </div>
     
     <div class="label-group">
-      <span class="prefix">CURRENT BRANCH</span>
-      <span class="branch-name">{{ selectedBranchName }}</span>
+      <span class="prefix">{{'CURRENT_BRANCH' | translate}}</span>
+      <span class="branch-name">{{ selectedBranchName | translate}}</span>
     </div>
 
     <mat-icon class="chevron">expand_more</mat-icon>
@@ -20,7 +20,7 @@
     </button>
     
     <div *ngIf="branches.length === 0" class="no-branches">
-      No branches found for this business.
+      {{'NO_BRANCHES_FOUND' | translate}}
     </div>
   </mat-menu>
 </div>
