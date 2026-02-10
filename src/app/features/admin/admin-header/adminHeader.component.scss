@@ -29,21 +29,54 @@ $text-dim: #94a3b8;
     gap: 12px;
     cursor: pointer;
 
-    .logo_glow {
-        background: $primary;
-        color: white;
-        width: 35px; height: 35px;
-        border-radius: 8px;
-        display: flex; align-items: center; justify-content: center;
-        font-weight: 900;
-        box-shadow: 0 0 15px rgba($primary, 0.4);
+    .logo-box {
+        /* Path to your image */
+        background-image: url('/assets/images/logo1.png');
+        
+        /* Centers the logo and prevents it from repeating */
+        background-position: center;
+        background-repeat: no-repeat;
+        
+        /* 'contain' ensures the whole logo is visible without being cropped */
+        background-size: contain;
+        
+        /* Set your desired dimensions */
+        width: 50px;
+        height: 50px;
+        
+        /* Optional: keeps it clean if the box is larger than the logo */
+        display: inline-block;
+        @media (max-width: 768px) {
+            display: none;
+         }
     }
+
     .brand_name {
         color: white;
         font-weight: 800;
         letter-spacing: 2px;
         font-size: 0.9rem;
         @media (max-width: 768px) { display: none; }
+    }
+}
+
+
+.logo-box-mobile {
+    /* Hide by default (PC/Desktop) */
+    display: none;
+
+    @media (max-width: 768px) {
+        /* Show only on Mobile */
+        display: inline-block;
+        
+        background-image: url('/assets/images/logo1.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        
+        width: 25px;
+        height: 25px;
+        margin-right: auto;
     }
 }
 
