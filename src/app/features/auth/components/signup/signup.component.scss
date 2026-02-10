@@ -1,263 +1,101 @@
-/* Keep all previous SCSS and add/update these parts */
+@use "sass:color";
 
-$bg-main: #050811;
-$bg-card: #1e293b;
-$accent-red: #e94560;
-$accent-blue: #3b82f6;
-$text-primary: #f8fafc;
-$text-muted: #94a3b8;
-$border-glass: rgba(255, 255, 255, 0.1);
+$r: #e94560; $b: #3b82f6; $m: #94a3b8; $g: rgba(255,255,255,0.1);
 
-/* New Badge for single business mode */
-.selected-business-badge {
-  background: rgba($accent-blue, 0.1);
-  border: 1px solid rgba($accent-blue, 0.2);
-  color: $text-primary;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  font-size: 0.9rem;
-  text-align: center;
-  strong { color: $accent-blue; }
-}
-
-/* ... (rest of your existing SCSS) ... */
+%f { display: flex; align-items: center; }
+%i { background: #0f172a; border: 1px solid $g; border-radius: 12px; color: #fff; transition: 0.3s; }
 
 .header_container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: $bg-main;
-  padding: 20px;
-  font-family: 'Inter', sans-serif;
-  position: relative;
-  overflow: hidden;
-
+  @extend %f; min-height: 100vh; justify-content: center; background: #050811; padding: 20px;
+  position: relative; overflow: hidden;
   &::before {
-    content: '';
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background: $accent-red;
-    filter: blur(120px);
-    opacity: 0.1;
-    top: -50px;
-    right: -50px;
+    content: ''; position: absolute; width: 300px; height: 300px;
+    background: $r; filter: blur(120px); opacity: 0.1; top: -50px; right: -50px;
   }
 }
 
 .auth_cont {
-  background: rgba(22, 33, 62, 0.7);
-  backdrop-filter: blur(20px);
-  width: 100%;
-  max-width: 480px;
-  padding: 35px;
-  border-radius: 24px;
-  border: 1px solid $border-glass;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  background: rgba(22,33,62,0.7); backdrop-filter: blur(20px);
+  width: 100%; max-width: 480px; padding: 35px; border-radius: 24px;
+  border: 1px solid $g; box-shadow: 0 25px 50px -12px #000; z-index: 1; text-align: center;
+  h1 { font-size: 1.8rem; margin: 0; color: #fff; font-weight: 800; }
+  p { color: $m; font-size: 0.9rem; margin: 5px 0 25px; }
+}
 
-  .signup-header {
-    text-align: center;
-    margin-bottom: 25px;
-    h1 { font-size: 1.8rem; margin: 0; color: #fff; font-weight: 800; }
-    p { color: $text-muted; font-size: 0.9rem; margin-top: 5px; }
-  }
+.selected-business-badge {
+  background: rgba($b, 0.1); border: 1px solid rgba($b, 0.2);
+  color: #f8fafc; padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 0.9rem;
+  strong { color: $b; }
 }
 
 .section-label {
-  display: block;
-  font-weight: 700;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 15px;
-  color: $accent-blue;
+  display: block; font: 700 0.75rem sans-serif; text-transform: uppercase;
+  margin-bottom: 15px; color: $b; text-align: left;
 }
 
 .business-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-  max-height: 260px;
-  overflow-y: auto;
-  padding-right: 8px;
-
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  margin-bottom: 20px; max-height: 260px; overflow-y: auto;
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: $border-glass; border-radius: 10px; }
+  &::-webkit-scrollbar-thumb { background: $g; border-radius: 10px; }
 }
 
 .business-card {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid $border-glass;
-  border-radius: 16px;
-  padding: 16px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &:hover { 
-    background: rgba(15, 23, 42, 0.9);
-    border-color: rgba($accent-blue, 0.5);
-    transform: translateY(-2px);
-  }
-  
+  @extend %i; background: rgba(15,23,42,0.6); padding: 16px; cursor: pointer;
+  &:hover { background: rgba(15,23,42,0.9); border-color: rgba($b, 0.5); transform: translateY(-2px); }
   &.selected {
-    border-color: $accent-red;
-    background: rgba($accent-red, 0.05);
-    box-shadow: 0 0 15px rgba($accent-red, 0.2);
-    .selection-indicator { 
-        background: $accent-red; 
-        border-color: $accent-red;
-        box-shadow: 0 0 8px $accent-red;
-    }
+    border-color: $r; background: rgba($r, 0.05); box-shadow: 0 0 15px rgba($r, 0.2);
+    .selection-indicator { background: $r; border-color: $r; box-shadow: 0 0 8px $r; }
   }
+}
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    .biz-name { font-weight: 700; color: #fff; font-size: 0.9rem; }
-    .selection-indicator {
-      width: 16px;
-      height: 16px;
-      border: 2px solid $border-glass;
-      border-radius: 50%;
-      transition: 0.2s;
-    }
-  }
+.card-header { @extend %f; justify-content: space-between; .biz-name { font-weight: 700; color: #fff; font-size: 0.9rem; } }
+.selection-indicator { width: 16px; height: 16px; border: 2px solid $g; border-radius: 50%; }
 
-  .owner-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 15px;
-    
-    .avatar {
-      width: 24px;
-      height: 24px;
-      background: $bg-card;
-      color: $accent-blue;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.65rem;
-      font-weight: 800;
-      border: 1px solid $border-glass;
-    }
-    .owner-details {
-      .label { font-size: 0.6rem; color: $text-muted; text-transform: uppercase; display: block; }
-      .owner-name { font-size: 0.75rem; color: #fff; font-weight: 500; }
-    }
+.owner-info {
+  @extend %f; gap: 8px; margin-top: 15px; text-align: left;
+  .avatar {
+    width: 24px; height: 24px; background: #1e293b; color: $b; border-radius: 50%; 
+    @extend %f; justify-content: center; font: 800 0.65rem sans-serif; border: 1px solid $g;
   }
+  .label { font-size: 0.6rem; color: $m; text-transform: uppercase; display: block; }
+  .owner-name { font-size: 0.75rem; color: #fff; }
 }
 
 .login_input {
-  width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  background: #0f172a;
-  border: 1px solid $border-glass;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  color: #fff;
-  transition: 0.3s;
-  
-  &:focus { 
-    outline: none; 
-    border-color: $accent-blue; 
-    box-shadow: 0 0 0 4px rgba($accent-blue, 0.1); 
-  }
-  &::placeholder { color: #475569; }
+  @extend %i; width: 100%; padding: 14px 16px; margin-bottom: 12px; font-size: 0.95rem;
+  &:focus { outline: none; border-color: $b; box-shadow: 0 0 0 4px rgba($b, 0.1); }
 }
 
 .mobileNumber_field {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
-  .index_field {
-    display: flex;
-    align-items: center;
-    background: #0f172a;
-    border-radius: 12px;
-    padding: 0 12px;
-    border: 1px solid $border-glass;
-    span { color: $text-muted; font-weight: 700; }
-    .index_input { 
-        border: none; 
-        background: transparent; 
-        width: 45px; 
-        color: #fff; 
-        outline: none; 
-        font-weight: 600;
-    }
-  }
+  display: flex; gap: 10px; margin-bottom: 12px;
+  .index_field { @extend %f, %i; padding: 0 12px; span { color: $m; font-weight: 700; } }
+  .index_input { border: none; background: transparent; width: 40px; color: #fff; outline: none; }
   .login_input { margin-bottom: 0; }
 }
 
 .main_button {
-  background: linear-gradient(135deg, $accent-red 0%, #ff2e63 100%);
-  color: white;
-  border: none;
-  padding: 16px;
-  border-radius: 14px;
-  width: 100%;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 4px 15px rgba($accent-red, 0.3);
-  margin: 0;
-  &:hover:not(:disabled) { 
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba($accent-red, 0.4);
-  }
+  background: linear-gradient(135deg, $r 0%, #ff2e63 100%);
+  color: #fff; border: none; padding: 16px; border-radius: 14px;
+  width: 100%; font: 800 1rem sans-serif; cursor: pointer; transition: 0.3s;
+  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba($r, 0.4); }
   &:disabled { opacity: 0.4; filter: grayscale(1); }
 }
 
-.verification-box {
-    text-align: center;
-    p { color: $text-muted; margin-bottom: 20px; }
-}
-
 .code-input-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    .timer-ring {
-        background: rgba($accent-red, 0.1);
-        color: $accent-red;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 0.8rem;
-        border: 2px solid rgba($accent-red, 0.2);
-    }
-    .login_input { margin-bottom: 0; }
+  @extend %f; gap: 15px; margin-bottom: 20px;
+  .timer-ring {
+    background: rgba($r, 0.1); color: $r; width: 48px; height: 48px; border-radius: 50%;
+    @extend %f; justify-content: center; font-weight: 800; font-size: 0.8rem; border: 2px solid rgba($r, 0.2);
+  }
+  .login_input { margin-bottom: 0; }
 }
 
 .msg {
-  padding: 14px;
-  border-radius: 12px;
-  text-align: center;
-  margin-top: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  &.error { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
-  &.success { background: rgba(74, 222, 128, 0.1); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.2); }
+  padding: 12px; border-radius: 12px; margin-top: 20px; font: 600 0.85rem sans-serif; border: 1px solid;
+  &.error { background: rgba(239,68,68,0.1); color: #f87171; border-color: rgba(239,68,68,0.2); }
+  &.success { background: rgba(74,222,128,0.1); color: #4ade80; border-color: rgba(74,222,128,0.2); }
 }
 
 .center-text { text-align: center; }
-.w-100 { width: 100%; }
 .mt-20 { margin-top: 20px; }
-
-.margin0 {
-  margin: 0 !important;
-}
