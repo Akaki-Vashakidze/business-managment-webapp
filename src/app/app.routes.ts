@@ -1,61 +1,54 @@
 import { Routes } from '@angular/router';
-
-import { LoginComponent } from './features/auth/components/login/login.component';
-import { SignupComponent } from './features/auth/components/signup/signup.component';
-import { PassRecoveryComponent } from './features/auth/components/pass-recovery/pass-recovery.component';
-import { AdminDashboardComponent } from './features/admin/admin-dashboard/admin-dashboard.component';
-
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
-import { UserDashboardComponent } from './features/user/user-dashboard/user-dashboard.component';
-import { AddBranchesComponent } from './features/admin/add-branches/add-branches.component';
-import { AddBusinessComponent } from './features/admin/add-business/add-business.component';
-import { MyBusinessesComponent } from './features/admin/my-businesses/my-businesses.component';
-import { BranchItemsComponent } from './features/admin/branch-items/branch-items.component';
-import { BranchesComponent } from './sharedComponents/branches/branches.component';
-import { MyBranchesComponent } from './features/admin/my-branches/my-branches.component';
-import { ItemManagementComponent } from './features/admin/item-management/item-management.component';
-import { UsersComponent } from './features/admin/users/users.component';
-import { StaffCheckInComponent } from './features/admin/staff-check-in/staff-check-in.component';
-import { UserDetailsComponent } from './features/admin/user-details/user-details.component';
-import { UserItemManagementComponent } from './features/user/user-item-management/user-item-management.component';
 import { IsAlreadyAuthedGuard } from './guards/isAlreadyAuthed.guard';
-import { UserProfileComponent } from './features/user/user-profile/user-profile.component';
-import { ResetPasswordComponent } from './features/auth/components/reset-password/reset-password.component';
 
 export const routes: Routes = [
-  // 🔓 Public
-  { path: 'login', canActivate:[IsAlreadyAuthedGuard], component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
-  { path: 'password-recovery', component: PassRecoveryComponent },
-  { path: 'newpass/:token', component: ResetPasswordComponent },
+  // 🔓 Public (Load immediately or lazy load)
+  { 
+    path: 'login', 
+    canActivate: [IsAlreadyAuthedGuard], 
+    loadComponent: () => import('./features/auth/components/login/login.component').then(m => m.LoginComponent) 
+  },
+  { 
+    path: 'signup', 
+    loadComponent: () => import('./features/auth/components/signup/signup.component').then(m => m.SignupComponent) 
+  },
+  { 
+    path: 'password-recovery', 
+    loadComponent: () => import('./features/auth/components/pass-recovery/pass-recovery.component').then(m => m.PassRecoveryComponent) 
+  },
+  { 
+    path: 'newpass/:token', 
+    loadComponent: () => import('./features/auth/components/reset-password/reset-password.component').then(m => m.ResetPasswordComponent) 
+  },
 
-  // 👤 User routes
+  // 👤 User routes (Lazy Loaded)
   {
     path: 'user',
     canActivate: [AuthGuard],
     children: [
-      { path: 'dashboard', component: UserDashboardComponent },
-      { path: 'profile', component: UserProfileComponent },
-      { path: 'reservations/:itemId', component: UserItemManagementComponent },
-      { path: 'reservations/:itemId/:slotTIme', component: UserItemManagementComponent },
+      { path: 'dashboard', loadComponent: () => import('./features/user/user-dashboard/user-dashboard.component').then(m => m.UserDashboardComponent) },
+      { path: 'profile', loadComponent: () => import('./features/user/user-profile/user-profile.component').then(m => m.UserProfileComponent) },
+      { path: 'reservations/:itemId', loadComponent: () => import('./features/user/user-item-management/user-item-management.component').then(m => m.UserItemManagementComponent) },
+      { path: 'reservations/:itemId/:slotTIme', loadComponent: () => import('./features/user/user-item-management/user-item-management.component').then(m => m.UserItemManagementComponent) },
     ],
   },
 
-  // 👑 Admin routes
+  // 👑 Admin routes (Lazy Loaded - Biggest size savings here!)
   {
-  path: 'admin',
+    path: 'admin',
     canActivate: [AuthGuard, AdminGuard],
     children: [
-      { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'branches', component: MyBranchesComponent },
-      { path: 'addBusiness', component: AddBusinessComponent },
-      { path: 'myBusinesses', component: MyBusinessesComponent },
-      { path: 'branchItems', component: BranchItemsComponent },
-      { path: 'users', component: UsersComponent },
-      { path: 'item/manage/:id', component: ItemManagementComponent },
-      { path: 'checkIn', component: StaffCheckInComponent },
-      { path: 'user-details/:userId', component: UserDetailsComponent },
+      { path: 'dashboard', loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
+      { path: 'branches', loadComponent: () => import('./features/admin/my-branches/my-branches.component').then(m => m.MyBranchesComponent) },
+      { path: 'addBusiness', loadComponent: () => import('./features/admin/add-business/add-business.component').then(m => m.AddBusinessComponent) },
+      { path: 'myBusinesses', loadComponent: () => import('./features/admin/my-businesses/my-businesses.component').then(m => m.MyBusinessesComponent) },
+      { path: 'branchItems', loadComponent: () => import('./features/admin/branch-items/branch-items.component').then(m => m.BranchItemsComponent) },
+      { path: 'users', loadComponent: () => import('./features/admin/users/users.component').then(m => m.UsersComponent) },
+      { path: 'item/manage/:id', loadComponent: () => import('./features/admin/item-management/item-management.component').then(m => m.ItemManagementComponent) },
+      { path: 'checkIn', loadComponent: () => import('./features/admin/staff-check-in/staff-check-in.component').then(m => m.StaffCheckInComponent) },
+      { path: 'user-details/:userId', loadComponent: () => import('./features/admin/user-details/user-details.component').then(m => m.UserDetailsComponent) },
     ],
   },
 

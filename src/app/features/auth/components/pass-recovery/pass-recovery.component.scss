@@ -1,3 +1,4 @@
+@use "sass:color"; 
 $accent: #3b82f6;
 $bg: #050811;
 $card: #16213e;
@@ -129,9 +130,11 @@ $text-muted: #94a3b8;
   transition: all 0.3s ease;
 
   &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba($accent, 0.35);
-    background: lighten($accent, 5%);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px rgba($accent, 0.35);
+      
+      /* Changed from lighten($accent, 5%) */
+      background: color.adjust($accent, $lightness: 5%);
   }
 
   &:active {
