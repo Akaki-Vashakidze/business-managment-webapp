@@ -16,11 +16,20 @@
     </div>
 
     <div class="input-group">
+    <label><span class="material-icons">timer</span> Quick Duration (From Now)</label>
+    <div class="quick-date-chips">
+      <button (click)="reserveForDuration(60)">1 Hour</button>
+      <button (click)="reserveForDuration(120)">2 Hours</button>
+      <button (click)="reserveForDuration(180)">3 Hours</button>
+    </div>
+  </div>
+
+    <div class="input-group">
       <label><span class="material-icons">bolt</span> Quick Select</label>
       <div class="quick-date-chips">
-        <button [class.active]="quickDate === 'today'" (click)="setQuickDate('today')">Today</button>
-        <button [class.active]="quickDate === 'tomorrow'" (click)="setQuickDate('tomorrow')">Tomorrow</button>
-        <button [class.active]="quickDate === 'dayAfter'" (click)="setQuickDate('dayAfter')">Upcoming</button>
+        <button [class.active]="quickDate === 'today'" (click)="setQuickDate('today', false)">Today</button>
+        <button [class.active]="quickDate === 'tomorrow'" (click)="setQuickDate('tomorrow', false)">Tomorrow</button>
+        <button [class.active]="quickDate === 'dayAfter'" (click)="setQuickDate('dayAfter', false)">Upcoming</button>
       </div>
     </div>
 
@@ -51,7 +60,7 @@
             [class.selected]="slot.selected"
             (click)="selectSlot(slot)"
           >
-            <span class="time">{{ slot.label.split(' - ')[0] }}</span>
+            <span class="time">{{ slot.label }}</span>
           </div>
         </div>
       </div>

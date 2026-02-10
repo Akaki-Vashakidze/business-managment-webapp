@@ -81,8 +81,8 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
 
   /* ================= DATE LOGIC ================= */
 
-  setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter') {
-    if (this.quickDate === type) {
+  setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter', doNotToggle:boolean) {
+    if (this.quickDate === type && !doNotToggle) {
       this.quickDate = null;
       return;
     }
@@ -245,6 +245,47 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
       }
     });
   }
+  
+  reserveForDuration(minutes: number) {
+  // 1. Force date to Today
+  this.setQuickDate('today', true);
+
+  const now = new Date();
+  const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
+  
+  // 2. Snap to the closest 15-minute slot (rounding up)
+  // Example: 14:07 becomes 14:15
+  const snappedStart = Math.ceil(currentTotalMinutes / 15) * 15;
+  const snappedEnd = snappedStart + minutes;
+
+  // 3. Find the slots in our timeSlots array
+  const startSlot = this.timeSlots.find(s => s.start === snappedStart);
+  const endSlot = this.timeSlots.find(s => s.end === snappedEnd);
+
+  if (!startSlot || !endSlot) {
+    this.snackbar.error('Selected time range is outside of business hours');
+    return;
+  }
+
+  // 4. Verify if the range is actually free
+  const slotsInRange = this.timeSlots.filter(
+    s => s.start >= snappedStart && s.end <= snappedEnd
+  );
+
+  if (slotsInRange.some(s => !s.free)) {
+    this.snackbar.error('No stations are available for this immediate duration');
+    return;
+  }
+
+  // 5. Apply selection visually and to logic
+  this.clearSelection();
+  this.rangeStart = startSlot;
+  this.rangeEnd = endSlot;
+  slotsInRange.forEach(s => s.selected = true);
+
+  // 6. Optional: Auto-trigger the reserve method
+  // this.reserveSelected(); 
+}
 
   ngOnDestroy(): void {
     this.destroy$.next();
