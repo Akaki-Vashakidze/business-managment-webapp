@@ -50,6 +50,9 @@ export class UserHeaderComponent {
           this.userService.setUser(null);
           localStorage.removeItem('businesManagement_user');
           localStorage.removeItem('businesManagement_token');
+          localStorage.removeItem('businesManagement_role');
+          localStorage.removeItem('businesManagement_selectedBranch');
+          localStorage.removeItem('businesManagement_selectedBusiness');
           this.router.navigate(['/login']);
         }
       });

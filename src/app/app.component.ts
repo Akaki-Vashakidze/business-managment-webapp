@@ -20,8 +20,11 @@ export class AppComponent {
   constructor(private translate: TranslateService, private userService: UserService) {
     userService.user$.subscribe(item => {
       console.log('App Component User Update:', item);
-      this.adminView = localStorage.getItem('businesManagement_role') == 'admin' ? true : false;
-      console.log(this.adminView)
+      if(!item) {
+        this.adminView = false;
+      } else {
+        this.adminView = item.user.isManager == 1 || item.user.isOwner == 1 ? true : false;
+      }
     });
     this.translate.setTranslation('en', en);
     this.translate.setTranslation('ka', ka);
