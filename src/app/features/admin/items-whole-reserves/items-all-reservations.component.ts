@@ -31,21 +31,21 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
   rangeEnd: TimeSlot | null = null;
 
   @Input() itemsIds!: string[];
-  @Output() onReserve = new EventEmitter<boolean>();  
+  @Output() onReserve = new EventEmitter<boolean>();
   allReservations: any[] = [];
   timeSlots: TimeSlot[] = [];
   selectedDate: string = '';
   users: User[] = [];
   selectedUser!: string;
-  selectedBranch!:string;
+  selectedBranch!: string;
   quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = null;
 
   constructor(
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService,
     private userService: UserService,
-    private businessService:BusinessService,
-    private branchesService:BranchesService
+    private businessService: BusinessService,
+    private branchesService: BranchesService
   ) {
 
     businessService.businessSelected.pipe(takeUntil(this.destroy$)).subscribe(item => {
@@ -57,7 +57,7 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
     })
   }
 
-  
+
 
   ngOnInit(): void {
 
@@ -75,13 +75,13 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
     }
   }
 
-  getAllUsers(businessId:string) {
+  getAllUsers(businessId: string) {
     this.userService.getAllUsers(businessId).subscribe(u => this.users = u);
   }
 
   /* ================= DATE LOGIC ================= */
 
-  setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter', doNotToggle:boolean) {
+  setQuickDate(type: 'today' | 'tomorrow' | 'dayAfter', doNotToggle: boolean) {
     if (this.quickDate === type && !doNotToggle) {
       this.quickDate = null;
       return;
@@ -111,6 +111,7 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
   loadReservations(ids: string[]) {
     this.itemManagementService.getAllItemsReservations(ids).subscribe(res => {
       this.allReservations = res;
+      console.log(res) //gemini I want to show all reservations and it's info on table or a list(or as you wish) because then I want to delete them if  want
       this.buildSlots();
     });
   }
@@ -245,47 +246,62 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
       }
     });
   }
-  
+
   reserveForDuration(minutes: number) {
-  // 1. Force date to Today
-  this.setQuickDate('today', true);
+    // 1. Force date to Today
+    this.setQuickDate('today', true);
 
-  const now = new Date();
-  const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
-  
-  // 2. Snap to the closest 15-minute slot (rounding up)
-  // Example: 14:07 becomes 14:15
-  const snappedStart = Math.ceil(currentTotalMinutes / 15) * 15;
-  const snappedEnd = snappedStart + minutes;
+    const now = new Date();
+    const currentTotalMinutes = now.getHours() * 60 + now.getMinutes();
 
-  // 3. Find the slots in our timeSlots array
-  const startSlot = this.timeSlots.find(s => s.start === snappedStart);
-  const endSlot = this.timeSlots.find(s => s.end === snappedEnd);
+    // 2. Snap to the closest 15-minute slot (rounding up)
+    // Example: 14:07 becomes 14:15
+    const snappedStart = Math.ceil(currentTotalMinutes / 15) * 15;
+    const snappedEnd = snappedStart + minutes;
 
-  if (!startSlot || !endSlot) {
-    this.snackbar.error('Selected time range is outside of business hours');
-    return;
+    // 3. Find the slots in our timeSlots array
+    const startSlot = this.timeSlots.find(s => s.start === snappedStart);
+    const endSlot = this.timeSlots.find(s => s.end === snappedEnd);
+
+    if (!startSlot || !endSlot) {
+      this.snackbar.error('Selected time range is outside of business hours');
+      return;
+    }
+
+    // 4. Verify if the range is actually free
+    const slotsInRange = this.timeSlots.filter(
+      s => s.start >= snappedStart && s.end <= snappedEnd
+    );
+
+    if (slotsInRange.some(s => !s.free)) {
+      this.snackbar.error('No stations are available for this immediate duration');
+      return;
+    }
+
+    // 5. Apply selection visually and to logic
+    this.clearSelection();
+    this.rangeStart = startSlot;
+    this.rangeEnd = endSlot;
+    slotsInRange.forEach(s => s.selected = true);
+
+    // 6. Optional: Auto-trigger the reserve method
+    // this.reserveSelected(); 
   }
 
-  // 4. Verify if the range is actually free
-  const slotsInRange = this.timeSlots.filter(
-    s => s.start >= snappedStart && s.end <= snappedEnd
-  );
-
-  if (slotsInRange.some(s => !s.free)) {
-    this.snackbar.error('No stations are available for this immediate duration');
-    return;
+  deleteReservation(reservationId: string) {
+    if (confirm('Are you sure you want to delete this reservation?')) {
+      this.itemManagementService.deleteReservation(reservationId).subscribe(item => {
+        if (item.errors) {
+          this.snackbar.error('Failed to delete reservation');
+        } else {
+          this.snackbar.success('Reservation deleted successfully');
+          this.loadReservations(this.itemsIds);
+          this.onReserve.next(true)
+        }
+      }
+      );
+    }
   }
-
-  // 5. Apply selection visually and to logic
-  this.clearSelection();
-  this.rangeStart = startSlot;
-  this.rangeEnd = endSlot;
-  slotsInRange.forEach(s => s.selected = true);
-
-  // 6. Optional: Auto-trigger the reserve method
-  // this.reserveSelected(); 
-}
 
   ngOnDestroy(): void {
     this.destroy$.next();

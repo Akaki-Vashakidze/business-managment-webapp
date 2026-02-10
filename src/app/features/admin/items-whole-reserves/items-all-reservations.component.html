@@ -78,5 +78,45 @@
         Confirm Reservation
       </button>
     </div>
+    
+  </div>
+  
+</div>
+
+
+    <div class="reservation-card glass-panel management-section">
+  <div class="card-header">
+    <span class="material-icons">list_alt</span>
+    <h3>Active Reservations</h3>
+  </div>
+
+  <div class="reservation-body">
+    <div class="res-list">
+      <div *ngIf="allReservations.length === 0" class="empty-state">
+        No active reservations for these items.
+      </div>
+
+      <div *ngFor="let res of allReservations" class="res-item">
+        <div class="res-info">
+          <div class="res-main">
+            <span class="item-name">{{ res.item.name }}</span>
+            <span class="res-time">
+              {{ res.startHour | number:'2.0' }}:{{ res.startMinute | number:'2.0' }} - 
+              {{ res.endHour | number:'2.0' }}:{{ res.endMinute | number:'2.0' }}
+            </span>
+          </div>
+          <div class="res-sub">
+            <span class="res-date">{{ res.date | date:'mediumDate' }}</span>
+            <span class="status-badge" [class.paid]="res.isPaid">
+              {{ res.isPaid ? 'Paid' : 'Unpaid' }}
+            </span>
+          </div>
+        </div>
+
+        <button class="btn-delete" (click)="deleteReservation(res._id)" title="Delete Reservation">
+          <span class="material-icons">delete_outline</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>

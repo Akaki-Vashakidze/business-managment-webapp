@@ -130,10 +130,14 @@ $text-dim: #94a3b8;
 .btn-main { background: $primary; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; }
 .btn-accent { background: rgba($success, 0.1); color: $success; border: 1px solid rgba($success, 0.2); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; cursor: pointer; }
 .btn-icon { background: none; border: none; color: $text-dim; cursor: pointer; transition: 0.2s; .material-icons { font-size: 20px; } &:hover { color: white; } &.del:hover { color: $danger; } }
-
+.btn-red { background: rgba($danger, 0.1); color: $danger; border: 1px solid rgba($danger, 0.2); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; cursor: pointer; }
 /* Helpers */
 .hide-mobile { @media (max-width: 768px) { display: none; } }
 .show-mobile { display: none; @media (max-width: 768px) { display: block; margin-top: 5px; } }
 .text-right { text-align: right; }
 .loader-line { height: 2px; background: $primary; width: 100%; animation: pulse 2s infinite; }
 @keyframes pulse { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+
+.marginLeft10 {
+  margin-left: 10px;
+}

@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div class="glass-card form-section" [class.is-editing]="editingUser">
+  <!-- <div class="glass-card form-section" [class.is-editing]="editingUser">
     <div class="card-header">
       <span class="material-icons">{{ editingUser ? 'edit' : 'add_circle' }}</span>
       <h3>{{ editingUser ? 'Modify User' : 'New Registration' }}</h3>
@@ -61,7 +61,8 @@
         </div>
       </div>
     </form>
-  </div>
+  </div> -->
+  
 
   <div class="list-container">
     <div *ngIf="loading" class="loader-line"></div>
@@ -101,11 +102,14 @@
                 <button (click)="launchUserDetails(user._id)" class="btn-icon" title="View Profile">
                   <span class="material-icons">visibility</span>
                 </button>
-                <button (click)="openEditUser(user)" class="btn-icon"><span class="material-icons">edit</span></button>
+                <!-- <button (click)="openEditUser(user)" class="btn-icon"><span class="material-icons">edit</span></button> -->
+                <mat-icon (click)="unblockUser(user)"  class="btn-icon" *ngIf="user.record.state == 0">check_circle</mat-icon>
+                <mat-icon (click)="blockUser(user)"  class="btn-icon" *ngIf="user.record.state == 1">do_not_disturb_on</mat-icon>
                 <button (click)="deleteUser(user)" class="btn-icon del"><span class="material-icons">delete</span></button>
                 <button (click)="showCreateMembership(user, i)" class="btn-accent">+ Member</button>
+                <button  *ngIf="user.record.state == 0"class="btn-red marginLeft10">Blocked</button>
               </div>
-
+              
               <div *ngIf="(i + 1) === showCreateMembershipFeature" class="membership-inline">
                 <select [(ngModel)]="selectedMembershipType">
                   <option *ngFor="let type of membershipTypes" [value]="type">{{ type }}</option>

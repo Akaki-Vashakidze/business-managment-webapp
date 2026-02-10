@@ -53,7 +53,7 @@ $text-dim: #94a3b8;
   display: flex; gap: 10px;
   button {
     flex: 1; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);
-    background: rgba(255,255,255,0.02); color: $text-dim; font-size: 0.8rem; font-weight: 700;
+    background: rgba(255,255,255,0.02); color: $text-dim; font-size: 0.8rem; font-weight: 700; width: 80px;
     cursor: pointer; transition: 0.2s;
     &.active { background: $primary; color: white; border-color: $primary; box-shadow: 0 5px 15px rgba($primary, 0.3); }
   }
@@ -143,4 +143,104 @@ $text-dim: #94a3b8;
   
   &:active { transform: scale(0.98); }
   .material-icons { font-size: 20px; }
+}
+
+
+.management-section {
+  margin-top: 40px; // Space from the booking card
+}
+
+.res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  color: $text-dim;
+  padding: 20px;
+  font-size: 0.9rem;
+}
+
+.res-item {
+  background: rgba($bg-dark, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s;
+
+  &:hover {
+    border-color: rgba($primary, 0.3);
+    background: rgba($bg-dark, 0.8);
+  }
+}
+
+.res-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+
+  .item-name {
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .res-time {
+    color: $primary;
+    font-family: 'monospace';
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+}
+
+.res-sub {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  .res-date {
+    color: $text-dim;
+    font-size: 0.75rem;
+  }
+}
+
+.status-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba($danger, 0.1);
+  color: $danger;
+  border: 1px solid rgba($danger, 0.2);
+
+  &.paid {
+    background: rgba($success, 0.1);
+    color: $success;
+    border-color: rgba($success, 0.2);
+  }
+}
+
+.btn-delete {
+  background: transparent;
+  border: none;
+  color: $text-dim;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba($danger, 0.1);
+    color: $danger;
+  }
+
+  .material-icons {
+    font-size: 20px;
+  }
 }

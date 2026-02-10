@@ -26,13 +26,22 @@
   cursor: pointer;
   
   .logo-box {
-    font-size: 1.5rem;
-    background: #e94560;
-    padding: 5px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* Path to your image */
+    background-image: url('/assets/images/logo1.png');
+    
+    /* Centers the logo and prevents it from repeating */
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    /* 'contain' ensures the whole logo is visible without being cropped */
+    background-size: contain;
+    
+    /* Set your desired dimensions */
+    width: 50px;
+    height: 50px;
+    
+    /* Optional: keeps it clean if the box is larger than the logo */
+    display: inline-block;
   }
 
   .brand-name {
@@ -163,12 +172,22 @@
     padding: 5px 10px;
     font-size: 0.75rem;
   }
+
+    .logo-box {
+    width: 35px !important;
+    height: 35px !important;
+  }
 }
 
 /* 3. Small Phone Breakpoint (Below 400px) */
 @media (max-width: 400px) {
   .brand .logo-box {
     font-size: 1.2rem;
+  }
+
+  .logo-box {
+    width: 25px !important;
+    height: 25px !important;
   }
 
   .nav-actions {

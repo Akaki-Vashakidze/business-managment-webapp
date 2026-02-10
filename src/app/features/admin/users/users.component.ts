@@ -10,11 +10,12 @@ import { MembershipType } from '../../../enums/membership.enum';
 import { Router } from '@angular/router';
 import { BusinessService } from '../../auth/services/business.service';
 import { BranchesService } from '../../auth/services/branches.service';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.scss']
 })
@@ -162,6 +163,30 @@ export class UsersComponent implements OnInit, OnDestroy {
     if (!confirm(`Are you sure you want to delete ${user.fullName}?`)) return;
 
     this.usersService.deleteUser(user._id).subscribe({
+      next: () => {
+        this.snackbarService.success('User deleted successfully');
+        this.loadUsers(this.searchTerm);
+      },
+      error: () => this.snackbarService.error('Error deleting user')
+    });
+  }
+
+  blockUser(user: User) {
+    if (!confirm(`Are you sure you want to block ${user.fullName}?`)) return;
+
+    this.usersService.blockUser(user._id).subscribe({
+      next: () => {
+        this.snackbarService.success('User deleted successfully');
+        this.loadUsers(this.searchTerm);
+      },
+      error: () => this.snackbarService.error('Error deleting user')
+    });
+  }
+
+  unblockUser(user: User) {
+    if (!confirm(`Are you sure you want to unblock ${user.fullName}?`)) return;
+
+    this.usersService.unblockUser(user._id).subscribe({
       next: () => {
         this.snackbarService.success('User deleted successfully');
         this.loadUsers(this.searchTerm);

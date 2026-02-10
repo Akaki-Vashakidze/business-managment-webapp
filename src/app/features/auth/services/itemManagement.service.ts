@@ -28,5 +28,9 @@ export class ItemManagementService {
     markItemAsPaid(itemManagingId:string){
         return this.http.post<any>(`/consoleApi/item/management/mark-item-as-paid/${itemManagingId}`,{});
     }
+
+    deleteReservation(itemManagingId:string){
+        return this.http.delete<any>(`/consoleApi/item/management/delete/${itemManagingId}`,{});
+    }
     
 }

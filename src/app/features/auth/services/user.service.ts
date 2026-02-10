@@ -45,11 +45,11 @@ export class UserService {
   }
 
   getAllUsers(businessId:string): Observable<any> {
-    return this.http.get(`/consoleApi/user/get-all-users-minus-owner-and-managers/${businessId}`);
+    return this.http.get(`/consoleApi/admin/get-all-users-minus-owner-and-managers/${businessId}`);
   }
 
   getFilteredUsers(searchTerm: string, businessId:string): Observable<any> {
-    return this.http.post(`/consoleApi/user/get-filtered-users`, {searchQuery:searchTerm, businessId});
+    return this.http.post(`/consoleApi/admin/get-filtered-users`, {searchQuery:searchTerm, businessId});
   }
 
   editUser(searchTerm: string, userData:any): Observable<any> {
@@ -76,13 +76,20 @@ export class UserService {
   }
 
   makeAdminActive(){
-    return this.http.post(`/consoleApi/user/makeAdminActive`, {});
+    return this.http.post(`/consoleApi/admin/makeAdminActive`, {});
   }
 
   checkIfAdminIsActive(){
-    return this.http.post(`/consoleApi/user/checkIfAdminIsActive`, {},{
+    return this.http.post(`/consoleApi/admin/checkIfAdminIsActive`, {},{
             context: new HttpContext().set(SKIP_LOADER, true)
         });
   }
 
+  blockUser(userId:string){
+    return this.http.post(`/consoleApi/admin/blockUser/${userId}`, {});
+  }
+
+  unblockUser(userId:string){
+    return this.http.post(`/consoleApi/admin/unblockUser/${userId}`, {});
+  }
 }
