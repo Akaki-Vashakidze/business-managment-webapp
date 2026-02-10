@@ -4,7 +4,7 @@
       <span class="material-icons">arrow_back_ios</span>
     </button>
     <div class="title-area">
-      <h1>Station Booking</h1>
+      <h1>{{'STATION_BOOKING' | translate}}</h1>
       <p>REF: {{ itemId.slice(-6).toUpperCase() }}</p>
     </div>
   </header>
@@ -12,7 +12,7 @@
   <section class="section">
     <div class="section-header">
       <span class="step">01</span>
-      <label>Choose your day</label>
+      <label>{{'CHOOSE_YOUR_DAY' | translate}}</label>
     </div>
     <div class="date-tabs">
       <div *ngFor="let tab of dateTabs" 
@@ -28,8 +28,8 @@
   <section class="section">
     <div class="section-header">
       <span class="step">02</span>
-      <label>Select your playtime</label>
-      <span class="hint-pill">Tap Start & End</span>
+      <label>{{'SELECT_YOUR_PLAYTIME' | translate}}</label>
+      <span class="hint-pill">{{'TAP_START_AND_END' | translate}}</span>
     </div>
 
     <div class="grid-wrapper">
@@ -49,11 +49,11 @@
     <div class="drawer-content">
       <div class="booking-summary">
         <div class="summary-item">
-          <span class="lbl">Date</span>
+          <span class="lbl">{{'DATE' | translate}}</span>
           <span class="val">{{ reservation.date | date:'MMM d, y' }}</span>
         </div>
         <div class="summary-item">
-          <span class="lbl">Time</span>
+          <span class="lbl">{{'TIME' | translate}}</span>
           <span class="val" *ngIf="selectedStart && selectedEnd">
             {{ format(selectedStart.start) }} — {{ format(selectedEnd.end) }}
           </span>
@@ -64,9 +64,9 @@
         <label class="paid-check">
           <input type="checkbox" [(ngModel)]="reservation.isPaid">
           <span class="box"></span>
-          Paid Now
+          {{'PAID_NOW' | translate}}
         </label>
-        <button class="confirm-btn" (click)="reserveItem()">Confirm Station</button>
+        <button class="confirm-btn" (click)="reserveItem()">{{'CONFIRM_STATION' | translate}}</button>
       </div>
     </div>
   </div>

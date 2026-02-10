@@ -7,6 +7,7 @@ import { ItemManagementService } from '../../auth/services/itemManagement.servic
 import { SnackbarService } from '../../auth/services/snack-bar.service';
 import { User } from '../../../interfaces/shared-interfaces';
 import { SiteService } from '../../auth/services/site.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface TimeSlot {
   start: number;
@@ -19,7 +20,7 @@ interface TimeSlot {
 @Component({
   selector: 'app-user-item-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, TranslateModule],
   templateUrl: './user-item-management.component.html',
   styleUrl: './user-item-management.component.scss'
 })

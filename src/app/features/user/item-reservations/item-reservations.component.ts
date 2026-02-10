@@ -4,11 +4,12 @@ import { interval, startWith, Subscription, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-item-reservations',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslateModule],
   templateUrl: './item-reservations.component.html',
   styleUrl: './item-reservations.component.scss'
 })

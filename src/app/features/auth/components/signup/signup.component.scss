@@ -209,7 +209,7 @@ $border-glass: rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: 0.3s;
   box-shadow: 0 4px 15px rgba($accent-red, 0.3);
-  
+  margin: 0;
   &:hover:not(:disabled) { 
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba($accent-red, 0.4);

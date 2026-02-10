@@ -6,11 +6,12 @@ import { UserService } from '../../auth/services/user.service';
 import { ItemManagement } from '../../../interfaces/shared-interfaces';
 import { Subject, takeUntil } from 'rxjs';
 import { SnackbarService } from '../../auth/services/snack-bar.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-user-dashboard',
   standalone: true,
-  imports: [CommonModule, ItemReservationsComponent],
+  imports: [CommonModule, ItemReservationsComponent, TranslateModule],
   templateUrl: './user-dashboard.component.html',
   styleUrl: './user-dashboard.component.scss'
 })

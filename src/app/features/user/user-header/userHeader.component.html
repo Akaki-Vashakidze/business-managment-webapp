@@ -20,12 +20,12 @@
               {{ user.fullName || 'Gamer' }}
             </span>
             <button (click)="logOut()" class="btn-outline">
-              {{'logout' | translate}}
+              {{'LOGOUT' | translate}}
             </button>
           </div>
         </ng-container>
 
-              <div class="lang-wrapper">
+      <div class="lang-wrapper">
         <select (change)="changeLang($event)" class="lang-select">
           <option value="en">EN</option>
           <option value="ka">GE</option>

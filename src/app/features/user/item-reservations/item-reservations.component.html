@@ -2,14 +2,14 @@
   
   <header class="page-header">
     <div class="header-text">
-      <h1>The Gaming Hub</h1>
-      <p>Select station & time</p>
+      <h1>GAME TIME</h1>
+      <p>{{'SELECT_STATION_AND_TIME'| translate}}</p>
     </div>
-    <div class="live-badge"><span class="pulse"></span> Live</div>
+    <div class="live-badge"><span class="pulse"></span> {{'LIVE' | translate}}</div>
   </header>
 
   <section class="selection-section">
-    <label class="section-label">Branches</label>
+    <label class="section-label">{{'BRANCHES' | translate}}</label>
     <div class="h-scroll">
       <div *ngFor="let branch of branches" 
            class="chip branch-chip" 
@@ -21,7 +21,7 @@
   </section>
 
   <section class="selection-section">
-    <label class="section-label">Select Date</label>
+    <label class="section-label">{{'SELECT_DATE' | translate}}</label>
     <div class="h-scroll">
       <div *ngFor="let tab of dateTabs" 
            class="date-card" 
@@ -35,7 +35,7 @@
 
   <div *ngIf="loadingItems" class="loader-cont">
     <div class="spin"></div>
-    <p>Calibrating consoles...</p>
+    <p>{{'CALIBRATING_CONSOLES' | translate}}</p>
   </div>
 
   <div class="items-list" *ngIf="!loadingItems">
@@ -50,7 +50,7 @@
             </span>
           </div>
         </div>
-        <button class="btn-book-top" (click)="handleReserve(item._id)">Full</button>
+        <button class="btn-book-top" (click)="handleReserve(item._id)">{{'RESERVE' | translate}}</button>
       </div>
 
       <div class="timeline-grid">
