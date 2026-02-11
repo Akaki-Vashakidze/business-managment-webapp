@@ -1,6 +1,6 @@
 <header class="header-container">
   <div class="header-content">
-    <div class="brand" routerLink="/">
+    <div class="brand" routerLink="/dashboard">
       <div class="logo-box"></div>
       <span class="brand-name show-pc">GAME<span>TIME</span></span>
       <span class="brand-name show-mob">G<span>T</span></span>
@@ -22,6 +22,9 @@
             <button (click)="logOut()" class="btn-outline">
               {{'LOGOUT' | translate}}
             </button>
+            <div *ngIf="user.isManager || user.isOwner" class="switchToUser" (click)="switchRoleToAdmin()" routerLink="/admin/branchItems" >
+                <mat-icon>toggle_off</mat-icon>
+            </div>
           </div>
         </ng-container>
 

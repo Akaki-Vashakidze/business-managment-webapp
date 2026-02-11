@@ -39,7 +39,7 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
   selectedUser!: string;
   selectedBranch!: string;
   quickDate: 'today' | 'tomorrow' | 'dayAfter' | null = null;
-
+  businessChosen:boolean = true;
   constructor(
     private itemManagementService: ItemManagementService,
     private snackbar: SnackbarService,
@@ -49,6 +49,10 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
   ) {
 
     businessService.businessSelected.pipe(takeUntil(this.destroy$)).subscribe(item => {
+      if(!item) {
+        this.businessChosen = false;
+        return;
+      }
       this.getAllUsers(item?._id || '');
     })
 
@@ -109,9 +113,9 @@ export class ItemsWholeReservesComponent implements OnInit, OnChanges, OnDestroy
   /* ================= DATA ================= */
 
   loadReservations(ids: string[]) {
-    this.itemManagementService.getAllItemsReservations(ids).subscribe(res => {
+    this.itemManagementService.getAllItemsFutureReservations(ids).subscribe(res => {
       this.allReservations = res;
-      console.log(res) //gemini I want to show all reservations and it's info on table or a list(or as you wish) because then I want to delete them if  want
+      console.log(res)
       this.buildSlots();
     });
   }

@@ -21,6 +21,10 @@ export class ItemManagementService {
         return this.http.post<ItemManagement[]>(`/consoleApi/item/management/get-all-item-reservations`,{itemIds});
     }
 
+    getAllItemsFutureReservations(itemIds:string[]){
+        return this.http.post<ItemManagement[]>(`/consoleApi/item/management/get-all-item-future-reservations`,{itemIds});
+    }
+
     getAllItemsReservationsForToday(itemIds:string[]){
         return this.http.post<ItemManagement[]>(`/consoleApi/item/management/get-all-item-reservations-for-today`,{itemIds});
     }

@@ -130,9 +130,6 @@ export class SignupComponent implements OnInit, OnDestroy {
         if (item.error) {
           this.errorMessage = item.keyword || 'Registration failed';
         } else {
-          localStorage.setItem('businesManagement_user', JSON.stringify(item));
-          localStorage.setItem('businesManagement_role', item.user.isOwner == 1 || item.user.isManager == 1 ? 'admin' : 'user');
-          localStorage.setItem('businesManagement_token', item.token);
           this.userService.setUser(item);
           this.router.navigate(['dashboard']);
         }

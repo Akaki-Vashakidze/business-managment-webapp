@@ -25,6 +25,10 @@
                 <span class="material-icons">power_settings_new</span>
                 <span class="btn_text">{{'LOGOUT' | translate}}</span>
             </button>
+            <div class="switchToUser" (click)="switchToUser()" routerLink="/dashboard">
+                <mat-icon>toggle_on</mat-icon>
+            </div>
+
         </ng-container>
 
         <ng-template #guestButtons>

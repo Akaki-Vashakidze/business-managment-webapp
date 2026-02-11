@@ -1,4 +1,4 @@
-<div class="reservation-card glass-panel">
+<div class="reservation-card glass-panel" *ngIf="businessChosen">
   <div class="card-header">
     <span class="material-icons">event_available</span>
     <h3>Instant Reservation</h3>
@@ -96,7 +96,7 @@
         No active reservations for these items.
       </div>
 
-      <div *ngFor="let res of allReservations" class="res-item">
+      <div *ngFor="let res of allReservations" style="color:#2ecc71" class="res-item">
         <div class="res-info">
           <div class="res-main">
             <span class="item-name">{{ res.item.name }}</span>
@@ -120,3 +120,4 @@
     </div>
   </div>
 </div>
+

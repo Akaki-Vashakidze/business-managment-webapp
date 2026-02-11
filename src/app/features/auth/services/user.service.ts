@@ -11,17 +11,23 @@ export class UserService {
   private userSubject = new BehaviorSubject<any>(null);
   public user$: Observable<any> = this.userSubject.asObservable();
 
+  public switchRole = new BehaviorSubject<'admin' | 'user' | null>(null);
+
   user!: any;
   constructor(private http: HttpClient) {
     const storedUser = localStorage.getItem('businesManagement_user');
-    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+    console.log(storedUser)
+    if(storedUser){
+       const parsedUser = storedUser ? JSON.parse(storedUser) : null;
     this.userSubject.next(parsedUser);
+    }
   }
 
   checkUser(): Observable<any> {
     try {
       const storedUser = localStorage.getItem('businesManagement_user');
       this.user = storedUser ? JSON.parse(storedUser) : null;
+       this.userSubject.next(this.user);
     } catch (error) {
       console.error('Failed to parse user from localStorage:', error);
       this.user = null;
@@ -29,15 +35,22 @@ export class UserService {
     return this.user;
   }
 
-  setUser(user: {user:User, token:string} | null) {
+  setUser(user: {user:User, token:string | null} | null) {
     this.userSubject.next(user);
     if (user) {
       localStorage.setItem('businesManagement_user', JSON.stringify(user.user));
-      localStorage.setItem('businesManagement_token', user.token);
+      localStorage.setItem('businesManagement_role', user.user.isOwner == 1 || user.user.isManager == 1 ? 'admin' : 'user');
+      if(user.token){
+        localStorage.setItem('businesManagement_token', user.token);
+      }
     } else {
       localStorage.removeItem('businesManagement_user');
       localStorage.removeItem('businesManagement_token');
     }
+  }
+
+  onSwitchRole(role: 'admin' | 'user'){
+    this.switchRole.next(role)
   }
 
   getUser(): any {

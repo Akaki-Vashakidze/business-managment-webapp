@@ -19,13 +19,25 @@ export class AppComponent {
   adminView: any;
   constructor(private translate: TranslateService, private userService: UserService) {
     userService.user$.subscribe(item => {
-      console.log('App Component User Update:', item);
+      console.log(item)
       if(!item) {
         this.adminView = false;
       } else {
-        this.adminView = item.user.isManager == 1 || item.user.isOwner == 1 ? true : false;
+        this.adminView = item?.isManager == 1 || item?.isOwner == 1 ? true : false;
       }
+      console.log(this.adminView)
     });
+
+    userService.switchRole.subscribe(role => {
+      console.log(role)
+      if(!role) return;
+      if(role == 'user') {
+        this.adminView = false;
+      } else {
+        this.adminView = true;
+      }
+    })
+
     this.translate.setTranslation('en', en);
     this.translate.setTranslation('ka', ka);
 

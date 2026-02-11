@@ -42,6 +42,10 @@ export class UserHeaderComponent {
     this.translateService.use(lang);
   }
 
+  switchRoleToAdmin(){
+    this.userService.onSwitchRole('admin')
+  }
+
   logOut(): void {
     this.authService.logOut()
       .pipe(takeUntil(this.destroy$))

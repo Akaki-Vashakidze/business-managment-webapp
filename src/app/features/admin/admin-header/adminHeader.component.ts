@@ -67,6 +67,10 @@ export class AdminHeaderComponent implements OnDestroy {
       });
   }
 
+  switchToUser(){
+    this.userService.onSwitchRole('user')
+  }
+
   makeAdminActive() {
     this.userService.makeAdminActive().subscribe(item => {
       this.user = item;
