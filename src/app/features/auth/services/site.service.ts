@@ -18,6 +18,11 @@ export class SiteService {
         return this.http.get<ItemManagement[]>(`/consoleApi/site/get-business-branches/${business}`);
     }
 
+    //if there is only one business
+    getExistingBusiness() {
+        return this.http.get(`/consoleApi/site/get-existing-business`);
+    }
+
     getItemsReservations(body:{date:string,branchId:string}){
         return this.http.post<any>(`/consoleApi/site/get-branch-items-reservations`,body,{
             context: new HttpContext().set(SKIP_LOADER, true)

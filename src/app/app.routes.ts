@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/components/signup/signup.component').then(m => m.SignupComponent) 
   },
   { 
+    path: 'dashboard', 
+    loadComponent: () => import('./sharedComponents/dashboard/dashboard.component').then(m => m.DashboardComponent) 
+  },
+  { 
     path: 'password-recovery', 
     loadComponent: () => import('./features/auth/components/pass-recovery/pass-recovery.component').then(m => m.PassRecoveryComponent) 
   },
@@ -53,6 +57,6 @@ export const routes: Routes = [
   },
 
   // fallback
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

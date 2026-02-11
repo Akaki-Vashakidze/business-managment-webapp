@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://gametime-hmkoe.ondigitalocean.app'
+  apiUrl: 'http://localhost:3000'
 };

@@ -1,0 +1,179 @@
+// Colors
+$accent: #3b82f6;
+$bg-main: #0f172a;
+$bg-card: #16213e;
+$green: #2ecc71;
+$red: #e94560;
+$text-dim: #94a3b8;
+
+.dashboard-wrapper {
+  padding: 1rem; // Reduced for mobile
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: $bg-main;
+  min-height: 100vh;
+  color: white;
+  margin-top: 20px;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}
+
+.promo-banner {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  border-radius: 20px;
+  padding: 2rem 1.5rem; // Mobile padding
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(46, 204, 113, 0.2);
+  
+  h1 { margin: 0; font-size: 1.8rem; font-weight: 800; line-height: 1.2; }
+  p { font-size: 1rem; opacity: 0.95; margin: 10px 0; }
+
+  @media (min-width: 768px) {
+    padding: 3rem 2rem;
+    h1 { font-size: 2.5rem; }
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr; // Single column by default (mobile)
+  gap: 1.5rem;
+
+  @media (min-width: 960px) {
+    grid-template-columns: 1fr 320px; // Sidebar appears on desktop
+    gap: 2rem;
+  }
+}
+
+.card-section {
+  background: $bg-card;
+  border-radius: 20px;
+  padding: 1.25rem;
+  border: 1px solid #1f2937;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    
+    .title-with-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h2 { margin: 0; font-size: 1.25rem; }
+  }
+}
+
+// Reservation Cards (Mobile Responsive)
+.res-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid $accent;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column; // Stacked on mobile
+  gap: 12px;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .res-info {
+    .res-date { font-size: 0.75rem; color: $text-dim; font-weight: 600; display: block; }
+    .res-time { font-size: 1rem; font-weight: 800; color: #fff; }
+  }
+
+  .res-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    .status-group { display: flex; gap: 6px; }
+
+    .cancel-btn {
+      background: rgba($red, 0.1);
+      color: $red;
+      border: 1px solid rgba($red, 0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 0.2s;
+
+      &:hover { background: $red; color: white; }
+    }
+  }
+}
+
+// Sidebar Cards
+.stat-card, .info-card {
+  background: #1e293b;
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-left: 5px solid #4ade80;
+
+  .stat-value { font-size: 2rem; font-weight: 900; }
+  
+  &.low-stock {
+    border-left-color: $red;
+    .stat-value { color: $red; }
+  }
+}
+
+.status-pill {
+  font-size: 0.6rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba($red, 0.1);
+  color: $red;
+  border: 1px solid rgba($red, 0.2);
+
+  &.paid {
+    background: rgba($green, 0.1);
+    color: $green;
+    border-color: rgba($green, 0.2);
+  }
+  &.highlight {
+    background: rgba($accent, 0.1);
+    color: $accent;
+    border-color: rgba($accent, 0.2);
+  }
+}
+
+.live-indicator {
+  background: $red;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  animation: pulse 2s infinite;
+}
+
+.my-reservations{
+    margin-bottom: 10px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 400px){
+    .main-content {
+        width: 90vw;
+    }
+}

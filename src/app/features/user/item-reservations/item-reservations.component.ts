@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { UserService } from '../../auth/services/user.service';
 
 @Component({
   selector: 'app-item-reservations',
@@ -26,21 +27,33 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   loading: boolean = true;
   loadingItems: boolean = false;
   dateTabs: any[] = [];
-
+  businessId!:string;
   openingHour = 9;
   closingHour = 24;
 
   private refreshSub?: Subscription;
 
-  constructor(private siteService: SiteService, private router: Router) {}
+  constructor(private siteService: SiteService, private router: Router, private userService:UserService) {}
 
   ngOnInit() {
     this.generateDateTabs();
-    const stored = localStorage.getItem('businesManagement_user');
-    this.user = stored ? JSON.parse(stored) : null;
-    if (this.user?.business) {
-      this.fetchBranches();
-    }
+     this.userService.user$.subscribe(user => {
+      if(user) {
+        this.user = user
+      } else {
+        const stored = localStorage.getItem('businesManagement_user');
+        this.user = stored ? JSON.parse(stored) : null;
+      }
+      if (this.user?.business) {
+          this.fetchBranches();
+      } else {
+        this.siteService.getExistingBusiness().subscribe((res: any) => {
+          this.businessId = res.result.data._id
+          console.log(this.businessId)
+          this.fetchBranches()
+        })
+      }
+     })
   }
 
   ngOnDestroy() {
@@ -62,7 +75,7 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   }
 
   fetchBranches() {
-    this.siteService.getBranchesByBusiness(this.user.business).subscribe({
+    this.siteService.getBranchesByBusiness(this.user?.business || this.businessId).subscribe({
       next: (res: any) => {
         this.branches = res.result.data;
         if (this.branches.length > 0) this.selectBranch(this.branches[0]._id);

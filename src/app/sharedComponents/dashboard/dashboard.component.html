@@ -1,0 +1,37 @@
+<div class="dashboard-wrapper">
+  
+  <div class="promo-banner">
+    <div class="banner-content">
+      <h1>{{'WELCOME_BACK_CHAMPION' | translate}}</h1>
+      <p>{{'READY_FOR_YOUR_NEXT_SESSION' | translate}} {{availableCount}} {{'PLAYSTATIONS_ARE_WAITING' | translate }}</p>
+      <div class="banner-badge">{{'PRICE_PER_HOUR' | translate}}</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="main-content">
+      <section class="card-section">
+        <div class="section-header">
+          <h2>{{'QUICK_BOOKING' | translate}}</h2>
+          <span class="live-indicator">{{'LIVE' | translate}}</span>
+        </div>
+        <app-item-reservations (statsUpdated)="statsUpdated($event)"></app-item-reservations>
+      </section>
+    </div>
+
+    <aside class="sidebar-content">
+      <div class="stat-card" [class.low-stock]="availableCount <= 1">
+        <h3>{{'AVAILABLE_NOW' | translate}}</h3>
+        <div class="stat-value">{{ availableCount }} / {{ totalItems }}</div>
+        <p>{{ availableCount > 0 ? 'STATIONS_FREE' : 'FULLY_BOOKED' | translate}}</p>
+      </div>
+
+      <div class="info-card">
+        <h3>{{'LOCATION_INFO' | translate}}</h3>
+        <p>📍 {{'LOCATION_RUSTAVI_GEORGIA' | translate}}</p>
+        <p>📞 +995 598 120 220</p>
+        <a href="https://maps.google.com" target="_blank" class="map-link">{{'OPEN_IN_MAPS' | translate}}</a>
+      </div>
+    </aside>
+  </div>
+</div>
