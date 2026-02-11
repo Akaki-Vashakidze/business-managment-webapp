@@ -36,7 +36,7 @@ export class UserService {
   }
 
   setUser(user: {user:User, token:string | null} | null) {
-    this.userSubject.next(user);
+    this.userSubject.next(user?.user);
     if (user) {
       localStorage.setItem('businesManagement_user', JSON.stringify(user.user));
       localStorage.setItem('businesManagement_role', user.user.isOwner == 1 || user.user.isManager == 1 ? 'admin' : 'user');
