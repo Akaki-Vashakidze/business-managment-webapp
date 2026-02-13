@@ -28,7 +28,7 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   loadingItems: boolean = false;
   dateTabs: any[] = [];
   businessId!:string;
-  openingHour = 9;
+  openingHour = 12;
   closingHour = 24;
 
   private refreshSub?: Subscription;

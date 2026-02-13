@@ -35,10 +35,10 @@
     <div class="grid-wrapper">
       <div class="slots-grid">
         <div *ngFor="let slot of timeSlots"
-             class="slot"
-             [class.reserved]="slot.reserved"
-             [class.selected]="slot.selected"
-             (click)="selectSlot(slot)">
+            class="slot"
+            [class.reserved]="slot.reserved"
+            [class.selected]="slot.selected"
+            (click)="selectSlot(slot)">
           {{ slot.label }}
         </div>
       </div>

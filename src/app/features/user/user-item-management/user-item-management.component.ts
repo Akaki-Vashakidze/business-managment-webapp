@@ -118,14 +118,12 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
     let limitStart: number | null = null;
     let limitEnd: number | null = null;
 
-    // Only parse the slot limit if slotTime exists (it gets cleared when clicking a date tab)
     if (this.slotTime && this.slotTime.includes('-')) {
       const parts = this.slotTime.split('-');
       limitStart = this.parseTimeToMinutes(parts[0]);
       limitEnd = this.parseTimeToMinutes(parts[1]);
     }
 
-    // Dynamic start based on whether we have a filter or default hours
     const loopStart = (limitStart !== null && limitStart < this.DEFAULT_START) 
       ? limitStart 
       : this.DEFAULT_START;
@@ -134,10 +132,10 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
       ? limitEnd
       : this.DEFAULT_END;
 
+    // Loop every 15 minutes
     for (let m = loopStart; m < loopEnd; m += 15) {
       const end = m + 15;
 
-      // Filter logic: Only apply if limitStart exists
       if (limitStart !== null && limitEnd !== null) {
         if (m < limitStart || end > limitEnd) continue;
       }
@@ -153,7 +151,8 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
         end,
         reserved,
         selected: false,
-        label: this.format(m)
+        // UPDATED LABEL: Shows the range now
+        label: `${this.format(m)} - ${this.format(end)}`
       });
     }
 
