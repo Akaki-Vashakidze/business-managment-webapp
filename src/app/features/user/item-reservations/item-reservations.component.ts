@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { SiteService } from '../../auth/services/site.service';
-import { interval, startWith, Subscription, switchMap } from 'rxjs';
+import { interval, startWith, Subscription, switchMap, Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   @Input() reservations: any[] = [];
   @Output() statsUpdated = new EventEmitter<{available: number, total: number}>();
 
+  private destroy$ = new Subject<void>(); // Added for clean subscription management
   user: any = null;
   branches: any[] = [];
   selectedBranchId: string | null = null;
@@ -37,7 +38,7 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.generateDateTabs();
-     this.userService.user$.subscribe(user => {
+     this.userService.user$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       if(user) {
         this.user = user
       } else {
@@ -47,9 +48,8 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
       if (this.user?.business) {
           this.fetchBranches();
       } else {
-        this.siteService.getExistingBusiness().subscribe((res: any) => {
+        this.siteService.getExistingBusiness().pipe(takeUntil(this.destroy$)).subscribe((res: any) => {
           this.businessId = res.result.data._id
-          console.log(this.businessId)
           this.fetchBranches()
         })
       }
@@ -58,6 +58,8 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.refreshSub) this.refreshSub.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   generateDateTabs() {
@@ -75,14 +77,16 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
   }
 
   fetchBranches() {
-    this.siteService.getBranchesByBusiness(this.user?.business || this.businessId).subscribe({
-      next: (res: any) => {
-        this.branches = res.result.data;
-        if (this.branches.length > 0) this.selectBranch(this.branches[0]._id);
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+    this.siteService.getBranchesByBusiness(this.user?.business || this.businessId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.branches = res.result.data;
+          if (this.branches.length > 0) this.selectBranch(this.branches[0]._id);
+          this.loading = false;
+        },
+        error: () => this.loading = false
+      });
   }
 
   onDateChange(date: string) {
@@ -90,27 +94,36 @@ export class ItemReservationsComponent implements OnInit, OnDestroy {
     if (this.selectedBranchId) this.selectBranch(this.selectedBranchId);
   }
 
-  selectBranch(branchId: string) {
+  /**
+   * UPDATED: This method can now be called from the Parent 
+   * to refresh data manually or change branches.
+   */
+  public selectBranch(branchId: string) {
     this.selectedBranchId = branchId;
     this.loadingItems = true;
+    
     if (this.refreshSub) this.refreshSub.unsubscribe();
 
     this.refreshSub = interval(20000)
-      .pipe(startWith(0), switchMap(() => this.siteService.getItemsReservations({
-        branchId: this.selectedBranchId || '',
-        date: this.selectedDate
-      })))
-      .subscribe(
-        {
+      .pipe(
+        startWith(0), 
+        switchMap(() => this.siteService.getItemsReservations({
+          branchId: this.selectedBranchId || '',
+          date: this.selectedDate
+        })),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
         next: (res: any) => {
           this.items = res.result.data.items;
           this.reservations = res.result.data.reservations;
           this.updateParentStats();
           this.loadingItems = false;
         },
-        error: () => this.loadingItems = false
-      }
-    );
+        error: () => {
+          this.loadingItems = false;
+        }
+      });
   }
 
   isItemBusyNow(itemId: string): boolean {

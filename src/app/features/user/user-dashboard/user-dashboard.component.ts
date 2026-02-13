@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SiteService } from '../../auth/services/site.service';
 import { ItemReservationsComponent } from "../item-reservations/item-reservations.component";
 import { UserService } from '../../auth/services/user.service';
@@ -21,11 +21,17 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   availableCount: number = 0;
   totalItems: number = 0;
   myReservations: ItemManagement[] = [];
-
+  @ViewChild(ItemReservationsComponent) childComponent!: ItemReservationsComponent;
   constructor(private userService: UserService, private snackbarService:SnackbarService, private siteService: SiteService) {}
 
   ngOnInit(): void {
     this.loadMyReservations();
+  }
+
+  refreshChildData() {
+    if (this.childComponent.selectedBranchId) {
+      this.childComponent.selectBranch(this.childComponent.selectedBranchId);
+    }
   }
 
   ngOnDestroy(): void {
@@ -38,6 +44,7 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         this.myReservations = result;
+        console.log(this.myReservations)
       });
   }
 
@@ -54,10 +61,11 @@ export class UserDashboardComponent implements OnInit, OnDestroy {
   deleteMyReservation(id:string){
     this.siteService.deleteMyReservation(id).subscribe(res => {
       console.log(res)
-      if(res.errors) {
+      if(res.statusCode != 200) {
           this.snackbarService.error(res.errors)
       } else {
         this.loadMyReservations();
+        this.refreshChildData()
         this.snackbarService.success('deleted')
       }
     })
