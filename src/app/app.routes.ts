@@ -53,6 +53,7 @@ export const routes: Routes = [
       { path: 'item/manage/:id', loadComponent: () => import('./features/admin/item-management/item-management.component').then(m => m.ItemManagementComponent) },
       { path: 'checkIn', loadComponent: () => import('./features/admin/staff-check-in/staff-check-in.component').then(m => m.StaffCheckInComponent) },
       { path: 'user-details/:userId', loadComponent: () => import('./features/admin/user-details/user-details.component').then(m => m.UserDetailsComponent) },
+      { path: 'analytics', loadComponent: () => import('./features/admin/analytics/analytics.component').then(m => m.AnalyticsComponent) },
     ],
   },
 

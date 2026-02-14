@@ -1,0 +1,25 @@
+<div class="analytics-container" *ngIf="analytics">
+  <h2>Traffic Overview</h2>
+
+  <div class="stat-card total">
+    <span class="label">Total Unique Users</span>
+    <div class="value">{{ analytics.totalUniqueUsers }}</div>
+  </div>
+
+  <div class="device-section">
+    <h3>Device Distribution</h3>
+    
+    <div class="device-item" *ngFor="let device of analytics.devices">
+      <div class="device-info">
+        <span class="device-name">{{ device._id | titlecase }}</span>
+        <span class="device-count">{{ device.count }} users</span>
+      </div>
+      <div class="progress-bg">
+        <div class="progress-fill" 
+             [style.width.%]="getPercentage(device._id)"
+             [ngClass]="device._id">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
