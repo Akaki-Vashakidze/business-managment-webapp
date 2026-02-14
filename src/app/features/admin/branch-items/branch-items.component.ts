@@ -6,8 +6,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { BranchItem } from '../../../interfaces/shared-interfaces';
 import { ItemsService } from '../../auth/services/items.service';
 import { BranchesService } from '../../auth/services/branches.service';
-
-// Child Components
 import { AddItemComponent } from "../add-item/add-item.component";
 import { ItemsWholeReservesComponent } from "../items-whole-reserves/items-all-reservations.component";
 import { LiveTimesComponent } from "../../../live-times/live-times.component";
