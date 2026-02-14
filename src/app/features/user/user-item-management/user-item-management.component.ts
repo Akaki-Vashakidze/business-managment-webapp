@@ -34,9 +34,8 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
   allReservations: any[] = [];
   loadingReservations = false;
 
-  // Configuration for Default Business Hours
-  readonly DEFAULT_START = 12 * 60; // 12:00 PM
-  readonly DEFAULT_END = 24 * 60;   // 12:00 AM
+  DEFAULT_START = 12 * 60; // 12:00 PM
+  DEFAULT_END = 24 * 60;   // 12:00 AM
 
   reservation = {
     date: '',
@@ -58,9 +57,7 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.itemId = this.route.snapshot.paramMap.get('itemId')!;
     this.slotTime = this.route.snapshot.paramMap.get('slotTIme');
-    
     this.generateDateTabs();
-    // On first load, use the URL date or default to today
     this.reservation.date = this.dateTabs[0].full;
     this.loadReservations();
   }
@@ -125,6 +122,11 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
       const parts = this.slotTime.split('-');
       limitStart = this.parseTimeToMinutes(parts[0]);
       limitEnd = this.parseTimeToMinutes(parts[1]);
+
+      //here
+      console.log(limitEnd, limitStart)
+        this.DEFAULT_START = limitStart
+        this.DEFAULT_END = limitEnd
     }
 
     // Determine the boundaries of the grid
