@@ -162,17 +162,6 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  private autoSelectRequestedRange(start: number, end: number) {
-    const startSlot = this.timeSlots.find(s => s.start === start);
-    const endSlot = this.timeSlots.find(s => s.end === end);
-
-    if (startSlot && endSlot && !this.isRangeReserved(start, end)) {
-      this.selectedStart = startSlot;
-      this.selectedEnd = endSlot;
-      this.highlightRange();
-    }
-  }
-
   isRangeReserved(start: number, end: number): boolean {
     const selectedDateStr = new Date(this.reservation.date).toDateString();
     return this.allReservations.some(r => {
