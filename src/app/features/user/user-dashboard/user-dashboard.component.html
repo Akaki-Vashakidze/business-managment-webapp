@@ -63,7 +63,8 @@
       <div class="stat-card" [class.low-stock]="availableCount <= 1">
         <h3>{{'AVAILABLE_NOW' | translate}}</h3>
         <div class="stat-value">{{ availableCount }} / {{ totalItems }}</div>
-        <p>{{ availableCount > 0 ? 'STATIONS_FREE' : 'FULLY_BOOKED' | translate}}</p>
+        <p *ngIf="availableCount > 0">{{'STATIONS_FREE' | translate}}</p>
+        <p *ngIf="availableCount === 0">{{'FULLY_BOOKED' | translate}}</p>
       </div>
 
       <div class="info-card">
