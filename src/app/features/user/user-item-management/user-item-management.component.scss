@@ -122,18 +122,6 @@ $text: #f8fafc;
   display: flex;
   align-items: center;
   gap: 15px;
-  .paid-check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    cursor: pointer;
-    input { display: none; }
-    .box { width: 18px; height: 18px; border: 2px solid $accent; border-radius: 4px; position: relative; }
-    input:checked + .box { background: $accent; }
-    input:checked + .box::after { content: '✔'; position: absolute; top: -3px; left: 2px; color: white; font-size: 0.7rem; }
-  }
   .confirm-btn {
     flex: 1;
     background: $green;

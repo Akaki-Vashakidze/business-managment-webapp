@@ -68,5 +68,5 @@ export const ka = {
   DATE: "თარიღი",
   TIME: "დრო",
   PAID_NOW: "გადახდილია",
-  CONFIRM_STATION: "ფლეისთეიშენის დადასტურება"
+  CONFIRM_STATION: "ფლეისთეიშენის დაჯავშნა"
 };

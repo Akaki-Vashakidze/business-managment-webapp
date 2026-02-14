@@ -58,7 +58,7 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.itemId = this.route.snapshot.paramMap.get('itemId')!;
     this.slotTime = this.route.snapshot.paramMap.get('slotTIme');
-
+    
     this.generateDateTabs();
     // On first load, use the URL date or default to today
     this.reservation.date = this.dateTabs[0].full;
@@ -111,19 +111,23 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
   buildSlots() {
     this.timeSlots = [];
     const selectedDateStr = new Date(this.reservation.date).toDateString();
+    
+    // Filter existing reservations for the selected day
     const dayRes = this.allReservations.filter(r => 
       new Date(r.date).toDateString() === selectedDateStr
     );
 
     let limitStart: number | null = null;
     let limitEnd: number | null = null;
-
+    
+    // Check if a specific time window was requested via URL
     if (this.slotTime && this.slotTime.includes('-')) {
       const parts = this.slotTime.split('-');
       limitStart = this.parseTimeToMinutes(parts[0]);
       limitEnd = this.parseTimeToMinutes(parts[1]);
     }
 
+    // Determine the boundaries of the grid
     const loopStart = (limitStart !== null && limitStart < this.DEFAULT_START) 
       ? limitStart 
       : this.DEFAULT_START;
@@ -132,14 +136,16 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
       ? limitEnd
       : this.DEFAULT_END;
 
-    // Loop every 15 minutes
+    // Generate the 15-minute interval slots
     for (let m = loopStart; m < loopEnd; m += 15) {
       const end = m + 15;
 
+      // If a filter is active (from URL), skip slots outside that range
       if (limitStart !== null && limitEnd !== null) {
         if (m < limitStart || end > limitEnd) continue;
       }
 
+      // Check if this specific 15-min block overlaps with any existing reservation
       const reserved = dayRes.some(r => {
         const rs = r.startHour * 60 + r.startMinute;
         const re = r.endHour * 60 + r.endMinute;
@@ -151,13 +157,8 @@ export class UserItemManagementComponent implements OnInit, OnDestroy {
         end,
         reserved,
         selected: false,
-        // UPDATED LABEL: Shows the range now
         label: `${this.format(m)} - ${this.format(end)}`
       });
-    }
-
-    if (limitStart !== null && limitEnd !== null) {
-      this.autoSelectRequestedRange(limitStart, limitEnd);
     }
   }
 
