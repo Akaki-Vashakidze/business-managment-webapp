@@ -22,14 +22,14 @@
             <button (click)="logOut()" class="btn-outline">
               {{'LOGOUT' | translate}}
             </button>
-            <div *ngIf="user.isManager || user.isOwner" class="switchToUser" (click)="switchRoleToAdmin()" routerLink="/admin/branchItems" >
+            <div *ngIf="user.isManager || user.isOwner" class="switchToUser" (click)="switchRoleToAdmin()" routerLink="/admin/branchItems">
                 <mat-icon>toggle_off</mat-icon>
             </div>
           </div>
         </ng-container>
 
       <div class="lang-wrapper">
-        <select (change)="changeLang($event)" class="lang-select">
+        <select [value]="lang" (change)="changeLang($event)" class="lang-select">
           <option value="en">EN</option>
           <option value="ka">GE</option>
         </select>

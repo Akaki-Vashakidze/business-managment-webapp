@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 export class AppComponent {
   adminView: any;
   constructor(private translate: TranslateService, private userService: UserService) {
+    const savedLang = localStorage.getItem('businesManagement_selectedLang') || 'ka'; // Default to 'ka' if nothing saved
     userService.user$.subscribe(item => {
       console.log(item)
       if(!item) {
@@ -41,8 +42,8 @@ export class AppComponent {
     this.translate.setTranslation('en', en);
     this.translate.setTranslation('ka', ka);
 
-    this.translate.setDefaultLang('en');
-    this.translate.use('en');
+    this.translate.setDefaultLang('ka');
+    this.translate.use(savedLang);
   }
 
   title = 'scheduler-app';

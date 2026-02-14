@@ -15,10 +15,13 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './userHeader.component.scss'
 })
 export class UserHeaderComponent {
-  lang: string = 'en'
+  lang: string = 'ka'
   user: any;
   private destroy$ = new Subject<void>();
   constructor(private translateService: TranslateService, private authService: AuthService, private userService: UserService, private router: Router) {
+    const savedLang = localStorage.getItem('businesManagement_selectedLang') || 'ka';
+    this.lang = savedLang;
+    this.translateService.use(savedLang);
     try {
       const storedUser = localStorage.getItem('businesManagement_user');
       this.user = storedUser ? JSON.parse(storedUser) : null;
@@ -37,10 +40,15 @@ export class UserHeaderComponent {
         console.log('Header User Update:', this.user);
       });
   }
+
   changeLang(event: any) {
-    let lang = event.target.value
-    this.translateService.use(lang);
-  }
+  const selectedLang = event.target.value;
+  this.lang = selectedLang; // Keep the variable updated
+  this.translateService.use(selectedLang);
+  
+  // Optional: Save to localStorage so it persists on refresh
+  localStorage.setItem('businesManagement_selectedLang', selectedLang);
+}
 
   switchRoleToAdmin(){
     this.userService.onSwitchRole('admin')
